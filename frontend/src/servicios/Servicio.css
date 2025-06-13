@@ -82,3 +82,8 @@ servicio-container {
   background-color: rgba(255, 0, 0, 0.1);
   color: #ff4f4f;
 }
+.icono-tijera {
+  color: #00b3ff;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}

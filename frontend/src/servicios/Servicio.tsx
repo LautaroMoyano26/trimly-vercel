@@ -1,8 +1,7 @@
 import "./Servicio.css";
 import Tabla from "../components/Tabla";
-import { FaClock, FaMoneyBillWave, FaEdit, FaTrash } from "react-icons/fa";
+import { FaClock, FaEdit, FaTrash, FaCut } from "react-icons/fa";
 
-// Datos de servicios, basados en la imagen que subiste
 const servicios = [
   {
     nombre: "Corte de Cabello",
@@ -53,7 +52,12 @@ const columns = [
 
 // Prepara los datos para la tabla
 const data = servicios.map((s) => ({
-  servicio: <span className="fw-bold">{s.nombre}</span>,
+  servicio: (
+    <span className="fw-bold d-flex align-items-center gap-2">
+      <FaCut className="icono-tijera" />
+      <span>{s.nombre}</span>
+    </span>
+  ),
   descripcion: s.descripcion,
   duracion: (
     <>
@@ -63,7 +67,6 @@ const data = servicios.map((s) => ({
   ),
   precio: (
     <>
-      <FaMoneyBillWave size={14} className="me-1" />
       ${s.precio}
     </>
   ),
@@ -92,8 +95,6 @@ export default function Servicios() {
           <button className="nuevo-servicio-btn">+ Nuevo Servicio</button>
         </div>
       </div>
-
-      {/* Barra de búsqueda eliminada */}
 
       <Tabla columns={columns} data={data} />
     </div>
