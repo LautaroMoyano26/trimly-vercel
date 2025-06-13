@@ -1,0 +1,69 @@
+salon-app/
+├── backend/                     # API y lógica de negocio (NestJS + TypeORM)
+│   ├── src/
+│   │   ├── modules/            # Cada dominio del negocio es un módulo separado
+│   │   │   ├── auth/           # Autenticación y autorización (login, JWT, roles)
+│   │   │   │   ├── dto/
+│   │   │   │   ├── entities/
+│   │   │   │   ├── guards/
+│   │   │   │   ├── auth.controller.ts
+│   │   │   │   ├── auth.service.ts
+│   │   │   │   └── auth.module.ts
+│   │   │   ├── turno/          # Gestión de turnos
+│   │   │   │   ├── dto/
+│   │   │   │   ├── entities/
+│   │   │   │   ├── turno.controller.ts
+│   │   │   │   ├── turno.service.ts
+│   │   │   │   └── turno.module.ts
+│   │   │   ├── cliente/        # Gestión de clientes
+│   │   │   ├── servicio/       # Gestión de servicios
+│   │   │   ├── stock/          # Gestión de productos
+│   │   │   ├── reporte/        # Generación de reportes
+│   │   │   └── usuario/        # Gestión de usuarios y permisos
+│   │   ├── common/             # Código utilitario y compartido entre módulos
+│   │   │   ├── decorators/
+│   │   │   ├── guards/
+│   │   │   ├── pipes/
+│   │   │   └── dto/
+│   │   ├── config/             # Configuración de la app (DB, variables de entorno, etc.)
+│   │   │   ├── database.config.ts
+│   │   │   └── app.config.ts
+│   │   ├── main.ts             # Entry point de la aplicación
+│   │   └── app.module.ts       # Módulo raíz de NestJS
+│   ├── test/                   # Pruebas unitarias o de integración
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── frontend/                   # Interfaz de usuario (React + TypeScript)
+│   ├── public/                 # Archivos estáticos (favicon, index.html)
+│   ├── src/
+│   │   ├── components/         # Componentes reutilizables y de layout
+│   │   │   ├── ui/             # Componentes base (Button, Input, Card, Modal)
+│   │   │   ├── layout/         # Header, Sidebar, Footer
+│   │   │   └── forms/          # Formularios específicos
+│   │   ├── pages/              # Páginas principales (una por funcionalidad)
+│   │   │   ├── auth/
+│   │   │   ├── turnos/
+│   │   │   ├── clientes/
+│   │   │   ├── servicios/
+│   │   │   ├── stock/
+│   │   │   ├── reportes/
+│   │   │   └── usuarios/
+│   │   ├── hooks/              # Custom hooks de React
+│   │   ├── services/           # Lógica de comunicación con el backend (api)
+│   │   ├── context/            # Contextos globales (usuario, permisos)
+│   │   ├── types/              # Tipos e interfaces TypeScript
+│   │   ├── utils/              # Helpers y utilidades generales
+│   │   ├── constants/          # URLs, mensajes, configuraciones
+│   │   ├── styles/             # CSS/SCSS globales
+│   │   └── App.tsx             # Componente raíz
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── shared/                     # Tipos compartidos entre front y back
+│   └── types/
+├── .env.example               # Variables de entorno de ejemplo
+├── .gitignore
+├── package.json               # Scripts del proyecto raíz
+├── README.md                  # Documentación inicial del proyecto
+└── docs/                      # Documentación adicional (diagramas, manuales, etc.)
