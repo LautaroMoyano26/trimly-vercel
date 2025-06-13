@@ -1,18 +1,25 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./navbar/Navbar";
 import Clientes from "./clientes/Clientes";
-import "./App.css";
+// Importa aquí tus otras vistas, por ejemplo:
+// import Home from "./home/Home";
+// import Servicios from "./servicios/Servicios";
+// etc.
 
 export default function App() {
   return (
-    <div className="container-fluid h-100" style={{ minHeight: "100vh", background: "#19191d" }}>
-      <div className="row h-100 flex-nowrap" style={{ height: "100vh" }}>
-        <div className="col-auto p-0">
-          <Navbar />
-        </div>
-        <div className="col p-0" style={{ minHeight: "100vh", width: "100%" }}>
-          <Clientes />
+    <BrowserRouter>
+      <div style={{ display: "flex", height: "100vh", width: "100%", background: "#19191d", overflow: "hidden" }}>
+        <Navbar />
+        <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+          <Routes>
+            {/* <Route path="/" element={<Home />} /> */}
+            {/* <Route path="/servicios" element={<Servicios />} /> */}
+            <Route path="/clientes" element={<Clientes />} />
+            {/* Agrega más rutas según tus vistas */}
+          </Routes>
         </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
