@@ -1,4 +1,5 @@
 import "./Clientes.css";
+import Tabla from "../components/Tabla";
 import { FaUserCircle, FaPhoneAlt, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
 
 const clientes = [
@@ -23,6 +24,46 @@ const clientes = [
   // ...más clientes
 ];
 
+// Define las columnas
+const columns = [
+  { key: "cliente", label: "Cliente" },
+  { key: "contacto", label: "Contacto" },
+  { key: "dni", label: "DNI" },
+  { key: "ultimaVisita", label: "Última visita" },
+  { key: "visitas", label: "Visitas" },
+  { key: "estado", label: "Estado" },
+  { key: "acciones", label: "Acciones" },
+];
+
+// Prepara los datos para la tabla
+const data = clientes.map((c) => ({
+  cliente: (
+    <span className="d-flex align-items-center gap-2">
+      <FaUserCircle size={32} color="#a259ff" />
+      <span className="fw-bold">{c.nombre}</span>
+    </span>
+  ),
+  contacto: (
+    <>
+      <FaPhoneAlt size={12} className="me-1" />
+      {c.telefono}
+      <br />
+      <FaEnvelope size={12} className="me-1" />
+      {c.email}
+    </>
+  ),
+  dni: c.dni,
+  ultimaVisita: (
+    <>
+      <FaCalendarAlt size={14} className="me-1" />
+      {c.ultimaVisita}
+    </>
+  ),
+  visitas: <span className="visitas-badge">{c.visitas} visitas</span>,
+  estado: <span className="estado-badge">{c.estado}</span>,
+  acciones: null,
+}));
+
 export default function Clientes() {
   return (
     <div className="clientes-container container-fluid py-4 px-2 px-md-4">
@@ -43,54 +84,7 @@ export default function Clientes() {
           />
         </div>
       </div>
-      <div className="table-responsive rounded-4">
-        <table className="table table-dark table-borderless align-middle mb-0">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Contacto</th>
-              <th>DNI</th>
-              <th>Última visita</th>
-              <th>Visitas</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clientes.map((c, i) => (
-              <tr key={i}>
-                <td>
-                  <span className="d-flex align-items-center gap-2">
-                    <FaUserCircle size={32} color="#a259ff" />
-                    <span className="fw-bold">{c.nombre}</span>
-                  </span>
-                </td>
-                <td>
-                  <FaPhoneAlt size={12} className="me-1" />
-                  {c.telefono}
-                  <br />
-                  <FaEnvelope size={12} className="me-1" />
-                  {c.email}
-                </td>
-                <td>{c.dni}</td>
-                <td>
-                  <FaCalendarAlt size={14} className="me-1" />
-                  {c.ultimaVisita}
-                </td>
-                <td>
-                  <span className="visitas-badge">{c.visitas} visitas</span>
-                </td>
-                <td>
-                  <span className="estado-badge">{c.estado}</span>
-                </td>
-                <td>
-                  {/* Acciones futuras */}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Tabla columns={columns} data={data} />
     </div>
   );
 }

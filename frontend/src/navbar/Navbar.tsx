@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar-vertical d-flex flex-column align-items-center py-3">
       <div className="navbar-logo mb-4 d-none d-md-flex align-items-center justify-content-center">
-        <span className="navbar-avatar">SH</span>
+        <span className="navbar-avatar">TRIMLY</span>
       </div>
       <ul className="navbar-menu list-unstyled mb-0 w-100 d-flex flex-md-column flex-row justify-content-center align-items-center gap-3 gap-md-0">
         {navItems.map((item) => (
