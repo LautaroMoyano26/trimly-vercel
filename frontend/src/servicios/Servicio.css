@@ -63,3 +63,22 @@ servicio-container {
   overflow: hidden;
   background: #232329;
 }
+.btn-accion {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-accion.editar:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00b3ff;
+}
+
+.btn-accion.eliminar:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff4f4f;
+}
