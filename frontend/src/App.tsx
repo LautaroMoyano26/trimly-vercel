@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./navbar/Navbar";
 import Clientes from "./clientes/Clientes";
-import Servicios from "./servicios/Servicio";
+import Servicios from "./servicios/Servicio"; // Asegúrate de que esta ruta sea correcta
 // Importa aquí tus otras vistas, por ejemplo:
 // import Home from "./home/Home";
 // import Servicios from "./servicios/Servicios";
@@ -15,7 +15,7 @@ export default function App() {
         <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
           <Routes>
             {/* <Route path="/" element={<Home />} /> */}
-            {<Route path="/servicios" element={<Servicios />} />}
+            <Route path="/servicios" element={<Servicios />} />
             <Route path="/clientes" element={<Clientes />} />
             {/* Agrega más rutas según tus vistas */}
           </Routes>

@@ -1,0 +1,73 @@
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal-content {
+  background: #232329;
+  border-radius: 18px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 400px;
+  color: #fff;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+.close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="date"],
+input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #19191d;
+  color: #fff;
+  margin-bottom: 0;
+}
+.switch-row {
+  align-items: center;
+  justify-content: space-between;
+}
+.switch-desc {
+  display: block;
+  color: #b3b3b3;
+  font-size: 0.9rem;
+}
+.cancel-btn {
+  background: #232329;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.create-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: bold;
+}
