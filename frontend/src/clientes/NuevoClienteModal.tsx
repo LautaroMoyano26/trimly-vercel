@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaPhoneAlt, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
 import "./NuevoClienteModal.css";
 
 interface Props {
@@ -26,57 +27,104 @@ export default function NuevoClienteModal({ show, onClose, onClienteCreado }: Pr
     }));
   };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        const res = await fetch("http://localhost:3000/clientes", {
+      const res = await fetch("http://localhost:3000/clientes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-        });
-        if (!res.ok) {
-        // Puedes mostrar un mensaje de error al usuario aquí
+      });
+      if (!res.ok) {
         alert("Error al crear el cliente. Verifica los datos o el servidor.");
         return;
-        }
-        onClienteCreado();
-        onClose();
+      }
+      onClienteCreado();
+      onClose();
     } catch (error) {
-        alert("No se pudo conectar con el servidor.");
+      alert("No se pudo conectar con el servidor.");
     }
-    };
+  };
 
   if (!show) return null;
 
   return (
     <div className="modal-bg">
-      <div className="modal-content">
+      <div className="nuevo-cliente-modal-content">
         <button className="close-btn" onClick={onClose}>×</button>
-        <h2>Nuevo Cliente</h2>
-        <p>Agrega un nuevo cliente a tu peluquería</p>
+        <h2 className="modal-title">Nuevo Cliente</h2>
+        <p className="modal-subtitle">Agrega un nuevo cliente a tu peluquería</p>
         <form onSubmit={handleSubmit}>
           <div className="form-row">
-            <input name="nombre" placeholder="Ej: María" value={form.nombre} onChange={handleChange} required />
-            <input name="apellido" placeholder="Ej: García" value={form.apellido} onChange={handleChange} required />
+            <div className="nuevo-input-group">
+              <label>Nombre</label>
+              <input name="nombre" placeholder="Ej: María" value={form.nombre} onChange={handleChange} required />
+            </div>
+            <div className="nuevo-input-group">
+              <label>Apellido</label>
+              <input name="apellido" placeholder="Ej: García" value={form.apellido} onChange={handleChange} required />
+            </div>
           </div>
-          <input name="telefono" placeholder="Ej: 11-1234-5678" value={form.telefono} onChange={handleChange} required />
-          <input name="email" placeholder="Ej: cliente@email.com" value={form.email} onChange={handleChange} required />
+          <div className="nuevo-input-group input-icon-group">
+            <label>Teléfono</label>
+            <div className="input-icon-row">
+              <FaPhoneAlt className="input-icon" />
+              <input
+                name="telefono"
+                placeholder="Ej: 11-1234-5678"
+                value={form.telefono}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+          <div className="nuevo-input-group input-icon-group">
+            <label>Email</label>
+            <div className="input-icon-row">
+              <FaEnvelope className="input-icon" />
+              <input
+                name="email"
+                placeholder="Ej: cliente@email.com"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
           <div className="form-row">
-            <input name="dni" placeholder="Ej: 12345678" value={form.dni} onChange={handleChange} required />
-            <input
-              type="date"
-              name="fechaNacimiento"
-              placeholder="aaaa-mm-dd"
-              value={form.fechaNacimiento}
-              onChange={handleChange}
-            />
+            <div className="nuevo-input-group">
+              <label>DNI</label>
+              <input name="dni" placeholder="Ej: 12345678" value={form.dni} onChange={handleChange} required />
+            </div>
+            <div className="nuevo-input-group input-icon-group">
+              <label>Fecha de nacimiento</label>
+              <div className="input-icon-row">
+                <FaCalendarAlt className="input-icon" />
+                <input
+                  type="text"
+                  name="fechaNacimiento"
+                  placeholder="dd/mm/aaaa"
+                  value={form.fechaNacimiento}
+                  onChange={handleChange}
+                  pattern="\d{2}/\d{2}/\d{4}"
+                  maxLength={10}
+                />
+              </div>
+            </div>
           </div>
-          <div className="form-row switch-row">
-            <label>
-              Estado del cliente
-              <span className="switch-desc">Cliente activo puede agendar turnos</span>
+          <div className="estado-row">
+            <div>
+              <label className="estado-label">Estado del cliente</label>
+              <div className="switch-desc">Cliente activo puede agendar turnos</div>
+            </div>
+            <label className="switch">
+              <input type="checkbox" 
+              name="activo" 
+              checked={true} 
+              disabled
+              readOnly />
+              <span className="slider"></span>
             </label>
-            <input type="checkbox" name="activo" checked={form.activo} onChange={handleChange} />
           </div>
           <div className="form-row buttons">
             <button type="button" className="cancel-btn" onClick={onClose}>Cancelar</button>
@@ -84,6 +132,6 @@ export default function NuevoClienteModal({ show, onClose, onClienteCreado }: Pr
           </div>
         </form>
       </div>
-      </div>
-    );
-  }
+    </div>
+  );
+}

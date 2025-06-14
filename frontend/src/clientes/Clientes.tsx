@@ -3,6 +3,7 @@ import "./Clientes.css";
 import Tabla from "../components/Tabla";
 import NuevoClienteModal from "./NuevoClienteModal";
 import { FaUserCircle, FaPhoneAlt, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface Cliente {
   id: number;
@@ -76,7 +77,16 @@ export default function Clientes() {
         {c.activo ? "Activo" : "Inactivo"}
       </span>
     ),
-    acciones: null,
+    acciones: (
+      <>
+        <button className="btn-accion editar" title="Editar">
+          <FaEdit />
+        </button>
+        <button className="btn-accion eliminar" title="Eliminar">
+          <FaTrash />
+        </button>
+      </>
+    ),
   }));
 
   return (
