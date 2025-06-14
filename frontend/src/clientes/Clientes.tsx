@@ -89,7 +89,9 @@ export default function Clientes() {
       <div className="row align-items-center mb-3">
         <div className="col">
           <h1 className="fw-bold mb-0">Clientes</h1>
-          <p className="text-secondary mb-0">Gestiona los clientes de tu peluquería</p>
+          <p className="text-secondary mb-0">
+            Gestiona los clientes de tu peluquería
+          </p>
         </div>
         <div className="col-auto">
           <button className="nuevo-cliente-btn" onClick={() => setShowModal(true)}>
