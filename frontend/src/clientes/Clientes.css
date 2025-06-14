@@ -27,6 +27,21 @@
   opacity: 0.85;
 }
 
+.modificar-cliente-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.modificar-cliente-btn:hover {
+  opacity: 0.85;
+}
+
 .clientes-busqueda {
   background: #232329 !important;
   color: #fff !important;
@@ -53,6 +68,21 @@
   font-size: 0.95rem;
   font-weight: bold;
   display: inline-block;
+}
+
+.btn-accion {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-accion.editar:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00b3ff;
 }
 
 .table-dark {
