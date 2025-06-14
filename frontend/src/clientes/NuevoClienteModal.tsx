@@ -101,13 +101,11 @@ export default function NuevoClienteModal({ show, onClose, onClienteCreado }: Pr
               <div className="input-icon-row">
                 <FaCalendarAlt className="input-icon" />
                 <input
-                  type="text"
+                  type="date"
                   name="fechaNacimiento"
-                  placeholder="dd/mm/aaaa"
+                  placeholder="aaaa-mm-dd"
                   value={form.fechaNacimiento}
                   onChange={handleChange}
-                  pattern="\d{2}/\d{2}/\d{4}"
-                  maxLength={10}
                 />
               </div>
             </div>
