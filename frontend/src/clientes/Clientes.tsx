@@ -1,6 +1,13 @@
 import "./Clientes.css";
 import Tabla from "../components/Tabla";
-import { FaUserCircle, FaPhoneAlt, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaCalendarAlt,
+  FaEdit,
+  FaTrash,
+} from "react-icons/fa";
 
 const clientes = [
   {
@@ -61,7 +68,16 @@ const data = clientes.map((c) => ({
   ),
   visitas: <span className="visitas-badge">{c.visitas} visitas</span>,
   estado: <span className="estado-badge">{c.estado}</span>,
-  acciones: null,
+  acciones: (
+    <>
+      <button className="btn-accion editar" title="Editar">
+        <FaEdit />
+      </button>
+      <button className="btn-accion eliminar" title="Eliminar">
+        <FaTrash />
+      </button>
+    </>
+  ),
 }));
 
 export default function Clientes() {
@@ -70,7 +86,9 @@ export default function Clientes() {
       <div className="row align-items-center mb-3">
         <div className="col">
           <h1 className="fw-bold mb-0">Clientes</h1>
-          <p className="text-secondary mb-0">Gestiona los clientes de tu peluquería</p>
+          <p className="text-secondary mb-0">
+            Gestiona los clientes de tu peluquería
+          </p>
         </div>
         <div className="col-auto">
           <button className="nuevo-cliente-btn">+ Nuevo cliente</button>
