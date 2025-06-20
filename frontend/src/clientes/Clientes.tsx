@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./Clientes.css";
 import Tabla from "../components/Tabla";
-import NuevoClienteModal from "./NuevoClienteModal";
-import { FaUserCircle, FaPhoneAlt, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
+// Importamos el modal de edición que ya modificamos
+import EditarClienteModal from "./EditarClienteModal"; // Asegúrate de que el nombre del archivo sea correcto
+import {
+  FaUserCircle,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface Cliente {
@@ -21,14 +27,19 @@ const columns = [
   { key: "contacto", label: "Contacto" },
   { key: "dni", label: "DNI" },
   { key: "fechaNacimiento", label: "Fecha de nacimiento" },
-  { key: "visitas", label: "Visitas" }, // Puedes quitar si no usas visitas aún
+  { key: "visitas", label: "Visitas" },
   { key: "estado", label: "Estado" },
   { key: "acciones", label: "Acciones" },
 ];
 
 export default function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  // Cambiamos el nombre para que sea más claro para la edición/creación
+  const [showEditModal, setShowEditModal] = useState(false);
+  // Estado para guardar el cliente que vamos a editar
+  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
+    undefined
+  );
 
   // Cargar clientes desde el backend
   const fetchClientes = async () => {
@@ -39,7 +50,7 @@ export default function Clientes() {
       setClientes(Array.isArray(data) ? data : []);
     } catch (error) {
       setClientes([]);
-      console.error(error);
+      console.error("Error al cargar clientes:", error);
     }
   };
 
@@ -47,12 +58,26 @@ export default function Clientes() {
     fetchClientes();
   }, []);
 
+  // Función para abrir el modal en modo edición
+  const handleEditClick = (cliente: Cliente) => {
+    setSelectedClient(cliente); // Establece el cliente que se va a editar
+    setShowEditModal(true); // Abre el modal
+  };
+
+  // Función para abrir el modal en modo creación
+  const handleNewClientClick = () => {
+    setSelectedClient(undefined); // Asegura que no haya cliente seleccionado para "Crear"
+    setShowEditModal(true); // Abre el modal
+  };
+
   // Prepara los datos para la tabla
   const data = clientes.map((c) => ({
     cliente: (
       <span className="d-flex align-items-center gap-2">
         <FaUserCircle size={32} color="#a259ff" />
-        <span className="fw-bold">{c.nombre} {c.apellido}</span>
+        <span className="fw-bold">
+          {c.nombre} {c.apellido}
+        </span>
       </span>
     ),
     contacto: (
@@ -70,16 +95,21 @@ export default function Clientes() {
         <FaCalendarAlt size={14} className="me-1" />
         {c.fechaNacimiento}
       </>
-    ) : "-",
-    visitas: <span className="visitas-badge">-</span>, // Puedes reemplazar por el dato real si lo tienes
+    ) : (
+      "-"
+    ),
+    visitas: <span className="visitas-badge">-</span>,
     estado: (
-      <span className="estado-badge">
-        {c.activo ? "Activo" : "Inactivo"}
-      </span>
+      <span className="estado-badge">{c.activo ? "Activo" : "Inactivo"}</span>
     ),
     acciones: (
       <>
-        <button className="btn-accion editar" title="Editar">
+        {/* Agregamos onClick al botón de editar y le pasamos el cliente actual */}
+        <button
+          className="btn-accion editar"
+          title="Editar"
+          onClick={() => handleEditClick(c)}
+        >
           <FaEdit />
         </button>
         <button className="btn-accion eliminar" title="Eliminar">
@@ -91,10 +121,15 @@ export default function Clientes() {
 
   return (
     <div className="clientes-container container-fluid py-4 px-2 px-md-4">
-      <NuevoClienteModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onClienteCreado={fetchClientes}
+      {/* Usamos el mismo modal para crear y editar */}
+      <EditarClienteModal
+        show={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedClient(undefined); // Limpiamos el cliente seleccionado al cerrar
+        }}
+        onClienteEditado={fetchClientes} // Llama a fetchClientes para recargar la lista
+        clienteToEdit={selectedClient} // Pasamos el cliente seleccionado al modal
       />
       <div className="row align-items-center mb-3">
         <div className="col">
@@ -104,7 +139,8 @@ export default function Clientes() {
           </p>
         </div>
         <div className="col-auto">
-          <button className="nuevo-cliente-btn" onClick={() => setShowModal(true)}>
+          {/* Cambiamos el onClick del botón "Nuevo cliente" */}
+          <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
             + Nuevo cliente
           </button>
         </div>
@@ -114,7 +150,6 @@ export default function Clientes() {
           <input
             className="form-control clientes-busqueda"
             placeholder="Buscar cliente por nombre, teléfono o email..."
-            // Puedes agregar lógica de búsqueda aquí
           />
         </div>
       </div>
