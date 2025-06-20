@@ -34,12 +34,14 @@ const columns = [
 
 export default function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  // Cambiamos el nombre para que sea más claro para la edición/creación
   const [showEditModal, setShowEditModal] = useState(false);
-  // Estado para guardar el cliente que vamos a editar
   const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
     undefined
   );
+
+  // Nuevo estado para la búsqueda
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
 
   // Cargar clientes desde el backend
   const fetchClientes = async () => {
@@ -70,8 +72,15 @@ export default function Clientes() {
     setShowEditModal(true); // Abre el modal
   };
 
+  // Filtrar clientes por nombre o apellido
+  const filteredClientes = clientes.filter(
+    (c) =>
+      c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.apellido.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Prepara los datos para la tabla
-  const data = clientes.map((c) => ({
+  const data = filteredClientes.map((c) => ({
     cliente: (
       <span className="d-flex align-items-center gap-2">
         <FaUserCircle size={32} color="#a259ff" />
@@ -149,7 +158,11 @@ export default function Clientes() {
         <div className="col">
           <input
             className="form-control clientes-busqueda"
-            placeholder="Buscar cliente por nombre, teléfono o email..."
+            placeholder={searchPlaceholder}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setSearchPlaceholder("")}
+            onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
           />
         </div>
       </div>

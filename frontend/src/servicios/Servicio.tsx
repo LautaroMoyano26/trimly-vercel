@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Servicio.css";
 import Tabla from "../components/Tabla";
 import NuevoServicioModal from "./NuevoServicioModal";
