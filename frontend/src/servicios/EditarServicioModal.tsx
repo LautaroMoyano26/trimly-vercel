@@ -57,6 +57,7 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          duracion: Number(form.duracion),
           precio: parseFloat(form.precio),
         }),
       });
@@ -95,7 +96,10 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
               <label>Duración</label>
               <input
                 name="duracion"
-                placeholder="Ej: 45 minutos"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Ej: 45"
                 value={form.duracion}
                 onChange={handleChange}
                 required

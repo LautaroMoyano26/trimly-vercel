@@ -33,8 +33,9 @@ export default function NuevoServicioModal({ show, onClose, onServicioCreado }: 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          duracion: Number(form.duracion), // <--- aquí el cambio
           precio: parseFloat(form.precio),
-          estado: true, // Siempre enviar activo
+          estado: true,
         }),
       });
       if (!res.ok) {
@@ -69,10 +70,13 @@ export default function NuevoServicioModal({ show, onClose, onServicioCreado }: 
           </div>
           <div className="form-row">
             <div className="nuevo-input-group">
-              <label>Duración</label>
+              <label>Duración (minutos)</label>
               <input
                 name="duracion"
-                placeholder="Ej: 45 minutos"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Ej: 45"
                 value={form.duracion}
                 onChange={handleChange}
                 required

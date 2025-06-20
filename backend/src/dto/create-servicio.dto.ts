@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsNumber, IsOptional, IsBoolean } from 'class-val
 export class CreateServicioDto {
   @IsString()
   @IsNotEmpty()
-  nombre: string;
+  servicio: string;
 
   @IsString()
   @IsOptional()
@@ -11,7 +11,7 @@ export class CreateServicioDto {
 
   @IsNumber()
   @IsNotEmpty()
-  duracion: number; // minutos
+  duracion: number;
 
   @IsNumber()
   @IsNotEmpty()
@@ -19,5 +19,5 @@ export class CreateServicioDto {
 
   @IsBoolean()
   @IsOptional()
-  activo?: boolean;
+  estado?: boolean;
 }
