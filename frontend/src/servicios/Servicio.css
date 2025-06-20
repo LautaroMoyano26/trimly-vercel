@@ -1,4 +1,4 @@
-servicio-container {
+.servicio-container {
   background: #19191d;
   min-height: 100vh;
   height: 100vh;
@@ -86,4 +86,21 @@ servicio-container {
   color: #00b3ff;
   font-size: 1.1rem;
   flex-shrink: 0;
+}
+.input-modal {
+  background-color: #232329;
+  border-radius: 8px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+}
+
+input.input-modal {
+  color: #fff;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  padding: 0;
 }

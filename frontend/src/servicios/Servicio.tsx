@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./Servicio.css";
 import Tabla from "../components/Tabla";
 import NuevoServicioModal from "./NuevoServicioModal";
-import { FaClock, FaEdit, FaTrash, FaCut } from "react-icons/fa";
+import EditarServicioModal from "./EditarServicioModal";
+import { FaClock, FaEdit, FaTrash, FaCut, FaSearch } from "react-icons/fa";
 
 interface Servicio {
   id: number;
@@ -25,11 +26,18 @@ const columns = [
 export default function Servicios() {
   const [showModal, setShowModal] = useState(false);
   const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [showEditarModal, setShowEditarModal] = useState(false);
+  const [servicioEditar, setServicioEditar] = useState<Servicio | null>(null);
+  const [filtro, setFiltro] = useState("");
 
-  // Cargar servicios desde el backend
-  const cargarServicios = async () => {
+  // Cargar servicios desde el backend (filtrado por nombre si hay filtro)
+  const cargarServicios = async (nombreFiltro = "") => {
     try {
-      const res = await fetch("http://localhost:3000/servicios");
+      let url = "http://localhost:3000/servicios";
+      if (nombreFiltro.trim() !== "") {
+        url = `http://localhost:3000/servicios/buscar/nombre?nombre=${encodeURIComponent(nombreFiltro)}`;
+      }
+      const res = await fetch(url);
       const data = await res.json();
       setServicios(data);
     } catch (error) {
@@ -37,16 +45,28 @@ export default function Servicios() {
     }
   };
 
+  // Cargar todos los servicios al montar
   useEffect(() => {
     cargarServicios();
   }, []);
 
+  // Buscar servicios cada vez que cambia el filtro
+  useEffect(() => {
+    cargarServicios(filtro);
+  }, [filtro]);
+
   const handleServicioCreado = () => {
     setShowModal(false);
-    cargarServicios();
+    cargarServicios(filtro);
   };
 
-  // Prepara los datos para la tabla
+  const handleServicioEditado = () => {
+    setShowEditarModal(false);
+    setServicioEditar(null);
+    cargarServicios(filtro);
+  };
+
+  
   const data = servicios.map((s) => ({
     servicio: (
       <span className="fw-bold d-flex align-items-center gap-2">
@@ -69,7 +89,14 @@ export default function Servicios() {
     ),
     acciones: (
       <>
-        <button className="btn-accion editar" title="Editar">
+        <button
+          className="btn-accion editar"
+          title="Editar"
+          onClick={() => {
+            setServicioEditar(s);
+            setShowEditarModal(true);
+          }}
+        >
           <FaEdit />
         </button>
         <button className="btn-accion eliminar" title="Eliminar">
@@ -93,12 +120,32 @@ export default function Servicios() {
         </div>
       </div>
 
+
+    <div className="mb-3">
+      <div className="input-modal">
+        <input
+        className="input-modal"
+        type="text"
+        placeholder="Buscar servicio por nombre..."
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+      />
+      </div>
+    </div>
+
       <Tabla columns={columns} data={data} />
 
       <NuevoServicioModal
         show={showModal}
         onClose={() => setShowModal(false)}
         onServicioCreado={handleServicioCreado}
+      />
+
+      <EditarServicioModal
+        show={showEditarModal}
+        onClose={() => setShowEditarModal(false)}
+        servicioEditar={servicioEditar}
+        onServicioEditado={handleServicioEditado}
       />
     </div>
   );
