@@ -1,8 +1,9 @@
+// src/components/Clientes.tsx
 import React, { useEffect, useState } from "react";
 import "./Clientes.css";
 import Tabla from "../components/Tabla";
-// Importamos el modal de edición que ya modificamos
-import EditarClienteModal from "./EditarClienteModal"; // Asegúrate de que el nombre del archivo sea correcto
+import EditarClienteModal from "./EditarClienteModal";
+import EliminarClienteModal from "../components/EliminarClienteModal"; // <-- ¡NUEVA IMPORTACIÓN!
 import {
   FaUserCircle,
   FaPhoneAlt,
@@ -39,9 +40,9 @@ export default function Clientes() {
     undefined
   );
 
-  // Nuevo estado para la búsqueda
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
+  // --- NUEVOS ESTADOS PARA LA MODAL DE ELIMINAR ---
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Cliente | undefined>(undefined);
 
   // Cargar clientes desde el backend
   const fetchClientes = async () => {
@@ -53,6 +54,7 @@ export default function Clientes() {
     } catch (error) {
       setClientes([]);
       console.error("Error al cargar clientes:", error);
+      alert("No se pudieron cargar los clientes. Revisa la conexión al servidor.");
     }
   };
 
@@ -62,25 +64,24 @@ export default function Clientes() {
 
   // Función para abrir el modal en modo edición
   const handleEditClick = (cliente: Cliente) => {
-    setSelectedClient(cliente); // Establece el cliente que se va a editar
-    setShowEditModal(true); // Abre el modal
+    setSelectedClient(cliente);
+    setShowEditModal(true);
   };
 
   // Función para abrir el modal en modo creación
   const handleNewClientClick = () => {
-    setSelectedClient(undefined); // Asegura que no haya cliente seleccionado para "Crear"
-    setShowEditModal(true); // Abre el modal
+    setSelectedClient(undefined);
+    setShowEditModal(true);
   };
 
-  // Filtrar clientes por nombre o apellido
-  const filteredClientes = clientes.filter(
-    (c) =>
-      c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.apellido.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // --- NUEVA FUNCIÓN PARA ABRIR LA MODAL DE ELIMINAR ---
+  const handleDeleteClick = (cliente: Cliente) => {
+    setClientToDelete(cliente); // Establece el cliente a desactivar
+    setShowDeleteModal(true); // Abre la modal de desactivación
+  };
 
   // Prepara los datos para la tabla
-  const data = filteredClientes.map((c) => ({
+  const data = clientes.map((c) => ({
     cliente: (
       <span className="d-flex align-items-center gap-2">
         <FaUserCircle size={32} color="#a259ff" />
@@ -109,11 +110,12 @@ export default function Clientes() {
     ),
     visitas: <span className="visitas-badge">-</span>,
     estado: (
-      <span className="estado-badge">{c.activo ? "Activo" : "Inactivo"}</span>
+      <span className={`estado-badge ${c.activo ? 'activo' : 'inactivo'}`}>
+        {c.activo ? "Activo" : "Inactivo"}
+      </span>
     ),
     acciones: (
       <>
-        {/* Agregamos onClick al botón de editar y le pasamos el cliente actual */}
         <button
           className="btn-accion editar"
           title="Editar"
@@ -121,7 +123,12 @@ export default function Clientes() {
         >
           <FaEdit />
         </button>
-        <button className="btn-accion eliminar" title="Eliminar">
+        {/* --- CAMBIO AQUÍ: LLAMAR A LA FUNCIÓN PARA ABRIR LA MODAL DE ELIMINAR --- */}
+        <button
+          className="btn-accion eliminar"
+          title="Desactivar"
+          onClick={() => handleDeleteClick(c)} // Pasa el cliente completo
+        >
           <FaTrash />
         </button>
       </>
@@ -130,16 +137,27 @@ export default function Clientes() {
 
   return (
     <div className="clientes-container container-fluid py-4 px-2 px-md-4">
-      {/* Usamos el mismo modal para crear y editar */}
       <EditarClienteModal
         show={showEditModal}
         onClose={() => {
           setShowEditModal(false);
-          setSelectedClient(undefined); // Limpiamos el cliente seleccionado al cerrar
+          setSelectedClient(undefined);
         }}
-        onClienteEditado={fetchClientes} // Llama a fetchClientes para recargar la lista
-        clienteToEdit={selectedClient} // Pasamos el cliente seleccionado al modal
+        onClienteEditado={fetchClientes}
+        clienteToEdit={selectedClient}
       />
+
+      {/* --- NUEVA MODAL DE ELIMINAR/DESACTIVAR --- */}
+      <EliminarClienteModal
+        show={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setClientToDelete(undefined); // Limpiamos el cliente al cerrar
+        }}
+        clienteToDeactivate={clientToDelete}
+        onClienteDesactivado={fetchClientes} // Le pasamos la misma función de recarga
+      />
+
       <div className="row align-items-center mb-3">
         <div className="col">
           <h1 className="fw-bold mb-0">Clientes</h1>
@@ -148,7 +166,6 @@ export default function Clientes() {
           </p>
         </div>
         <div className="col-auto">
-          {/* Cambiamos el onClick del botón "Nuevo cliente" */}
           <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
             + Nuevo cliente
           </button>
@@ -158,11 +175,7 @@ export default function Clientes() {
         <div className="col">
           <input
             className="form-control clientes-busqueda"
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setSearchPlaceholder("")}
-            onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
+            placeholder="Buscar cliente por nombre, teléfono o email..."
           />
         </div>
       </div>

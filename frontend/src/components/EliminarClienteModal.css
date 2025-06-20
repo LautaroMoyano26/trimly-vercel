@@ -1,0 +1,90 @@
+/* src/components/EliminarClienteModal.css */
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+}
+
+.eliminar-cliente-modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px; /* Tamaño más pequeño para una confirmación */
+    position: relative;
+    text-align: center; /* Centrar el contenido */
+}
+
+.eliminar-cliente-modal-content .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.eliminar-cliente-modal-content .modal-title {
+    color: #dc3545; /* Rojo para indicar peligro */
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+.eliminar-cliente-modal-content .modal-subtitle {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.eliminar-cliente-modal-content .eliminar-warning {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.eliminar-cliente-modal-content .buttons {
+    display: flex;
+    justify-content: center; /* Centrar los botones */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.eliminar-cliente-modal-content .confirm-delete-btn {
+    background-color: #dc3545; /* Rojo de Bootstrap para peligro */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.eliminar-cliente-modal-content .confirm-delete-btn:hover {
+    background-color: #c82333; /* Un rojo más oscuro al pasar el ratón */
+}
+
+.eliminar-cliente-modal-content .cancel-btn {
+    background-color: #6c757d; /* Gris de Bootstrap */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.eliminar-cliente-modal-content .cancel-btn:hover {
+    background-color: #5a6268;
+}
