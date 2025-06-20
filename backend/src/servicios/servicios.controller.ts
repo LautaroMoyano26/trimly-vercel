@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Query } from '@nestjs/common';
 import { ServicioService } from './servicios.service';
 import { Servicio } from './servicio.entity';
-import { CreateServicioDto } from '../dto/create-servico.dto';
+import { CreateServicioDto } from '../dto/create-servicio.dto';
 import { UpdateServicioDto } from '../dto/update-servicio.dto'; // 1. Importa el DTO
 
 @Controller('servicios')
