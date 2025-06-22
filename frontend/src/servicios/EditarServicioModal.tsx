@@ -31,7 +31,7 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
       setForm({
         servicio: servicioEditar.servicio,
         descripcion: servicioEditar.descripcion,
-        duracion: servicioEditar.duracion,
+        duracion: servicioEditar.duracion.toString(),
         precio: servicioEditar.precio.toString(),
         estado: servicioEditar.estado,
       });
