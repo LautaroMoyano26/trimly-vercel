@@ -11,7 +11,7 @@ interface Servicio {
   id: number;
   servicio: string;
   descripcion: string;
-  duracion: string;
+  duracion: number;
   precio: number;
   estado: boolean;
 }
@@ -31,7 +31,8 @@ export default function Servicios() {
   const [showDeleteModal, setShowDeleteModal] = useState(false); // ✅ NUEVO ESTADO
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [servicioEditar, setServicioEditar] = useState<Servicio | null>(null);
-  const [servicioEliminar, setServicioEliminar] = useState<Servicio | null>(null); // ✅ NUEVO ESTADO
+  const [servicioEliminar, setServicioEliminar] = useState<Servicio | undefined>(undefined); // ✅ NUEVO ESTADO
+  const [busqueda, setBusqueda] = useState(""); // Estado para el buscador
 
   // Cargar servicios desde el backend
   const cargarServicios = async () => {
@@ -62,7 +63,7 @@ export default function Servicios() {
   // ✅ NUEVA FUNCIÓN PARA MANEJAR ELIMINACIÓN
   const handleServicioEliminado = async () => {
     setShowDeleteModal(false);
-    setServicioEliminar(null);
+    setServicioEliminar(undefined);
     await cargarServicios();
   };
 
@@ -78,8 +79,15 @@ export default function Servicios() {
     setShowEditModal(true);
   };
 
+  // Filtrar servicios según búsqueda
+  const serviciosFiltrados = servicios.filter(
+    (s) =>
+      s.servicio.toLowerCase().includes(busqueda.toLowerCase()) ||
+      s.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   // Prepara los datos para la tabla
-  const data = servicios.map((s) => ({
+  const data = serviciosFiltrados.map((s) => ({
     servicio: (
       <span className="fw-bold d-flex align-items-center gap-2">
         <FaCut className="icono-tijera" />
@@ -133,6 +141,19 @@ export default function Servicios() {
         </div>
       </div>
 
+     
+      <div className="row mb-3">
+        <div className="col">
+          <input
+            className="form-control clientes-busqueda"
+            type="text"
+            placeholder="Buscar servicio por nombre o descripción..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
+      </div>
+
       <Tabla columns={columns} data={data} />
 
       {/* Modal de Nuevo Servicio */}
@@ -158,7 +179,7 @@ export default function Servicios() {
         show={showDeleteModal}
         onClose={() => {
           setShowDeleteModal(false);
-          setServicioEliminar(null);
+          setServicioEliminar(undefined);
         }}
         servicioToDelete={servicioEliminar}
         onServicioEliminado={handleServicioEliminado}

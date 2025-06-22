@@ -12,7 +12,7 @@ export class Servicio {
   descripcion: string;
 
   @Column()
-  duracion: string;
+  duracion: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
   precio: number;

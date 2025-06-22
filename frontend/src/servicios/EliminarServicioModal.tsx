@@ -6,7 +6,7 @@ interface Servicio {
   id: number;
   servicio: string;
   descripcion: string;
-  duracion: string;
+  duracion: number;
   precio: number;
   estado: boolean;
 }

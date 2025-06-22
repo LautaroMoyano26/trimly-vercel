@@ -9,9 +9,9 @@ export class UpdateServicioDto {
   @IsOptional()
   descripcion?: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  duracion?: string;
+  duracion?: number;
 
   @IsNumber()
   @IsOptional()

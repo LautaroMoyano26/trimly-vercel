@@ -9,9 +9,9 @@ export class CreateServicioDto {
   @IsOptional()
   descripcion?: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  duracion: string;
+  duracion: number;
 
   @IsNumber()
   @IsNotEmpty()
