@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Put, Query } from '@nestjs/common';
+// backend/src/servicios/servicios.controller.ts - CORREGIR
+import { Controller, Get, Post, Body, Param, Put, Query, Delete } from '@nestjs/common'; // ✅ AGREGAR Delete
 import { ServicioService } from './servicios.service';
 import { Servicio } from './servicio.entity';
 import { CreateServicioDto } from '../dto/create-servicio.dto';
-import { UpdateServicioDto } from '../dto/update-servicio.dto'; // 1. Importa el DTO
+import { UpdateServicioDto } from '../dto/update-servicio.dto';
 
 @Controller('servicios')
 export class ServiciosController {
@@ -24,10 +25,23 @@ export class ServiciosController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateServicioDto: UpdateServicioDto) { // 2. Usa el DTO aquí
+  update(@Param('id') id: number, @Body() updateServicioDto: UpdateServicioDto) {
     return this.ServicioService.update(id, updateServicioDto);
   }
 
+  // ✅ CORREGIR MÉTODO DELETE
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+      throw new Error('ID inválido');
+    }
+    
+    await this.ServicioService.remove(numericId);
+    return { message: 'Servicio eliminado correctamente' };
+  }
+
+  // ✅ ELIMINAR MÉTODO DUPLICADO - MANTENER SOLO UNO
   @Get('buscar/nombre')
   buscarPorNombre(@Query('nombre') nombre: string): Promise<Servicio[]> {
     return this.ServicioService.buscarPorNombre(nombre);

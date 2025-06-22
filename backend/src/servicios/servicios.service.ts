@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+// backend/src/servicios/servicios.service.ts - CORREGIR
+import { Injectable, NotFoundException } from '@nestjs/common'; // ✅ AGREGAR NotFoundException
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Servicio } from './servicio.entity';
@@ -28,6 +29,16 @@ export class ServicioService {
     return this.ServicioRepository.findOneBy({ id });
   }
 
+  // ✅ CORREGIR MÉTODO REMOVE
+  async remove(id: number): Promise<void> {
+    const servicio = await this.ServicioRepository.findOneBy({ id });
+    if (!servicio) {
+      throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
+    }
+    await this.ServicioRepository.delete(id);
+  }
+
+  // ✅ ELIMINAR MÉTODO DUPLICADO - MANTENER SOLO UNO
   buscarPorNombre(nombre: string): Promise<Servicio[]> {
     return this.ServicioRepository.find({
       where: { servicio: Like(`%${nombre}%`) },
