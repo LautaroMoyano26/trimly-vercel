@@ -38,40 +38,66 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
     }
   }, [servicioEditar]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox"
-        ? (e.target as HTMLInputElement).checked
-        : value,
-    }));
-  };
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value, type } = e.target;
+  let newValue = value;
+  // Solo convierte a minúsculas si es input de texto o textarea
+  if (
+    (e.target instanceof HTMLInputElement && e.target.type === "text") ||
+    e.target instanceof HTMLTextAreaElement
+  ) {
+    newValue = value.toLowerCase();
+  }
+  setForm((prev) => ({
+    ...prev,
+    [name]: type === "checkbox"
+      ? (e.target as HTMLInputElement).checked
+      : newValue,
+  }));
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!servicioEditar) return;
-    try {
-      const res = await fetch(`http://localhost:3000/servicios/${servicioEditar.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          duracion: Number(form.duracion),
-          precio: parseFloat(form.precio),
-        }),
-      });
-      if (!res.ok) {
-        alert("Error al editar el servicio. Verifica los datos o el servidor.");
-        return;
-      }
-      onServicioEditado();
-      onClose();
-    } catch (error) {
-      alert("No se pudo conectar con el servidor.");
-    }
-  };
+   e.preventDefault();
+  if (!servicioEditar) return;
 
+  // Validación de servicio duplicado (excepto el propio)
+  try {
+    const res = await fetch("http://localhost:3000/servicios");
+    const servicios = await res.json();
+    const existe = servicios.some(
+      (s: any) =>
+        s.servicio.trim().toLowerCase() === form.servicio.trim().toLowerCase() &&
+        s.id !== servicioEditar.id
+    );
+    if (existe) {
+      alert("Ya existe un servicio con ese nombre.");
+      return;
+    }
+  } catch (error) {
+    alert("No se pudo validar si el servicio ya existe.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3000/servicios/${servicioEditar.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        duracion: Number(form.duracion),
+        precio: parseFloat(form.precio),
+      }),
+    });
+    if (!res.ok) {
+      alert("Error al editar el servicio. Verifica los datos o el servidor.");
+      return;
+    }
+    onServicioEditado();
+    onClose();
+  } catch (error) {
+    alert("No se pudo conectar con el servidor.");
+  }
+};
   if (!show || !servicioEditar) return null;
 
   return (
@@ -110,7 +136,7 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
               <input
                 name="precio"
                 type="number"
-                min="0"
+                min="1"
                 step="0.01"
                 placeholder="Ej: 1500"
                 value={form.precio}

@@ -1,4 +1,7 @@
 /* Overlay para oscurecer el fondo */
+input[type="text"], textarea {
+  text-transform: lowercase;
+}
 .modal-bg {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

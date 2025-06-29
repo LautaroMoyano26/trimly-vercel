@@ -16,39 +16,63 @@ export default function NuevoServicioModal({ show, onClose, onServicioCreado }: 
     estado: true, // Siempre activo
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   const { name, value, type } = e.target;
+  let newValue = value;
+  // Solo convierte a minúsculas si es input de texto o textarea
+  if (
+    (e.target instanceof HTMLInputElement && e.target.type === "text") ||
+    e.target instanceof HTMLTextAreaElement
+  ) {
+    newValue = value.toLowerCase();
+  }
   setForm((prev) => ({
     ...prev,
     [name]: type === "checkbox"
       ? (e.target as HTMLInputElement).checked
-      : value,
+      : newValue,
   }));
 };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:3000/servicios", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          duracion: Number(form.duracion), // <--- aquí el cambio
-          precio: parseFloat(form.precio),
-          estado: true,
-        }),
-      });
-      if (!res.ok) {
-        alert("Error al crear el servicio. Verifica los datos o el servidor.");
-        return;
-      }
-      onServicioCreado();
-      onClose();
-    } catch (error) {
-      alert("No se pudo conectar con el servidor.");
-    }
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
+  // --- Validación de servicio duplicado ---
+  try {
+    const res = await fetch("http://localhost:3000/servicios");
+    const servicios = await res.json();
+    const existe = servicios.some(
+      (s: any) => s.servicio.trim().toLowerCase() === form.servicio.trim().toLowerCase()
+    );
+    if (existe) {
+      alert("Ya existe un servicio con ese nombre.");
+      return;
+    }
+  } catch (error) {
+    alert("No se pudo validar si el servicio ya existe.");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/servicios", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        duracion: Number(form.duracion),
+        precio: parseFloat(form.precio),
+        estado: true,
+      }),
+    });
+    if (!res.ok) {
+      alert("Error al crear el servicio. Verifica los datos o el servidor.");
+      return;
+    }
+    onServicioCreado();
+    onClose();
+  } catch (error) {
+    alert("No se pudo conectar con el servidor.");
+  }
+};
   if (!show) return null;
 
   return (
@@ -87,7 +111,7 @@ export default function NuevoServicioModal({ show, onClose, onServicioCreado }: 
               <input
                 name="precio"
                 type="number"
-                min="0"
+                min="1"
                 step="0.01"
                 placeholder="Ej: 1500"
                 value={form.precio}
