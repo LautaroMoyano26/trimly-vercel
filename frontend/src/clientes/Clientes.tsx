@@ -3,6 +3,7 @@ import "./Clientes.css";
 import Tabla from "../components/Tabla";
 // Importamos el modal de edición que ya modificamos
 import EditarClienteModal from "./EditarClienteModal"; // Asegúrate de que el nombre del archivo sea correcto
+import EliminarClienteModal from "../components/EliminarClienteModal"; // Importa el modal
 import {
   FaUserCircle,
   FaPhoneAlt,
@@ -38,6 +39,10 @@ export default function Clientes() {
   const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
     undefined
   );
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [clienteToDelete, setClienteToDelete] = useState<Cliente | undefined>(
+    undefined
+  );
 
   // Nuevo estado para la búsqueda
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,6 +75,12 @@ export default function Clientes() {
   const handleNewClientClick = () => {
     setSelectedClient(undefined); // Asegura que no haya cliente seleccionado para "Crear"
     setShowEditModal(true); // Abre el modal
+  };
+
+  // Nueva función para abrir el modal de eliminación
+  const handleDeleteClick = (cliente: Cliente) => {
+    setClienteToDelete(cliente);
+    setShowDeleteModal(true);
   };
 
   // Filtrar clientes por nombre o apellido
@@ -121,7 +132,11 @@ export default function Clientes() {
         >
           <FaEdit />
         </button>
-        <button className="btn-accion eliminar" title="Eliminar">
+        <button
+          className="btn-accion eliminar"
+          title="Eliminar"
+          onClick={() => handleDeleteClick(c)} // <-- Aquí
+        >
           <FaTrash />
         </button>
       </>
@@ -139,6 +154,15 @@ export default function Clientes() {
         }}
         onClienteEditado={fetchClientes} // Llama a fetchClientes para recargar la lista
         clienteToEdit={selectedClient} // Pasamos el cliente seleccionado al modal
+      />
+      <EliminarClienteModal
+        show={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setClienteToDelete(undefined);
+        }}
+        clienteToDeactivate={clienteToDelete}
+        onClienteDesactivado={fetchClientes}
       />
       <div className="row align-items-center mb-3">
         <div className="col">

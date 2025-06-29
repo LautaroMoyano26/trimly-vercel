@@ -1,90 +1,141 @@
 /* src/components/EliminarClienteModal.css */
 .modal-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
 }
 
 .eliminar-cliente-modal-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 400px; /* Tamaño más pequeño para una confirmación */
-    position: relative;
-    text-align: center; /* Centrar el contenido */
+  background: #27272a;
+  border-radius: 32px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 500px;
+  color: #fff;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
-.eliminar-cliente-modal-content .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #666;
+.close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #b3b3b3;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #fff;
 }
 
-.eliminar-cliente-modal-content .modal-title {
-    color: #dc3545; /* Rojo para indicar peligro */
-    margin-bottom: 10px;
-    font-size: 1.8rem;
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ff6b6b;
+  text-align: center;
 }
 
-.eliminar-cliente-modal-content .modal-subtitle {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1rem;
+.modal-subtitle {
+  color: #e5e5e5;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 1.5;
 }
 
-.eliminar-cliente-modal-content .eliminar-warning {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 30px;
+.fw-bold {
+  color: #00e6f6;
+  font-weight: 600;
 }
 
-.eliminar-cliente-modal-content .buttons {
-    display: flex;
-    justify-content: center; /* Centrar los botones */
-    gap: 15px;
-    margin-top: 20px;
+.eliminar-warning {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ff9999;
+  font-size: 0.9rem;
+  margin: 20px 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
-.eliminar-cliente-modal-content .confirm-delete-btn {
-    background-color: #dc3545; /* Rojo de Bootstrap para peligro */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+.form-row.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
 }
 
-.eliminar-cliente-modal-content .confirm-delete-btn:hover {
-    background-color: #c82333; /* Un rojo más oscuro al pasar el ratón */
+.cancel-btn {
+  background: #232329;
+  color: #fff;
+  border: 2px solid #404040;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.eliminar-cliente-modal-content .cancel-btn {
-    background-color: #6c757d; /* Gris de Bootstrap */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+.cancel-btn:hover {
+  background: #18181b;
+  border-color: #00e6f6;
+  color: #00e6f6;
 }
 
-.eliminar-cliente-modal-content .cancel-btn:hover {
-    background-color: #5a6268;
+.confirm-delete-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee4444 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.confirm-delete-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+.confirm-delete-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .eliminar-cliente-modal-content {
+    margin: 20px;
+    padding: 24px 20px;
+    max-width: none;
+  }
+
+  .form-row.buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cancel-btn,
+  .confirm-delete-btn {
+    width: 100%;
+    padding: 14px 20px;
+  }
 }
