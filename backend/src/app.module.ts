@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { AppService } from './app.service'
+import { AppService } from './app.service';
 import { join } from 'path';
-import { ClientesModule } from './clientes/clientes.module'
+import { ClientesModule } from './clientes/clientes.module';
 import { ServiciosModule } from './servicios/servicios.module';
 
 @Module({

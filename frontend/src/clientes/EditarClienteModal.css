@@ -242,3 +242,11 @@
 .create-btn:hover {
   opacity: 0.85;
 }
+
+/* En EditarClienteModal.css o un CSS global */
+.error-message {
+  color: #dc3545; /* Rojo de Bootstrap para errores */
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block; /* Para que ocupe su propia línea */
+}

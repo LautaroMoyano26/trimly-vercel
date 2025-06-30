@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import "./Clientes.css";
+import "./Clientes.css"; // Asegúrate de que este archivo CSS existe y lo tienes actualizado
 import Tabla from "../components/Tabla";
-// Importamos el modal de edición que ya modificamos
-import EditarClienteModal from "./EditarClienteModal"; // Asegúrate de que el nombre del archivo sea correcto
-import EliminarClienteModal from "../components/EliminarClienteModal"; // Importa el modal
+import EditarClienteModal from "./EditarClienteModal";
+import EliminarClienteModal from "../components/EliminarClienteModal";
 import {
   FaUserCircle,
   FaPhoneAlt,
@@ -20,7 +19,7 @@ interface Cliente {
   email: string;
   dni: string;
   fechaNacimiento: string;
-  activo: boolean;
+  activo: boolean; // Esta propiedad es CLAVE para el estado y el ordenamiento
 }
 
 const columns = [
@@ -44,11 +43,10 @@ export default function Clientes() {
     undefined
   );
 
-  // Nuevo estado para la búsqueda
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
 
-  // Cargar clientes desde el backend
+  // Función para cargar clientes desde el backend
   const fetchClientes = async () => {
     try {
       const res = await fetch("http://localhost:3000/clientes");
@@ -56,42 +54,61 @@ export default function Clientes() {
       const data = await res.json();
       setClientes(Array.isArray(data) ? data : []);
     } catch (error) {
-      setClientes([]);
+      setClientes([]); // Asegura que la lista quede vacía si hay un error
       console.error("Error al cargar clientes:", error);
     }
   };
 
+  // Cargar los clientes al iniciar el componente
   useEffect(() => {
     fetchClientes();
   }, []);
 
-  // Función para abrir el modal en modo edición
+  // Manejadores para abrir los modales
   const handleEditClick = (cliente: Cliente) => {
-    setSelectedClient(cliente); // Establece el cliente que se va a editar
-    setShowEditModal(true); // Abre el modal
+    setSelectedClient(cliente);
+    setShowEditModal(true);
   };
 
-  // Función para abrir el modal en modo creación
   const handleNewClientClick = () => {
-    setSelectedClient(undefined); // Asegura que no haya cliente seleccionado para "Crear"
-    setShowEditModal(true); // Abre el modal
+    setSelectedClient(undefined); // Para indicar que es un nuevo cliente
+    setShowEditModal(true);
   };
 
-  // Nueva función para abrir el modal de eliminación
   const handleDeleteClick = (cliente: Cliente) => {
     setClienteToDelete(cliente);
     setShowDeleteModal(true);
   };
 
-  // Filtrar clientes por nombre o apellido
+  // --- FILTRADO Y ORDENAMIENTO DE CLIENTES ---
+
+  // 1. Filtrar clientes por término de búsqueda (nombre/apellido)
   const filteredClientes = clientes.filter(
     (c) =>
-      (c.nombre || "").toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+      (c.nombre || "")
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase()) ||
       (c.apellido || "").toLowerCase().includes(searchTerm.trim().toLowerCase())
   );
 
-  // Prepara los datos para la tabla
-  const data = filteredClientes.map((c) => ({
+  // 2. Ordenar clientes: Activos primero, Inactivos al final.
+  // Si tienen el mismo estado (ambos activos o ambos inactivos), se ordenan por nombre.
+  const sortedAndFilteredClientes = [...filteredClientes].sort((a, b) => {
+    // Si 'a' está activo y 'b' inactivo, 'a' va antes (-1)
+    if (a.activo && !b.activo) {
+      return -1;
+    }
+    // Si 'a' está inactivo y 'b' activo, 'a' va después (1)
+    if (!a.activo && b.activo) {
+      return 1;
+    }
+    // Si ambos tienen el mismo estado, ordenar alfabéticamente por nombre
+    return a.nombre.localeCompare(b.nombre);
+  });
+
+  // --- PREPARACIÓN DE DATOS PARA LA TABLA ---
+
+  const data = sortedAndFilteredClientes.map((c) => ({
     cliente: (
       <span className="d-flex align-items-center gap-2">
         <FaUserCircle size={32} color="#a259ff" />
@@ -120,11 +137,14 @@ export default function Clientes() {
     ),
     visitas: <span className="visitas-badge">-</span>,
     estado: (
-      <span className="estado-badge">{c.activo ? "Activo" : "Inactivo"}</span>
+      <span
+        className={c.activo ? "estado-badge-activo" : "estado-badge-inactivo"}
+      >
+        {c.activo ? "Activo" : "Inactivo"}
+      </span>
     ),
     acciones: (
       <>
-        {/* Agregamos onClick al botón de editar y le pasamos el cliente actual */}
         <button
           className="btn-accion editar"
           title="Editar"
@@ -134,8 +154,8 @@ export default function Clientes() {
         </button>
         <button
           className="btn-accion eliminar"
-          title="Eliminar"
-          onClick={() => handleDeleteClick(c)} // <-- Aquí
+          title="Desactivar"
+          onClick={() => handleDeleteClick(c)}
         >
           <FaTrash />
         </button>
@@ -143,17 +163,18 @@ export default function Clientes() {
     ),
   }));
 
+  // Renderizado del componente
   return (
     <div className="clientes-container container-fluid py-4 px-2 px-md-4">
-      {/* Usamos el mismo modal para crear y editar */}
+      {/* Modales */}
       <EditarClienteModal
         show={showEditModal}
         onClose={() => {
           setShowEditModal(false);
-          setSelectedClient(undefined); // Limpiamos el cliente seleccionado al cerrar
+          setSelectedClient(undefined);
         }}
-        onClienteEditado={fetchClientes} // Llama a fetchClientes para recargar la lista
-        clienteToEdit={selectedClient} // Pasamos el cliente seleccionado al modal
+        onClienteEditado={fetchClientes} // <--- ¡CAMBIO HECHO AQUÍ! Ahora se llama 'onClienteEditado'
+        clienteToEdit={selectedClient}
       />
       <EliminarClienteModal
         show={showDeleteModal}
@@ -164,6 +185,8 @@ export default function Clientes() {
         clienteToDeactivate={clienteToDelete}
         onClienteDesactivado={fetchClientes}
       />
+
+      {/* Encabezado y búsqueda */}
       <div className="row align-items-center mb-3">
         <div className="col">
           <h1 className="fw-bold mb-0">Clientes</h1>
@@ -172,7 +195,6 @@ export default function Clientes() {
           </p>
         </div>
         <div className="col-auto">
-          {/* Cambiamos el onClick del botón "Nuevo cliente" */}
           <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
             + Nuevo cliente
           </button>
@@ -190,6 +212,8 @@ export default function Clientes() {
           />
         </div>
       </div>
+
+      {/* Tabla de clientes */}
       <Tabla columns={columns} data={data} />
     </div>
   );

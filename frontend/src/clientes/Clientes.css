@@ -44,13 +44,13 @@
 
 .clientes-busqueda {
   background: #232329 !important;
-  color: #A259FF !important;
+  color: #a259ff !important;
   border: none !important;
   border-radius: 12px !important;
   font-size: 1rem;
 }
 .clientes-busqueda::placeholder {
-  color: #A259FF !important;
+  color: #a259ff !important;
   opacity: 1;
 }
 
@@ -113,4 +113,24 @@
   border-radius: 16px;
   overflow: hidden;
   background: #232329;
+}
+.estado-badge-activo {
+  background: #0e3e1a; /* Verde oscuro */
+  color: #1ed760; /* Verde brillante */
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* Estilos para el estado Inactivo (fondo rojo) */
+.estado-badge-inactivo {
+  background: #4a1515; /* Rojo oscuro */
+  color: #ff4d4d; /* Rojo brillante */
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
 }
