@@ -41,13 +41,7 @@ export default function EditarServicioModal({ show, onClose, servicioEditar, onS
 const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   const { name, value, type } = e.target;
   let newValue = value;
-  // Solo convierte a minúsculas si es input de texto o textarea
-  if (
-    (e.target instanceof HTMLInputElement && e.target.type === "text") ||
-    e.target instanceof HTMLTextAreaElement
-  ) {
-    newValue = value.toLowerCase();
-  }
+ 
   setForm((prev) => ({
     ...prev,
     [name]: type === "checkbox"

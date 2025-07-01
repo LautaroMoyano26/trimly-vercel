@@ -85,9 +85,16 @@ export default function Servicios() {
       s.servicio.toLowerCase().includes(busqueda.toLowerCase()) ||
       s.descripcion.toLowerCase().includes(busqueda.toLowerCase())
   );
+  // Ordenar: activos primero, inactivos al final
+  const serviciosOrdenados = [...serviciosFiltrados].sort((a, b) => {
+  if (a.estado && !b.estado) return -1;
+  if (!a.estado && b.estado) return 1;
+  return a.servicio.localeCompare(b.servicio);
+    });
+
 
   // Prepara los datos para la tabla
-  const data = serviciosFiltrados.map((s) => ({
+  const data = serviciosOrdenados.map((s) => ({
     servicio: (
       <span className="fw-bold d-flex align-items-center gap-2">
         <FaCut className="icono-tijera" />
@@ -103,7 +110,7 @@ export default function Servicios() {
     ),
     precio: <>${s.precio}</>,
     estado: (
-      <span className="estado-badge">
+      <span className={s.estado ? "estado-badge" : "estado-badge-inactivo"}>
         {s.estado ? "Activo" : "Inactivo"}
       </span>
     ),
