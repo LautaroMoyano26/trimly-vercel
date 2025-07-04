@@ -4,6 +4,7 @@ import Navbar from "./navbar/Navbar";
 import Clientes from "./clientes/Clientes";
 import Servicios from "./servicios/Servicio"; 
 import LoginPage from "./loginpage/loginpage"; 
+import ProductosDashboard from "./stock/ProductosDashboard.tsx";
 
 // ✅ CAMBIAR A sessionStorage para que no persista
 const isAuthenticated = () => {
@@ -57,6 +58,21 @@ export default function App() {
                 <Navbar />
                 <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
                   <Clientes />
+                </div>
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* ✅ NUEVA RUTA: Stock/Productos */}
+        <Route 
+          path="/stock" 
+          element={
+            <ProtectedRoute>
+              <div style={{ display: "flex", height: "100vh", width: "100%", background: "#19191d", overflow: "hidden" }}>
+                <Navbar />
+                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+                  <ProductosDashboard />
                 </div>
               </div>
             </ProtectedRoute>

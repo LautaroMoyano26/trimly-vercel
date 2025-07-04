@@ -35,10 +35,10 @@
 }
 
 .navbar-menu-item {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto;
-  border-radius: 16px;
+  width: 38px;         /* antes 48px */
+  height: 38px;        /* antes 48px */
+  margin: 0 auto 16px auto; /* centrado y separación vertical */
+  border-radius: 12px; /* opcional: menos redondeado si prefieres */
   color: #b3b3b3;
   font-size: 1.8rem;
   transition: background 0.2s, color 0.2s;
@@ -46,12 +46,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Elimina border o box-shadow si tienes */
 }
 
 .navbar-menu-item.active,
 .navbar-menu-item:hover {
   background: #a259ff;
   color: #fff;
+  box-shadow: 0 0 0 3px #6d38b1; /* Opcional: leve glow */
+  outline: 2px solid #a259ff;     /* Opcional: para más contraste */
 }
 
 @media (max-width: 767.98px) {
