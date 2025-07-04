@@ -1,0 +1,134 @@
+.productos-dashboard-container {
+  background: #19191d;
+  min-height: 100vh;
+  color: #fff;
+  padding: 32px 16px;
+}
+
+.dashboard-header h1 {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.tab {
+  background: #232329;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+.tab.active {
+  background: linear-gradient(90deg, #a259ff 0%, #00e6f6 100%);
+  color: #fff;
+}
+
+.nuevo-producto-btn {
+  margin-left: auto;
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.nuevo-producto-btn:hover {
+  opacity: 0.85;
+}
+
+.busqueda-input {
+  width: 100%;
+  background: #232329;
+  color: #a259ff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+}
+
+.productos-table {
+  width: 100%;
+  background: #232329;
+  border-radius: 16px;
+  overflow: hidden;
+  color: #fff;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.productos-table th,
+.productos-table td {
+  padding: 14px 12px;
+  text-align: left;
+}
+
+.icono-producto {
+  color: #00e6f6;
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.categoria-badge {
+  background: #232329;
+  color: #fff;
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.estado-badge {
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}
+.estado-alto {
+  background: #0e3e1a;
+  color: #1ed760;
+}
+.estado-medio {
+  background: #4a3a15;
+  color: #ffd600;
+}
+.estado-bajo {
+  background: #4a1515;
+  color: #ff4d4d;
+}
+
+.btn-accion {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1.1rem;
+}
+.btn-accion.editar:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00b3ff;
+}
+.btn-accion.eliminar:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff4f4f;
+}

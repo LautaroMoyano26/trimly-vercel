@@ -1,11 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./navbar/Navbar";
 import Clientes from "./clientes/Clientes";
-import Servicios from "./servicios/Servicio"; // Asegúrate de que esta ruta sea correcta
-// Importa aquí tus otras vistas, por ejemplo:
-// import Home from "./home/Home";
-// import Servicios from "./servicios/Servicios";
-// etc.
+import Servicios from "./servicios/Servicio"; 
+import ProductosDashboard from "./stock/ProductosDashboard.tsx";
 
 export default function App() {
   return (
@@ -17,6 +14,7 @@ export default function App() {
             {/* <Route path="/" element={<Home />} /> */}
             <Route path="/servicios" element={<Servicios />} />
             <Route path="/clientes" element={<Clientes />} />
+            <Route path="/stock" element={<ProductosDashboard />} />
             {/* Agrega más rutas según tus vistas */}
           </Routes>
         </div>
