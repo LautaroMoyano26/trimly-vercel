@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import "./NuevoProductoModal.css";
 
+interface Producto {
+  id: number;
+  nombre: string;
+  categoria: string;
+  marca: string;
+  precio: number;
+  stock: number;
+  estado: "Alto" | "Medio" | "Bajo";
+}
+
 interface Props {
   show: boolean;
   onClose: () => void;
-  onProductoCreado: (nuevoProducto: any) => void;
+  producto: Producto | null;
+  onProductoEditado: (productoEditado: Producto) => void;
 }
 
-export default function NuevoProductoModal({ show, onClose, onProductoCreado }: Props) {
+export default function EditarProductoModal({ show, onClose, producto, onProductoEditado }: Props) {
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
@@ -16,6 +27,19 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     stock: "",
     estado: "",
   });
+
+  useEffect(() => {
+    if (producto) {
+      setForm({
+        nombre: producto.nombre,
+        categoria: producto.categoria,
+        marca: producto.marca,
+        precio: producto.precio.toString(),
+        stock: producto.stock.toString(),
+        estado: producto.estado,
+      });
+    }
+  }, [producto]);
 
   // Función que determina el estado según el stock
   const calcularEstado = (stockStr: string): string => {
@@ -26,7 +50,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     return "Alto";
   };
 
-  // Cada vez que cambia el stock, actualizar estado
+  // Actualizar estado cuando cambia el stock
   useEffect(() => {
     const nuevoEstado = calcularEstado(form.stock);
     setForm((prev) => ({ ...prev, estado: nuevoEstado }));
@@ -43,12 +67,14 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validar nombre duplicado
+    // Validar nombre duplicado (excepto el propio)
     try {
       const res = await fetch("http://localhost:3000/producto");
       const productos = await res.json();
       const existe = productos.some(
-        (p: any) => p.nombre.trim().toLowerCase() === form.nombre.trim().toLowerCase()
+        (p: any) =>
+          p.nombre.trim().toLowerCase() === form.nombre.trim().toLowerCase() &&
+          p.id !== producto?.id
       );
       if (existe) {
         alert("Ya existe un producto con ese nombre.");
@@ -59,10 +85,10 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
       return;
     }
 
-    // Enviar nuevo producto
+    // Enviar producto editado
     try {
-      const res = await fetch("http://localhost:3000/producto", {
-        method: "POST",
+      const res = await fetch(`http://localhost:3000/producto/${producto?.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
@@ -72,28 +98,27 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
         }),
       });
       if (!res.ok) {
-        alert("Error al crear el producto. Verifica los datos o el servidor.");
+        alert("Error al editar el producto. Verifica los datos o el servidor.");
         return;
       }
-      const nuevoProducto = await res.json();
-      onProductoCreado(nuevoProducto);
+      const productoEditado = await res.json();
+      onProductoEditado(productoEditado);
       onClose();
     } catch (error) {
       alert("No se pudo conectar con el servidor.");
     }
   };
 
-  if (!show) return null;
+  if (!show || !producto) return null;
 
   return (
     <div className="modal-bg2">
       <div className="nuevo-producto-modal-content">
         <button className="close-btn" onClick={onClose}>×</button>
-        <h2 className="modal-title">Nuevo Producto</h2>
-        <p className="modal-subtitle">Agrega un nuevo producto al inventario</p>
+        <h2 className="modal-title">Editar Producto</h2>
+        <p className="modal-subtitle">Modifica los datos del producto</p>
         <form onSubmit={handleSubmit}>
-
-          {/* Nombre del producto - fila completa */}
+          {/* Nombre del producto */}
           <div className="nuevo-input-group">
             <label>Nombre del producto</label>
             <input
@@ -104,7 +129,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               required
             />
           </div>
-
           {/* Precio y Stock lado a lado */}
           <div className="form-row">
             <div className="nuevo-input-group">
@@ -121,7 +145,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               />
             </div>
             <div className="nuevo-input-group">
-              <label>Stock inicial</label>
+              <label>Stock</label>
               <input
                 name="stock"
                 type="number"
@@ -151,8 +175,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               )}
             </div>
           </div>
-
-          {/* Categoría fila completa */}
+          {/* Categoría */}
           <div className="nuevo-input-group">
             <label>Categoría</label>
             <input
@@ -163,8 +186,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               required
             />
           </div>
-
-          {/* Proveedor (marca) fila completa */}
+          {/* Marca */}
           <div className="nuevo-input-group">
             <label>Marca</label>
             <input
@@ -175,13 +197,11 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               required
             />
           </div>
-
           {/* Botones */}
           <div className="form-row buttons">
             <button type="button" className="cancel-btn" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="create-btn">Crear producto</button>
+            <button type="submit" className="create-btn">Guardar cambios</button>
           </div>
-
         </form>
       </div>
     </div>

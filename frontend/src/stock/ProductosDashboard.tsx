@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaBoxOpen, FaEdit, FaTrash } from "react-icons/fa";
 import "./ProductosDashboard.css";
 import NuevoProductoModal from "./NuevoProductoModal"; 
+import EditarProductoModal from "./EditarProductoModal"; // Importa el modal
 
 interface Producto {
   id: number;
@@ -17,6 +18,8 @@ export default function ProductosDashboard() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false); 
+  const [showEditarModal, setShowEditarModal] = useState(false);
+  const [productoAEditar, setProductoAEditar] = useState<Producto | null>(null);
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -97,7 +100,13 @@ export default function ProductosDashboard() {
                 </span>
               </td>
               <td>
-                <button className="btn-accion editar">
+                <button
+                  className="btn-accion editar"
+                  onClick={() => {
+                    setProductoAEditar(p);
+                    setShowEditarModal(true);
+                  }}
+                >
                   <FaEdit />
                 </button>
                 <button className="btn-accion eliminar">
@@ -115,6 +124,18 @@ export default function ProductosDashboard() {
         onProductoCreado={(nuevoProducto) => {
           setProductos((prev) => [...prev, nuevoProducto]);
           setShowModal(false);
+        }}
+      />
+
+      <EditarProductoModal
+        show={showEditarModal}
+        onClose={() => setShowEditarModal(false)}
+        producto={productoAEditar}
+        onProductoEditado={(productoEditado) => {
+          setProductos((prev) =>
+            prev.map((prod) => (prod.id === productoEditado.id ? productoEditado : prod))
+          );
+          setShowEditarModal(false);
         }}
       />
     </div>

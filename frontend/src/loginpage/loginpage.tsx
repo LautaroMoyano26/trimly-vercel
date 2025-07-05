@@ -70,7 +70,7 @@ const LoginPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // ✅ GUARDAR DATOS DEL USUARIO
-      localStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('isLoggedIn', 'true');;
       localStorage.setItem('username', usuarioValido.username);
       localStorage.setItem('userRole', usuarioValido.rol);
       localStorage.setItem('userName', usuarioValido.nombre);
