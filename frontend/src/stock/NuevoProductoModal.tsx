@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./NuevoProductoModal.css";
 
 interface Props {
@@ -14,10 +14,25 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     marca: "",
     precio: "",
     stock: "",
-    estado: ""
+    estado: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Función que determina el estado según el stock
+  const calcularEstado = (stockStr: string): string => {
+    const stockNum = parseInt(stockStr);
+    if (isNaN(stockNum)) return "";
+    if (stockNum <= 5) return "Bajo";
+    if (stockNum <= 30) return "Medio";
+    return "Alto";
+  };
+
+  // Cada vez que cambia el stock, actualizar estado
+  useEffect(() => {
+    const nuevoEstado = calcularEstado(form.stock);
+    setForm((prev) => ({ ...prev, estado: nuevoEstado }));
+  }, [form.stock]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
@@ -53,7 +68,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
           ...form,
           precio: parseFloat(form.precio),
           stock: parseInt(form.stock),
-          estado: form.estado || "Alto", // Asignar un estado por defecto si no se selecciona
+          estado: form.estado || "Alto",
         }),
       });
       if (!res.ok) {
@@ -77,6 +92,8 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
         <h2 className="modal-title">Nuevo Producto</h2>
         <p className="modal-subtitle">Agrega un nuevo producto al inventario</p>
         <form onSubmit={handleSubmit}>
+
+          {/* Nombre del producto - fila completa */}
           <div className="nuevo-input-group">
             <label>Nombre del producto</label>
             <input
@@ -88,67 +105,78 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
             />
           </div>
 
-          <div className="form-row">
-            <div className="nuevo-input-group">
-              <label>Categoría</label>
-              <input
-                name="categoria"
-                placeholder="Ej: Cuidado capilar"
-                value={form.categoria}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="nuevo-input-group">
-              <label>Marca</label>
-              <input
-                name="marca"
-                placeholder="Ej: L'Oréal"
-                value={form.marca}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
+          {/* Precio y Stock lado a lado */}
           <div className="form-row">
             <div className="nuevo-input-group">
               <label>Precio</label>
               <input
                 name="precio"
                 type="number"
-                min="1"
+                min="0"
                 step="0.01"
-                placeholder="Ej: 2500"
+                placeholder="0"
                 value={form.precio}
                 onChange={handleChange}
                 required
               />
             </div>
             <div className="nuevo-input-group">
-              <label>Stock</label>
+              <label>Stock inicial</label>
               <input
                 name="stock"
                 type="number"
                 min="0"
                 step="1"
-                placeholder="Ej: 20"
+                placeholder="0"
                 value={form.stock}
                 onChange={handleChange}
                 required
               />
+              {form.estado && (
+                <small
+                  style={{
+                    marginTop: "4px",
+                    display: "block",
+                    fontWeight: "bold",
+                    color:
+                      form.estado === "Alto"
+                        ? "green"
+                        : form.estado === "Medio"
+                        ? "orange"
+                        : "red",
+                  }}
+                >
+                  Estado: {form.estado}
+                </small>
+              )}
             </div>
           </div>
-          <div className="nuevo-input-g">
-            <label>Estado</label>
-            <select name="estado" value={form.estado} onChange={handleChange} required>
-              <option value="">Seleccionar estado</option>
-              <option value="Alto">Alto</option>
-              <option value="Medio">Medio</option>
-              <option value="Bajo">Bajo</option>
-            </select>
-            </div>
-          
+
+          {/* Categoría fila completa */}
+          <div className="nuevo-input-group">
+            <label>Categoría</label>
+            <input
+              name="categoria"
+              placeholder="Seleccionar categoría"
+              value={form.categoria}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Proveedor (marca) fila completa */}
+          <div className="nuevo-input-group">
+            <label>Proveedor</label>
+            <input
+              name="marca"
+              placeholder="Ej: L'Oréal"
+              value={form.marca}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Botones */}
           <div className="form-row buttons">
             <button type="button" className="cancel-btn" onClick={onClose}>Cancelar</button>
             <button type="submit" className="create-btn">Crear producto</button>
