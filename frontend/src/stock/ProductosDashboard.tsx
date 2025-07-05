@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaBoxOpen, FaEdit, FaTrash } from "react-icons/fa";
 import "./ProductosDashboard.css";
+import NuevoProductoModal from "./NuevoProductoModal"; 
 
 interface Producto {
   id: number;
   nombre: string;
   categoria: string;
-  proveedor: string;
+  marca: string;
   precio: number;
   stock: number;
   estado: "Alto" | "Medio" | "Bajo";
@@ -15,10 +16,21 @@ interface Producto {
 export default function ProductosDashboard() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [busqueda, setBusqueda] = useState("");
+  const [showModal, setShowModal] = useState(false); 
 
   useEffect(() => {
-    // Aquí deberías hacer fetch a tu backend para obtener los productos
-    // setProductos(data);
+    const cargarProductos = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/producto"); 
+        const data = await res.json();
+        setProductos(data); 
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+        alert("No se pudieron cargar los productos.");
+      }
+    };
+
+    cargarProductos();
   }, []);
 
   const productosFiltrados = productos.filter(
@@ -33,23 +45,31 @@ export default function ProductosDashboard() {
         <h1>Stock</h1>
         <p>Gestiona el inventario y categorías de productos</p>
       </div>
+
       <div className="dashboard-actions">
         <button className="tab active">Productos</button>
         <button className="tab">Categorías</button>
-        <button className="nuevo-producto-btn">+ Nuevo producto</button>
+        <button
+          className="nuevo-producto-btn"
+          onClick={() => setShowModal(true)} 
+        >
+          + Nuevo producto
+        </button>
       </div>
+
       <input
         className="busqueda-input"
         placeholder="Buscar producto por nombre o categoría..."
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
       />
+
       <table className="productos-table">
         <thead>
           <tr>
             <th>Producto</th>
             <th>Categoría</th>
-            <th>Proveedor</th>
+            <th>Marca</th>
             <th>Precio</th>
             <th>Stock</th>
             <th>Estado</th>
@@ -66,7 +86,7 @@ export default function ProductosDashboard() {
               <td>
                 <span className="categoria-badge">{p.categoria}</span>
               </td>
-              <td>{p.proveedor}</td>
+              <td>{p.marca}</td>
               <td>${p.precio.toLocaleString()}</td>
               <td>
                 <b>{p.stock} unidades</b>
@@ -88,6 +108,15 @@ export default function ProductosDashboard() {
           ))}
         </tbody>
       </table>
+
+      <NuevoProductoModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onProductoCreado={(nuevoProducto) => {
+          setProductos((prev) => [...prev, nuevoProducto]);
+          setShowModal(false);
+        }}
+      />
     </div>
   );
 }
