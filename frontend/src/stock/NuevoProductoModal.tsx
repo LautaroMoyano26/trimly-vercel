@@ -17,7 +17,17 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     estado: "",
   });
 
-  // Función que determina el estado según el stock
+  const resetForm = () => {
+    setForm({
+      nombre: "",
+      categoria: "",
+      marca: "",
+      precio: "",
+      stock: "",
+      estado: "",
+    });
+  };
+
   const calcularEstado = (stockStr: string): string => {
     const stockNum = parseInt(stockStr);
     if (isNaN(stockNum)) return "";
@@ -26,7 +36,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     return "Alto";
   };
 
-  // Cada vez que cambia el stock, actualizar estado
   useEffect(() => {
     const nuevoEstado = calcularEstado(form.stock);
     setForm((prev) => ({ ...prev, estado: nuevoEstado }));
@@ -43,7 +52,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validar nombre duplicado
     try {
       const res = await fetch("http://localhost:3000/producto");
       const productos = await res.json();
@@ -59,7 +67,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
       return;
     }
 
-    // Enviar nuevo producto
     try {
       const res = await fetch("http://localhost:3000/producto", {
         method: "POST",
@@ -71,12 +78,15 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
           estado: form.estado || "Alto",
         }),
       });
+
       if (!res.ok) {
         alert("Error al crear el producto. Verifica los datos o el servidor.");
         return;
       }
+
       const nuevoProducto = await res.json();
       onProductoCreado(nuevoProducto);
+      resetForm(); // 👉 Limpieza del formulario
       onClose();
     } catch (error) {
       alert("No se pudo conectar con el servidor.");
@@ -92,8 +102,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
         <h2 className="modal-title">Nuevo Producto</h2>
         <p className="modal-subtitle">Agrega un nuevo producto al inventario</p>
         <form onSubmit={handleSubmit}>
-
-          {/* Nombre del producto - fila completa */}
           <div className="nuevo-input-group">
             <label>Nombre del producto</label>
             <input
@@ -105,7 +113,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
             />
           </div>
 
-          {/* Precio y Stock lado a lado */}
           <div className="form-row">
             <div className="nuevo-input-group">
               <label>Precio</label>
@@ -152,7 +159,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
             </div>
           </div>
 
-          {/* Categoría fila completa */}
           <div className="nuevo-input-group">
             <label>Categoría</label>
             <input
@@ -164,7 +170,6 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
             />
           </div>
 
-          {/* Proveedor (marca) fila completa */}
           <div className="nuevo-input-group">
             <label>Marca</label>
             <input
@@ -176,12 +181,10 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
             />
           </div>
 
-          {/* Botones */}
           <div className="form-row buttons">
             <button type="button" className="cancel-btn" onClick={onClose}>Cancelar</button>
             <button type="submit" className="create-btn">Crear producto</button>
           </div>
-
         </form>
       </div>
     </div>

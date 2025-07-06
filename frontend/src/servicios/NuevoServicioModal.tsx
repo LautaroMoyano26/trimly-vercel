@@ -13,64 +13,76 @@ export default function NuevoServicioModal({ show, onClose, onServicioCreado }: 
     descripcion: "",
     duracion: "",
     precio: "",
-    estado: true, // Siempre activo
+    estado: true,
   });
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value, type } = e.target;
-  let newValue = value;
-  
-  setForm((prev) => ({
-    ...prev,
-    [name]: type === "checkbox"
-      ? (e.target as HTMLInputElement).checked
-      : newValue,
-  }));
-};
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  // --- Validación de servicio duplicado ---
-  try {
-    const res = await fetch("http://localhost:3000/servicios");
-    const servicios = await res.json();
-    const existe = servicios.some(
-      (s: any) => s.servicio.trim().toLowerCase() === form.servicio.trim().toLowerCase()
-    );
-    if (existe) {
-      alert("Ya existe un servicio con ese nombre.");
-      return;
-    }
-  } catch (error) {
-    alert("No se pudo validar si el servicio ya existe.");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:3000/servicios", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        duracion: Number(form.duracion),
-        precio: parseFloat(form.precio),
-        estado: true,
-      }),
+  const resetForm = () => {
+    setForm({
+      servicio: "",
+      descripcion: "",
+      duracion: "",
+      precio: "",
+      estado: true,
     });
-    if (!res.ok) {
-      alert("Error al crear el servicio. Verifica los datos o el servidor.");
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    let newValue = value;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : newValue,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:3000/servicios");
+      const servicios = await res.json();
+      const existe = servicios.some(
+        (s: any) => s.servicio.trim().toLowerCase() === form.servicio.trim().toLowerCase()
+      );
+      if (existe) {
+        alert("Ya existe un servicio con ese nombre.");
+        return;
+      }
+    } catch (error) {
+      alert("No se pudo validar si el servicio ya existe.");
       return;
     }
-    onServicioCreado();
-    onClose();
-  } catch (error) {
-    alert("No se pudo conectar con el servidor.");
-  }
-};
+
+    try {
+      const res = await fetch("http://localhost:3000/servicios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          duracion: Number(form.duracion),
+          precio: parseFloat(form.precio),
+          estado: true,
+        }),
+      });
+      if (!res.ok) {
+        alert("Error al crear el servicio. Verifica los datos o el servidor.");
+        return;
+      }
+      onServicioCreado();
+      resetForm(); // 👉 limpiar campos
+      onClose();
+    } catch (error) {
+      alert("No se pudo conectar con el servidor.");
+    }
+  };
+
   if (!show) return null;
 
   return (
-     <div className="modal-bg">
+    <div className="modal-bg">
       <div className="nuevo-servicio-modal-content">
         <button className="close-btn" onClick={onClose}>×</button>
         <h2 className="modal-title">Nuevo Servicio</h2>
@@ -131,10 +143,10 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div className="switch-desc">Servicio activo puede ser reservado</div>
             </div>
             <label className="switch">
-             <input
-              type="checkbox"
-              checked={true}
-              disabled
+              <input
+                type="checkbox"
+                checked={true}
+                disabled
               />
               <span className="slider"></span>
             </label>

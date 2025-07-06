@@ -3,6 +3,7 @@ import { FaBoxOpen, FaEdit, FaTrash } from "react-icons/fa";
 import "./ProductosDashboard.css";
 import NuevoProductoModal from "./NuevoProductoModal"; 
 import EditarProductoModal from "./EditarProductoModal"; // Importa el modal
+import EliminarProductoModal from "./EliminarProductoModal"; // Agregado
 
 interface Producto {
   id: number;
@@ -20,6 +21,8 @@ export default function ProductosDashboard() {
   const [showModal, setShowModal] = useState(false); 
   const [showEditarModal, setShowEditarModal] = useState(false);
   const [productoAEditar, setProductoAEditar] = useState<Producto | null>(null);
+  const [showEliminarModal, setShowEliminarModal] = useState(false); // Agregado
+  const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null); // Agregado
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -109,7 +112,13 @@ export default function ProductosDashboard() {
                 >
                   <FaEdit />
                 </button>
-                <button className="btn-accion eliminar">
+                <button
+                  className="btn-accion eliminar"
+                  onClick={() => {
+                    setProductoAEliminar(p);
+                    setShowEliminarModal(true);
+                  }}
+                >
                   <FaTrash />
                 </button>
               </td>
@@ -136,6 +145,16 @@ export default function ProductosDashboard() {
             prev.map((prod) => (prod.id === productoEditado.id ? productoEditado : prod))
           );
           setShowEditarModal(false);
+        }}
+      />
+
+      <EliminarProductoModal
+        show={showEliminarModal}
+        onClose={() => setShowEliminarModal(false)}
+        producto={productoAEliminar}
+        onProductoEliminado={(productoEliminado) => {
+          setProductos((prev) => prev.filter((prod) => prod.id !== productoEliminado.id));
+          setShowEliminarModal(false);
         }}
       />
     </div>
