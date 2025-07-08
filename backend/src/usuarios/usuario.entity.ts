@@ -17,13 +17,13 @@ export class Usuario {
   @Column()
   apellido: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   email: string;
 
   @Column({
     type: 'enum',
     enum: ['admin', 'empleado'],
-    default: 'empleado'
+    default: 'empleado',
   })
   rol: 'admin' | 'empleado';
 

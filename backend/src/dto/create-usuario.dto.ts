@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  ValidateIf, // Importar ValidateIf
+} from 'class-validator';
 
 export class CreateUsuarioDto {
   @IsString()
@@ -17,13 +24,14 @@ export class CreateUsuarioDto {
   @IsNotEmpty()
   apellido: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+  @IsOptional()
+  @IsEmail({}, { message: 'El formato del email no es válido.' })
+  @ValidateIf((o) => o.email !== null && o.email !== '') // Solo valida si no es null o un string vacío
+  email?: string;
 
   @IsEnum(['admin', 'empleado'])
-  @IsOptional()
-  rol?: 'admin' | 'empleado';
+  @IsNotEmpty({ message: 'El rol es obligatorio.' }) // El rol es obligatorio
+  rol: 'admin' | 'empleado';
 }
 
 export class LoginDto {

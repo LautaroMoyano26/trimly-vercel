@@ -20,9 +20,16 @@ interface Props {
 interface FormErrors {
   nombre?: string;
   username?: string;
+  email?: string;
   password?: string;
   rol?: string;
   generic?: string;
+}
+
+interface UsuarioExistente {
+  id: number;
+  username: string;
+  email: string;
 }
 
 export default function NuevoUsuarioModal({
@@ -66,73 +73,98 @@ export default function NuevoUsuarioModal({
     }
   };
 
-  const validateForm = async (): Promise<boolean> => {
+  const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     if (!form.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (!form.username.trim())
-      newErrors.username = "El username es obligatorio.";
+      newErrors.username = "El nombre de usuario es obligatorio.";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Formato de email inválido.";
+    }
     if (!form.password) {
       newErrors.password = "La contraseña es obligatoria.";
     } else if (form.password.length < 7) {
-      newErrors.password = "Mínimo 7 caracteres.";
+      newErrors.password = "La contraseña debe tener al menos 7 caracteres.";
     } else if (!/\d/.test(form.password)) {
-      newErrors.password = "Debe incluir al menos un número.";
+      newErrors.password = "La contraseña debe contener al menos un número.";
     }
     if (!form.rol) newErrors.rol = "El rol es obligatorio.";
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return false;
-    }
-
-    try {
-      const res = await fetch(
-        `http://localhost:3000/usuarios/check-username/${form.username}`
-      );
-      const data = await res.json();
-      if (data.exists) {
-        newErrors.username = "Este username ya está en uso.";
-        setErrors(newErrors);
-        return false;
-      }
-    } catch (error) {
-      newErrors.generic = "Error al verificar el username.";
-      setErrors(newErrors);
-      return false;
-    }
-
-    return true;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setErrors({});
 
-    const isValid = await validateForm();
-    if (!isValid) {
+    if (!validateForm()) {
+      alert("Por favor, corrige los errores en el formulario.");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:3000/usuarios", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await fetch("http://localhost:3000/usuarios");
+      const existingUsers: UsuarioExistente[] = await res.json();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Error al crear el usuario.");
+      const usernameExists = existingUsers.some(
+        (u) => u.username.toLowerCase() === form.username.toLowerCase()
+      );
+      if (usernameExists) {
+        setErrors((prev) => ({
+          ...prev,
+          username: "Este nombre de usuario ya está en uso.",
+        }));
+        alert("Este nombre de usuario ya está en uso.");
+        setIsSubmitting(false);
+        return;
       }
 
+      if (form.email) {
+        const emailExists = existingUsers.some(
+          (u) => u.email && u.email.toLowerCase() === form.email.toLowerCase()
+        );
+        if (emailExists) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Este email ya está en uso.",
+          }));
+          alert("Este email ya está en uso.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      // Convertir email vacío a null antes de enviar
+      const dataToSend = {
+        ...form,
+        email: form.email || null,
+      };
+
+      const createResponse = await fetch("http://localhost:3000/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json();
+        const errorMessage = Array.isArray(errorData.message)
+          ? errorData.message.join(", ")
+          : errorData.message;
+        throw new Error(errorMessage || "Error al crear el usuario.");
+      }
+
+      alert("Usuario creado exitosamente.");
       await onUsuarioCreado();
       onClose();
     } catch (error: any) {
-      setErrors({
+      setErrors((prev) => ({
+        ...prev,
         generic: error.message || "No se pudo conectar con el servidor.",
-      });
+      }));
+      alert(error.message || "No se pudo conectar con el servidor.");
     } finally {
       setIsSubmitting(false);
     }
@@ -146,9 +178,9 @@ export default function NuevoUsuarioModal({
         <button className="close-btn" onClick={onClose}>
           ×
         </button>
-        <h2 className="modal-title">Crear Nuevo Usuario</h2>
+        <h2 className="modal-title">Nuevo Usuario</h2>
         <p className="modal-subtitle">
-          Completa los datos para registrar un nuevo usuario en el sistema.
+          Crea un nuevo perfil de usuario para el sistema
         </p>
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-row">
@@ -169,19 +201,20 @@ export default function NuevoUsuarioModal({
               <label>Apellido</label>
               <input
                 name="apellido"
-                placeholder="Ej: Pérez (Opcional)"
+                placeholder="Ej: Pérez"
                 value={form.apellido}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
-          <div className="nuevo-input-group">
-            <label>Username</label>
+          <div className="nuevo-input-group input-icon-group">
+            <label>Nombre de usuario</label>
             <div className="input-icon-row">
               <FaUser className="input-icon" />
               <input
                 name="username"
-                placeholder="Ej: juan.perez"
+                placeholder="Ej: juanperez"
                 value={form.username}
                 onChange={handleChange}
                 required
@@ -191,65 +224,61 @@ export default function NuevoUsuarioModal({
               <span className="error-message">{errors.username}</span>
             )}
           </div>
-          <div className="nuevo-input-group">
-            <label>Email</label>
+          <div className="nuevo-input-group input-icon-group">
+            <label>Email (Opcional)</label>
             <div className="input-icon-row">
               <FaEnvelope className="input-icon" />
               <input
                 name="email"
                 type="email"
-                placeholder="ejemplo@correo.com (Opcional)"
+                placeholder="ejemplo@correo.com"
                 value={form.email}
                 onChange={handleChange}
               />
             </div>
+            {errors.email && (
+              <span className="error-message">{errors.email}</span>
+            )}
           </div>
-          <div className="form-row">
-            <div className="nuevo-input-group">
-              <label>Contraseña</label>
-              <div className="input-icon-row">
-                <FaLock className="input-icon" />
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Mínimo 7 caracteres, 1 número"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              {errors.password && (
-                <span className="error-message">{errors.password}</span>
-              )}
+          <div className="nuevo-input-group input-icon-group">
+            <label>Contraseña</label>
+            <div className="input-icon-row">
+              <FaLock className="input-icon" />
+              <input
+                name="password"
+                type="password"
+                placeholder="Mínimo 7 caracteres, 1 número"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
             </div>
-            <div className="nuevo-input-group">
-              <label>Rol</label>
-              <div className="input-icon-row">
-                <FaUserShield className="input-icon" />
-                <select
-                  name="rol"
-                  value={form.rol}
-                  onChange={handleChange}
-                  required
-                  style={{ paddingLeft: "40px" }}
-                >
-                  <option value="" disabled>
-                    Selecciona un rol
-                  </option>
-                  <option value="admin">Administrador</option>
-                  <option value="empleado">Empleado</option>
-                </select>
-              </div>
-              {errors.rol && (
-                <span className="error-message">{errors.rol}</span>
-              )}
+            {errors.password && (
+              <span className="error-message">{errors.password}</span>
+            )}
+          </div>
+          <div className="nuevo-input-group input-icon-group">
+            <label>Rol</label>
+            <div className="input-icon-row">
+              <FaUserShield className="input-icon" />
+              <select
+                name="rol"
+                value={form.rol}
+                onChange={handleChange}
+                required
+                style={{ paddingLeft: "36px" }}
+              >
+                <option value="" disabled>
+                  Selecciona un rol
+                </option>
+                <option value="admin">Administrador</option>
+                <option value="empleado">Empleado</option>
+              </select>
             </div>
+            {errors.rol && <span className="error-message">{errors.rol}</span>}
           </div>
           {errors.generic && (
-            <span
-              className="error-message"
-              style={{ textAlign: "center", marginTop: "10px" }}
-            >
+            <span className="error-message" style={{ textAlign: "center" }}>
               {errors.generic}
             </span>
           )}
