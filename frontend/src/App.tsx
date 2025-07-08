@@ -1,14 +1,15 @@
-import React from 'react';
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./navbar/Navbar";
 import Clientes from "./clientes/Clientes";
-import Servicios from "./servicios/Servicio"; 
-import LoginPage from "./loginpage/loginpage"; 
+import Servicios from "./servicios/Servicio";
+import LoginPage from "./loginpage/loginpage";
 import ProductosDashboard from "./stock/ProductosDashboard.tsx";
+import Usuarios from "./usuarios/Usuarios";
 
 // ✅ CAMBIAR A sessionStorage para que no persista
 const isAuthenticated = () => {
-  return sessionStorage.getItem('isLoggedIn') === 'true';
+  return sessionStorage.getItem("isLoggedIn") === "true";
 };
 
 // Componente para proteger rutas que requieren autenticación
@@ -26,77 +27,128 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Ruta de login (sin navbar) */}
-        <Route 
-          path="/login" 
+        <Route
+          path="/login"
           element={
             <PublicRoute>
               <LoginPage />
             </PublicRoute>
-          } 
+          }
         />
-        
+
         {/* Rutas protegidas (con navbar) */}
-        <Route 
-          path="/servicios" 
+        <Route
+          path="/servicios"
           element={
             <ProtectedRoute>
-              <div style={{ display: "flex", height: "100vh", width: "100%", background: "#19191d", overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
                 <Navbar />
                 <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
                   <Servicios />
                 </div>
               </div>
             </ProtectedRoute>
-          } 
+          }
         />
-        
-        <Route 
-          path="/clientes" 
+
+        <Route
+          path="/clientes"
           element={
             <ProtectedRoute>
-              <div style={{ display: "flex", height: "100vh", width: "100%", background: "#19191d", overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
                 <Navbar />
                 <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
                   <Clientes />
                 </div>
               </div>
             </ProtectedRoute>
-          } 
+          }
         />
-        
+
         {/* ✅ NUEVA RUTA: Stock/Productos */}
-        <Route 
-          path="/stock" 
+        <Route
+          path="/stock"
           element={
             <ProtectedRoute>
-              <div style={{ display: "flex", height: "100vh", width: "100%", background: "#19191d", overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
                 <Navbar />
                 <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
                   <ProductosDashboard />
                 </div>
               </div>
             </ProtectedRoute>
-          } 
+          }
         />
-        
+
+        {/* ✅ NUEVA RUTA: Usuarios */}
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
+                <Navbar />
+                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+                  <Usuarios />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
         {/* Ruta por defecto */}
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
-            isAuthenticated() ? 
-              <Navigate to="/servicios" /> : 
+            isAuthenticated() ? (
+              <Navigate to="/servicios" />
+            ) : (
               <Navigate to="/login" />
-          } 
+            )
+          }
         />
-        
+
         {/* Ruta para rutas no encontradas */}
-        <Route 
-          path="*" 
+        <Route
+          path="*"
           element={
-            isAuthenticated() ? 
-              <Navigate to="/servicios" /> : 
+            isAuthenticated() ? (
+              <Navigate to="/servicios" />
+            ) : (
               <Navigate to="/login" />
-          } 
+            )
+          }
         />
       </Routes>
     </BrowserRouter>
