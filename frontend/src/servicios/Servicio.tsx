@@ -5,6 +5,7 @@ import Tabla from "../components/Tabla";
 import NuevoServicioModal from "./NuevoServicioModal";
 import EditarServicioModal from "./EditarServicioModal";
 import EliminarServicioModal from "./EliminarServicioModal"; // ✅ NUEVA IMPORTACIÓN
+import SuccessModal from "../components/SuccessModal";
 import { FaClock, FaEdit, FaTrash, FaCut } from "react-icons/fa";
 
 interface Servicio {
@@ -33,6 +34,7 @@ export default function Servicios() {
   const [servicioEditar, setServicioEditar] = useState<Servicio | null>(null);
   const [servicioEliminar, setServicioEliminar] = useState<Servicio | undefined>(undefined); // ✅ NUEVO ESTADO
   const [busqueda, setBusqueda] = useState(""); // Estado para el buscador
+  const [successModal, setSuccessModal] = useState<{show: boolean, message: string}>({show: false, message: ""});
 
   // Cargar servicios desde el backend
   const cargarServicios = async () => {
@@ -51,12 +53,14 @@ export default function Servicios() {
 
   const handleServicioCreado = () => {
     setShowModal(false);
+    setSuccessModal({show: true, message: "Servicio creado correctamente"});
     cargarServicios();
   };
 
   const handleServicioEditado = () => {
     setShowEditModal(false);
     setServicioEditar(null);
+    setSuccessModal({show: true, message: "Servicio editado correctamente"});
     cargarServicios();
   };
 
@@ -64,6 +68,7 @@ export default function Servicios() {
   const handleServicioEliminado = async () => {
     setShowDeleteModal(false);
     setServicioEliminar(undefined);
+    setSuccessModal({show: true, message: "Servicio eliminado correctamente"});
     await cargarServicios();
   };
 
@@ -78,6 +83,7 @@ export default function Servicios() {
     setServicioEditar(servicio);
     setShowEditModal(true);
   };
+ 
 
   // Filtrar servicios según búsqueda
   const serviciosFiltrados = servicios.filter(
@@ -191,6 +197,12 @@ export default function Servicios() {
         servicioToDelete={servicioEliminar}
         onServicioEliminado={handleServicioEliminado}
       />
+      <SuccessModal
+        show={successModal.show}
+        message={successModal.message}
+        onClose={() => setSuccessModal({show: false, message: ""})}
+      />
+      
     </div>
   );
 }
