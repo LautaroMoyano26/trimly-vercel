@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FaBoxOpen, FaEdit, FaTrash } from "react-icons/fa";
 import "./ProductosDashboard.css";
 import NuevoProductoModal from "./NuevoProductoModal"; 
-import EditarProductoModal from "./EditarProductoModal"; // Importa el modal
-import EliminarProductoModal from "./EliminarProductoModal"; // Agregado
+import EditarProductoModal from "./EditarProductoModal";
+import EliminarProductoModal from "./EliminarProductoModal";
+import SuccessModal from "../components/SuccessModal"; // ✅ AGREGAR IMPORTACIÓN
 
 interface Producto {
   id: number;
@@ -21,8 +22,14 @@ export default function ProductosDashboard() {
   const [showModal, setShowModal] = useState(false); 
   const [showEditarModal, setShowEditarModal] = useState(false);
   const [productoAEditar, setProductoAEditar] = useState<Producto | null>(null);
-  const [showEliminarModal, setShowEliminarModal] = useState(false); // Agregado
-  const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null); // Agregado
+  const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null);
+  
+  // ✅ NUEVO ESTADO PARA SUCCESS MODAL
+  const [successModal, setSuccessModal] = useState<{show: boolean, message: string}>({
+    show: false, 
+    message: ""
+  });
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -39,33 +46,58 @@ export default function ProductosDashboard() {
     cargarProductos();
   }, []);
 
-  const productosFiltrados = productos.filter(
-    (p) =>
-      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.categoria.toLowerCase().includes(busqueda.toLowerCase())
+  // ✅ FUNCIONES PARA MANEJAR LOS SUCCESS MODALS
+  const handleProductoCreado = (nuevoProducto: Producto) => {
+    setProductos((prev) => [...prev, nuevoProducto]);
+    setShowModal(false);
+    setSuccessModal({show: true, message: "Producto creado correctamente"});
+  };
+
+  const handleProductoEditado = (productoEditado: Producto) => {
+    setProductos((prev) =>
+      prev.map((prod) => (prod.id === productoEditado.id ? productoEditado : prod))
+    );
+    setShowEditarModal(false);
+    setSuccessModal({show: true, message: "Producto editado correctamente"});
+  };
+
+  const handleProductoEliminado = (productoEliminado: Producto) => {
+    setProductos((prev) => prev.filter((prod) => prod.id !== productoEliminado.id));
+    setShowEliminarModal(false);
+    setSuccessModal({show: true, message: "Producto eliminado correctamente"});
+  };
+
+  const productosFiltrados = productos.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+    p.categoria.toLowerCase().includes(busqueda.toLowerCase()) ||
+    p.marca.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   return (
     <div className="productos-dashboard-container">
-      <div className="dashboard-header">
-        <h1>Stock</h1>
-        <p>Gestiona el inventario y categorías de productos</p>
-      </div>
+      {/* ✅ AGREGAR SUCCESS MODAL */}
+      <SuccessModal
+        show={successModal.show}
+        message={successModal.message}
+        onClose={() => setSuccessModal({show: false, message: ""})}
+      />
 
-      <div className="dashboard-actions">
-        <button className="tab active">Productos</button>
-        <button className="tab">Categorías</button>
-        <button
-          className="nuevo-producto-btn"
-          onClick={() => setShowModal(true)} 
-        >
-          + Nuevo producto
-        </button>
+      <div className="dashboard-header">
+        <h1>Gestión de Stock</h1>
+        <div className="dashboard-actions">
+          <button 
+            className="nuevo-producto-btn"
+            onClick={() => setShowModal(true)}
+          >
+            + Nuevo producto
+          </button>
+        </div>
       </div>
 
       <input
+        type="text"
+        placeholder="Buscar productos..."
         className="busqueda-input"
-        placeholder="Buscar producto por nombre o categoría..."
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
       />
@@ -73,7 +105,7 @@ export default function ProductosDashboard() {
       <table className="productos-table">
         <thead>
           <tr>
-            <th>Producto</th>
+            <th><FaBoxOpen className="icono-producto" /> Producto</th>
             <th>Categoría</th>
             <th>Marca</th>
             <th>Precio</th>
@@ -85,20 +117,23 @@ export default function ProductosDashboard() {
         <tbody>
           {productosFiltrados.map((p) => (
             <tr key={p.id}>
-              <td>
-                <FaBoxOpen className="icono-producto" />
-                {p.nombre}
-              </td>
+              <td>{p.nombre}</td>
               <td>
                 <span className="categoria-badge">{p.categoria}</span>
               </td>
               <td>{p.marca}</td>
-              <td>${p.precio.toLocaleString()}</td>
+              <td>${p.precio}</td>
+              <td>{p.stock}</td>
               <td>
-                <b>{p.stock} unidades</b>
-              </td>
-              <td>
-                <span className={`estado-badge estado-${p.estado.toLowerCase()}`}>
+                <span
+                  className={`estado-badge ${
+                    p.estado === "Alto"
+                      ? "estado-alto"
+                      : p.estado === "Medio"
+                      ? "estado-medio"
+                      : "estado-bajo"
+                  }`}
+                >
                   {p.estado}
                 </span>
               </td>
@@ -127,35 +162,25 @@ export default function ProductosDashboard() {
         </tbody>
       </table>
 
+      {/* ✅ ACTUALIZAR MODALES PARA USAR LAS NUEVAS FUNCIONES */}
       <NuevoProductoModal
         show={showModal}
         onClose={() => setShowModal(false)}
-        onProductoCreado={(nuevoProducto) => {
-          setProductos((prev) => [...prev, nuevoProducto]);
-          setShowModal(false);
-        }}
+        onProductoCreado={handleProductoCreado}
       />
 
       <EditarProductoModal
         show={showEditarModal}
         onClose={() => setShowEditarModal(false)}
         producto={productoAEditar}
-        onProductoEditado={(productoEditado) => {
-          setProductos((prev) =>
-            prev.map((prod) => (prod.id === productoEditado.id ? productoEditado : prod))
-          );
-          setShowEditarModal(false);
-        }}
+        onProductoEditado={handleProductoEditado}
       />
 
       <EliminarProductoModal
         show={showEliminarModal}
         onClose={() => setShowEliminarModal(false)}
         producto={productoAEliminar}
-        onProductoEliminado={(productoEliminado) => {
-          setProductos((prev) => prev.filter((prod) => prod.id !== productoEliminado.id));
-          setShowEliminarModal(false);
-        }}
+        onProductoEliminado={handleProductoEliminado}
       />
     </div>
   );
