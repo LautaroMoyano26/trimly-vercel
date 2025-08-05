@@ -196,7 +196,6 @@ export default function NuevoClienteModal({
     const isValid = validateForm();
     if (!isValid) {
       console.log("2. Validación de formulario fallida. Deteniendo envío.");
-      alert("Por favor, corrige los errores en el formulario."); // Mantener este alert para errores locales
       return;
     }
     console.log("2. Validación de formulario pasada.");
@@ -230,7 +229,6 @@ export default function NuevoClienteModal({
           ...prev,
           dni: "Ya existe un cliente con este DNI.",
         }));
-        alert("Ya existe un cliente con este DNI."); // Mantener este alert para duplicados
         console.log("5. DNI duplicado encontrado. Deteniendo envío.");
         return;
       }
@@ -246,7 +244,6 @@ export default function NuevoClienteModal({
           ...prev,
           email: "Ya existe un cliente con este email.",
         }));
-        alert("Ya existe un cliente con este email."); // Mantener este alert para duplicados
         console.log("6. Email duplicado encontrado. Deteniendo envío.");
         return;
       }
@@ -261,7 +258,6 @@ export default function NuevoClienteModal({
           ...prev,
           telefono: "Ya existe un cliente con este número de teléfono.",
         }));
-        alert("Ya existe un cliente con este número de teléfono."); // Mantener este alert para duplicados
         console.log("7. Teléfono duplicado encontrado. Deteniendo envío.");
         return;
       }
@@ -277,11 +273,7 @@ export default function NuevoClienteModal({
           error.message || "desconocido"
         }.`,
       }));
-      alert(
-        `No se pudo validar si el cliente ya existe: ${
-          error.message || "Error desconocido"
-        }. Intenta de nuevo.`
-      );
+      // Solo setea el error, no muestra alert
       return;
     }
 
@@ -314,18 +306,14 @@ export default function NuevoClienteModal({
           ...prev,
           generic: `Error al crear el cliente: ${errorMessage}`,
         }));
-        alert(`Error al crear el cliente: ${errorMessage}.`); // Mantener este alert para errores generales
         console.error("11. Error del backend al crear cliente:", errorData);
         return;
       }
 
       // --- ¡Alerta de éxito, usando el alert nativo como en EliminarClienteModal! ---
-      console.log("12. ¡Cliente creado exitosamente! Mostrando alerta nativa.");
-      alert("Cliente Registrado Exitosamente"); // <--- USAMOS ALERT NATIVO AQUÍ
-
-      console.log("13. Llamando a onClienteCreado() y onClose().");
-      await onClienteCreado(); // Llama al callback para que la lista de clientes se actualice
-      onClose(); // Cierra el modal justo después del alert
+       console.log("12. ¡Cliente creado exitosamente! Mostrando SuccessModal.");
+       await onClienteCreado(); // Llama al callback para que la lista de clientes se actualice y muestra el SuccessModal
+       onClose(); // Cierra el modal justo después
     } catch (error) {
       console.error(
         "14. Error en la conexión con el servidor (fetch de creación fallido):",
@@ -335,9 +323,7 @@ export default function NuevoClienteModal({
         ...prev,
         generic: "No se pudo conectar con el servidor.",
       }));
-      alert(
-        "No se pudo conectar con el servidor. Por favor, verifica tu conexión."
-      );
+       // Solo setea el error, no muestra alert
     }
   };
 

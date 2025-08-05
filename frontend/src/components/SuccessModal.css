@@ -1,0 +1,15 @@
+.success-modal-content {
+  background: #27272A;
+  border-radius: 32px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 400px;
+  color: #fff;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  text-align: center;
+}
+.modal-message {
+  font-size: 1.1rem;
+  margin: 24px 0 18px 0;
+}

@@ -3,6 +3,8 @@ import "./Clientes.css"; // Asegúrate de que este archivo CSS existe y lo tiene
 import Tabla from "../components/Tabla";
 import EditarClienteModal from "./EditarClienteModal";
 import EliminarClienteModal from "../components/EliminarClienteModal";
+import NuevoClienteModal from "./NuevoClienteModal";
+import SuccessModal from "../components/SuccessModal";
 import {
   FaUserCircle,
   FaPhoneAlt,
@@ -35,13 +37,11 @@ const columns = [
 export default function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
-    undefined
-  );
+  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [clienteToDelete, setClienteToDelete] = useState<Cliente | undefined>(
-    undefined
-  );
+  const [clienteToDelete, setClienteToDelete] = useState<Cliente | undefined>(undefined);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [successModal, setSuccessModal] = useState<{show: boolean, message: string}>({show: false, message: ""});
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
@@ -71,13 +71,33 @@ export default function Clientes() {
   };
 
   const handleNewClientClick = () => {
-    setSelectedClient(undefined); // Para indicar que es un nuevo cliente
-    setShowEditModal(true);
+    setShowNewModal(true);
   };
 
   const handleDeleteClick = (cliente: Cliente) => {
     setClienteToDelete(cliente);
     setShowDeleteModal(true);
+  };
+
+  // Callbacks para mostrar el modal de éxito
+  const handleClienteCreado = async () => {
+    await fetchClientes();
+    setSuccessModal({show: true, message: "Cliente registrado correctamente"});
+    setShowNewModal(false);
+  };
+
+  const handleClienteEditado = async () => {
+    await fetchClientes();
+    setSuccessModal({show: true, message: "Cliente editado correctamente"});
+    setShowEditModal(false);
+    setSelectedClient(undefined);
+  };
+
+  const handleClienteDesactivado = async () => {
+    await fetchClientes();
+    setSuccessModal({show: true, message: "Cliente desactivado correctamente"});
+    setShowDeleteModal(false);
+    setClienteToDelete(undefined);
   };
 
   // --- FILTRADO Y ORDENAMIENTO DE CLIENTES ---
@@ -167,13 +187,18 @@ export default function Clientes() {
   return (
     <div className="clientes-container container-fluid py-4 px-2 px-md-4">
       {/* Modales */}
+      <NuevoClienteModal
+        show={showNewModal}
+        onClose={() => setShowNewModal(false)}
+        onClienteCreado={handleClienteCreado}
+      />
       <EditarClienteModal
         show={showEditModal}
         onClose={() => {
           setShowEditModal(false);
           setSelectedClient(undefined);
         }}
-        onClienteEditado={fetchClientes} // <--- ¡CAMBIO HECHO AQUÍ! Ahora se llama 'onClienteEditado'
+        onClienteEditado={handleClienteEditado}
         clienteToEdit={selectedClient}
       />
       <EliminarClienteModal
@@ -183,7 +208,12 @@ export default function Clientes() {
           setClienteToDelete(undefined);
         }}
         clienteToDeactivate={clienteToDelete}
-        onClienteDesactivado={fetchClientes}
+        onClienteDesactivado={handleClienteDesactivado}
+      />
+      <SuccessModal
+        show={successModal.show}
+        message={successModal.message}
+        onClose={() => setSuccessModal({show: false, message: ""})}
       />
 
       {/* Encabezado y búsqueda */}

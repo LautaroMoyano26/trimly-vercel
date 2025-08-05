@@ -6,7 +6,8 @@ import { join } from 'path';
 import { ClientesModule } from './clientes/clientes.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { ProductoModule } from './producto/producto.module';
-import { UsuariosModule } from './usuarios/usuarios.module'; // ✅ AGREGAR ESTA LÍNEA
+import { UsuariosModule } from './usuarios/usuarios.module';
+//  Hay que agregar un .gitignore para que no se actualice este modulo.
 
 @Module({
   imports: [
@@ -15,14 +16,14 @@ import { UsuariosModule } from './usuarios/usuarios.module'; // ✅ AGREGAR ESTA
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'yarco7mysql',
+      password: 'TRIMLY2025',
       database: 'pruebas',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       synchronize: true,
     }),
     ClientesModule,
     ServiciosModule,
-    UsuariosModule, // ✅ AGREGAR ESTA LÍNEA
+    UsuariosModule,
     ProductoModule,
   ],
   controllers: [AppController],

@@ -3,7 +3,7 @@ import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 export class UpdateServicioDto {
   @IsString()
   @IsOptional()
-  servicio?: string; // Cambia 'nombre' por 'servicio'
+  servicio?: string;
 
   @IsString()
   @IsOptional()
@@ -19,5 +19,5 @@ export class UpdateServicioDto {
 
   @IsBoolean()
   @IsOptional()
-  estado?: boolean; // Cambia 'activo' por 'estado'
+  estado?: boolean;
 }
