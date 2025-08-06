@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUser, FaLock, FaEnvelope, FaUserShield } from "react-icons/fa";
+import ErrorModal from "../components/ErrorModal"; // Asegúrate de tener esta importación
+import SuccessModal from "../components/SuccessModal"; // Importar SuccessModal
 import "./NuevoUsuarioModal.css";
 
 interface NuevoUsuarioFormData {
@@ -47,6 +49,14 @@ export default function NuevoUsuarioModal({
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorModal, setErrorModal] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
+  const [successModal, setSuccessModal] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
 
   useEffect(() => {
     if (show) {
@@ -99,7 +109,10 @@ export default function NuevoUsuarioModal({
     setIsSubmitting(true);
 
     if (!validateForm()) {
-      alert("Por favor, corrige los errores en el formulario.");
+      setErrorModal({
+        show: true,
+        message: "Por favor, corrige los errores en el formulario.",
+      });
       setIsSubmitting(false);
       return;
     }
@@ -116,7 +129,10 @@ export default function NuevoUsuarioModal({
           ...prev,
           username: "Este nombre de usuario ya está en uso.",
         }));
-        alert("Este nombre de usuario ya está en uso.");
+        setErrorModal({
+          show: true,
+          message: "Este nombre de usuario ya está en uso.",
+        });
         setIsSubmitting(false);
         return;
       }
@@ -130,7 +146,10 @@ export default function NuevoUsuarioModal({
             ...prev,
             email: "Este email ya está en uso.",
           }));
-          alert("Este email ya está en uso.");
+          setErrorModal({
+            show: true,
+            message: "Este email ya está en uso.",
+          });
           setIsSubmitting(false);
           return;
         }
@@ -156,18 +175,30 @@ export default function NuevoUsuarioModal({
         throw new Error(errorMessage || "Error al crear el usuario.");
       }
 
-      alert("Usuario creado exitosamente.");
+      // Mostrar el modal de éxito solo después de la creación exitosa
+      setSuccessModal({
+        show: true,
+        message: "Usuario creado exitosamente.",
+      });
       await onUsuarioCreado();
-      onClose();
+      setIsSubmitting(false); // Puedes desactivar el botón de "crear" aquí también
     } catch (error: any) {
       setErrors((prev) => ({
         ...prev,
         generic: error.message || "No se pudo conectar con el servidor.",
       }));
-      alert(error.message || "No se pudo conectar con el servidor.");
+      setErrorModal({
+        show: true,
+        message: error.message || "No se pudo conectar con el servidor.",
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setSuccessModal({ show: false, message: "" });
+    onClose(); // Cierra el modal principal después de aceptar el SuccessModal
   };
 
   if (!show) return null;
@@ -296,6 +327,17 @@ export default function NuevoUsuarioModal({
           </div>
         </form>
       </div>
+      {/* Mostrar SuccessModal cuando el usuario se crea exitosamente */}
+      <SuccessModal
+        show={successModal.show}
+        message={successModal.message}
+        onClose={handleSuccessModalClose}  /* Cerrar el modal solo cuando el usuario lo decida */
+      />
+      <ErrorModal
+        show={errorModal.show}
+        message={errorModal.message}
+        onClose={() => setErrorModal({ show: false, message: "" })}
+      />
     </div>
   );
 }

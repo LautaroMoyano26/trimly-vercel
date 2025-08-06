@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUser, FaLock, FaEnvelope, FaUserShield } from "react-icons/fa";
+import SuccessModal from "../components/SuccessModal"; // Asegúrate de que esta ruta sea correcta
+import ErrorModal from "../components/ErrorModal"; // Importamos el ErrorModal
 import "./EditarUsuarioModal.css";
 
 interface Usuario {
@@ -40,8 +42,17 @@ export default function EditarUsuarioModal({
     rol: "",
     activo: true,
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successModal, setSuccessModal] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
+  const [errorModal, setErrorModal] = useState<{ show: boolean; message: string }>({
+    show: false,
+    message: "",
+  });
 
   useEffect(() => {
     if (show && usuarioToEdit) {
@@ -49,7 +60,7 @@ export default function EditarUsuarioModal({
         nombre: usuarioToEdit.nombre,
         apellido: usuarioToEdit.apellido || "",
         email: usuarioToEdit.email,
-        password: "", // La contraseña no se carga, solo se puede cambiar
+        password: "",
         rol: usuarioToEdit.rol,
         activo: usuarioToEdit.activo,
       });
@@ -85,10 +96,16 @@ export default function EditarUsuarioModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Si el formulario no es válido, mostramos el modal con el mensaje de error
     if (!validateForm()) {
-      alert("Por favor, corrige los errores en el formulario.");
-      return;
+      setErrorModal({
+        show: true,
+        message: "Por favor, corrige los errores en el formulario.",
+      });
+      return; // No proceder con la edición si hay errores
     }
+
     setIsSubmitting(true);
 
     const dataToSend: any = {
@@ -118,9 +135,13 @@ export default function EditarUsuarioModal({
         throw new Error(errorData.message || "Error al editar el usuario.");
       }
 
-      alert("Usuario editado exitosamente.");
+      setSuccessModal({
+        show: true,
+        message: "Usuario editado exitosamente.",
+      });
+
       await onUsuarioEditado();
-      onClose();
+     
     } catch (error: any) {
       setErrors({
         generic: error.message || "No se pudo conectar con el servidor.",
@@ -133,120 +154,145 @@ export default function EditarUsuarioModal({
   if (!show) return null;
 
   return (
-    <div className="modal-bg">
-      <div className="editar-usuario-modal-content">
-        <button className="close-btn" onClick={onClose}>
-          ×
-        </button>
-        <h2 className="modal-title">Editar Usuario</h2>
-        <p className="modal-subtitle">
-          Modifica los datos del usuario @{usuarioToEdit?.username}
-        </p>
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="form-row">
-            <div className="nuevo-input-group">
-              <label>Nombre</label>
-              <input
-                name="nombre"
-                value={form.nombre}
-                onChange={handleChange}
-                required
-              />
-              {errors.nombre && (
-                <span className="error-message">{errors.nombre}</span>
-              )}
-            </div>
-            <div className="nuevo-input-group">
-              <label>Apellido</label>
-              <input
-                name="apellido"
-                value={form.apellido}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className="nuevo-input-group input-icon-group">
-            <label>Email</label>
-            <div className="input-icon-row">
-              <FaEnvelope className="input-icon" />
-              <input
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div className="nuevo-input-group input-icon-group">
-            <label>Nueva Contraseña (opcional)</label>
-            <div className="input-icon-row">
-              <FaLock className="input-icon" />
-              <input
-                name="password"
-                type="password"
-                placeholder="Dejar en blanco para no cambiar"
-                value={form.password}
-                onChange={handleChange}
-              />
-            </div>
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
-          </div>
-          <div className="nuevo-input-group input-icon-group">
-            <label>Rol</label>
-            <div className="input-icon-row">
-              <FaUserShield className="input-icon" />
-              <select
-                name="rol"
-                value={form.rol}
-                onChange={handleChange}
-                required
-                style={{ paddingLeft: "36px" }}
-              >
-                <option value="admin">Administrador</option>
-                <option value="empleado">Empleado</option>
-              </select>
-            </div>
-            {errors.rol && <span className="error-message">{errors.rol}</span>}
-          </div>
-          <div className="estado-row">
-            <div>
-              <label className="estado-label">Estado del usuario</label>
-              <div className="switch-desc">
-                Usuario activo puede iniciar sesión
+    <>
+      <div className="modal-bg">
+        <div className="editar-usuario-modal-content">
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
+          <h2 className="modal-title">Editar Usuario</h2>
+          <p className="modal-subtitle">
+            Modifica los datos del usuario @{usuarioToEdit?.username}
+          </p>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-row">
+              <div className="nuevo-input-group">
+                <label>Nombre</label>
+                <input
+                  name="nombre"
+                  value={form.nombre}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.nombre && (
+                  <span className="error-message">{errors.nombre}</span>
+                )}
+              </div>
+              <div className="nuevo-input-group">
+                <label>Apellido</label>
+                <input
+                  name="apellido"
+                  value={form.apellido}
+                  onChange={handleChange}
+                />
               </div>
             </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                name="activo"
-                checked={form.activo}
-                onChange={handleChange}
-              />
-              <span className="slider"></span>
-            </label>
-          </div>
-          {errors.generic && (
-            <span className="error-message" style={{ textAlign: "center" }}>
-              {errors.generic}
-            </span>
-          )}
-          <div className="form-row buttons">
-            <button type="button" className="cancel-btn" onClick={onClose}>
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="create-btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Guardando..." : "Guardar Cambios"}
-            </button>
-          </div>
-        </form>
+
+            <div className="nuevo-input-group input-icon-group">
+              <label>Email</label>
+              <div className="input-icon-row">
+                <FaEnvelope className="input-icon" />
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="nuevo-input-group input-icon-group">
+              <label>Nueva Contraseña (opcional)</label>
+              <div className="input-icon-row">
+                <FaLock className="input-icon" />
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Dejar en blanco para no cambiar"
+                  value={form.password}
+                  onChange={handleChange}
+                />
+              </div>
+              {errors.password && (
+                <span className="error-message">{errors.password}</span>
+              )}
+            </div>
+
+            <div className="nuevo-input-group input-icon-group">
+              <label>Rol</label>
+              <div className="input-icon-row">
+                <FaUserShield className="input-icon" />
+                <select
+                  name="rol"
+                  value={form.rol}
+                  onChange={handleChange}
+                  required
+                  style={{ paddingLeft: "36px" }}
+                >
+                  <option value="admin">Administrador</option>
+                  <option value="empleado">Empleado</option>
+                </select>
+              </div>
+              {errors.rol && (
+                <span className="error-message">{errors.rol}</span>
+              )}
+            </div>
+
+            <div className="estado-row">
+              <div>
+                <label className="estado-label">Estado del usuario</label>
+                <div className="switch-desc">
+                  Usuario activo puede iniciar sesión
+                </div>
+              </div>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  name="activo"
+                  checked={form.activo}
+                  onChange={handleChange}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
+
+            {errors.generic && (
+              <span className="error-message" style={{ textAlign: "center" }}>
+                {errors.generic}
+              </span>
+            )}
+
+            <div className="form-row buttons">
+              <button type="button" className="cancel-btn" onClick={onClose}>
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="create-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Guardando..." : "Guardar Cambios"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <SuccessModal
+        show={successModal.show}
+        message={successModal.message}
+        onClose={() => {
+          setSuccessModal({ show: false, message: "" });
+          onClose(); // Cierra la modal principal después de aceptar el SuccessModal
+        }}
+      />
+
+      <ErrorModal
+        show={errorModal.show}
+        message={errorModal.message}
+        onClose={() => setErrorModal({ show: false, message: "" })}
+      />
+    </>
   );
 }

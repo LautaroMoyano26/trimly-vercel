@@ -1,5 +1,5 @@
 // src/components/EliminarClienteModal.tsx
-import React from 'react';
+
 import './EliminarClienteModal.css'; // Asegúrate de crear este archivo CSS
 
 interface Cliente {

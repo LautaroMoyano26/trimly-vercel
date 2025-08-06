@@ -1,4 +1,4 @@
-/* Estilos para el modal de éxito */
+/* src/components/ErrorModal.css */
 .modal-bg {
   position: fixed;
   top: 0;
@@ -11,32 +11,31 @@
   align-items: center;
 }
 
-.success-modal-content {
-  background: #27272A;  /* Fondo oscuro */
+.error-modal-content {
+  background: #27272A;  /* Fondo oscuro igual que el SuccessModal */
   border-radius: 32px;
   padding: 32px 28px;
   width: 100%;
   max-width: 400px;
   color: #fff;  /* Texto blanco */
   position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);  /* Sombra */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);  /* Sombra sutil */
   text-align: center;
+  border: 2px solid red;  /* Borde rojo para indicar que es un error */
 }
 
-/* Cambiar solo el título del modal de éxito */
-.success-modal-content .modal-title {
+.modal-title {
   font-size: 24px;
   font-weight: bold;
-  color: #28a745;  /* Color verde para el título de éxito */
 }
 
 .modal-message {
   font-size: 1.1rem;
-  margin: 24px 0 18px 0;
+  margin: 24px 0 18px 0;  /* Espaciado alrededor del mensaje */
 }
 
 .create-btn {
-  background-color: green;  /* Fondo verde para el botón */
+  background-color: red;  /* Fondo rojo para el botón */
   color: white;
   padding: 10px 20px;
   border: none;
