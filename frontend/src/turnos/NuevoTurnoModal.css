@@ -1,0 +1,118 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(25, 25, 29, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #27272A;         /* Fondo igual a servicios */
+  color: #fff;                 /* Texto blanco */
+  padding: 32px 24px;
+  border-radius: 32px;         /* Bordes redondeados */
+  min-width: calc(100vw - 150px);
+  max-width: calc(100vw - 150px);
+  min-height: 100vh;
+  margin-left: 150px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25); /* Sombra igual a servicios */
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.form-group select,
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: #18181B;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 0;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #b3b3b3;
+  opacity: 1;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  background: #232329;
+}
+
+.form-group textarea {
+  resize: none;
+  min-height: 40px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.cancel-btn {
+  background: #232329;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #18181B;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.save-btn:hover {
+  opacity: 0.85;
+}
