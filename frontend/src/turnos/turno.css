@@ -1,0 +1,27 @@
+#titulo{
+    color:#fff;
+}
+.turnos-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  margin-left: 32px;
+  margin-top: 32px;
+}
+
+.nuevo-turno-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 30px;
+}
