@@ -1,0 +1,26 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Cliente } from '../clientes/cliente.entity';
+import { Servicio } from '../servicios/servicio.entity';
+
+@Entity()
+export class Turno {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Cliente, { eager: true })
+  @JoinColumn({ name: 'clienteId' })
+  cliente: Cliente;
+
+  @ManyToOne(() => Servicio, { eager: true })
+  @JoinColumn({ name: 'servicioId' })
+  servicio: Servicio;
+
+  @Column({ type: 'date' })
+  fecha: string;
+
+  @Column({ type: 'time' })
+  hora: string;
+
+  @Column({ type: 'text', nullable: true })
+  notasAdicionales?: string;
+}
