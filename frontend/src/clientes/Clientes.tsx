@@ -37,11 +37,18 @@ const columns = [
 export default function Clientes() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(undefined);
+  const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
+    undefined
+  );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [clienteToDelete, setClienteToDelete] = useState<Cliente | undefined>(undefined);
+  const [clienteToDelete, setClienteToDelete] = useState<Cliente | undefined>(
+    undefined
+  );
   const [showNewModal, setShowNewModal] = useState(false);
-  const [successModal, setSuccessModal] = useState<{show: boolean, message: string}>({show: false, message: ""});
+  const [successModal, setSuccessModal] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
@@ -82,20 +89,23 @@ export default function Clientes() {
   // Callbacks para mostrar el modal de éxito
   const handleClienteCreado = async () => {
     await fetchClientes();
-    setSuccessModal({show: true, message: "Cliente registrado correctamente"});
+    setSuccessModal({
+      show: true,
+      message: "Cliente registrado correctamente",
+    });
     setShowNewModal(false);
   };
 
   const handleClienteEditado = async () => {
     await fetchClientes();
-    setSuccessModal({show: true, message: "Cliente editado correctamente"});
+    setSuccessModal({ show: true, message: "Cliente editado correctamente" });
     setShowEditModal(false);
     setSelectedClient(undefined);
   };
 
   const handleClienteDesactivado = async () => {
     await fetchClientes();
-    setSuccessModal({show: true, message: "Cliente desactivado correctamente"});
+
     setShowDeleteModal(false);
     setClienteToDelete(undefined);
   };
@@ -213,7 +223,7 @@ export default function Clientes() {
       <SuccessModal
         show={successModal.show}
         message={successModal.message}
-        onClose={() => setSuccessModal({show: false, message: ""})}
+        onClose={() => setSuccessModal({ show: false, message: "" })}
       />
 
       {/* Encabezado y búsqueda */}

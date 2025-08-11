@@ -311,9 +311,9 @@ export default function NuevoClienteModal({
       }
 
       // --- ¡Alerta de éxito, usando el alert nativo como en EliminarClienteModal! ---
-       console.log("12. ¡Cliente creado exitosamente! Mostrando SuccessModal.");
-       await onClienteCreado(); // Llama al callback para que la lista de clientes se actualice y muestra el SuccessModal
-       onClose(); // Cierra el modal justo después
+      1;
+      await onClienteCreado(); // Llama al callback para que la lista de clientes se actualice y muestra el SuccessModal
+      onClose(); // Cierra el modal justo después
     } catch (error) {
       console.error(
         "14. Error en la conexión con el servidor (fetch de creación fallido):",
@@ -323,7 +323,7 @@ export default function NuevoClienteModal({
         ...prev,
         generic: "No se pudo conectar con el servidor.",
       }));
-       // Solo setea el error, no muestra alert
+      // Solo setea el error, no muestra alert
     }
   };
 
