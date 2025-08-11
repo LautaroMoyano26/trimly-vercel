@@ -1,3 +1,103 @@
+/* --- SEMANA --- */
+.turnos-semana-list-section {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.turnos-semana-dia-card {
+  background: #232329;
+  border-radius: 18px;
+  padding: 24px 18px 18px 18px;
+  min-width: 160px;
+  max-width: 180px;
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 140px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+.turnos-semana-dia-label {
+  color: #b3b3b3;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.turnos-semana-dia-num {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.turnos-semana-sin-turnos {
+  color: #b3b3b3;
+  font-size: 1.05rem;
+  margin-top: 8px;
+}
+.turnos-semana-turnos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.turnos-semana-turno-item {
+  background: #393940;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.turnos-semana-turno-servicio {
+  font-weight: 600;
+  font-size: 1.08rem;
+}
+.turnos-semana-turno-hora {
+  color: #00e6f6;
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+.turnos-semana-turno-cliente {
+  color: #b3b3b3;
+  font-size: 0.97rem;
+}
+
+@media (max-width: 1100px) {
+  .turnos-semana-list-section {
+    gap: 10px;
+  }
+  .turnos-semana-dia-card {
+    min-width: 120px;
+    max-width: 140px;
+    padding: 18px 8px 12px 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .turnos-semana-list-section {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .turnos-semana-dia-card {
+    min-width: 90px;
+    max-width: 100px;
+    padding: 10px 2px 8px 2px;
+    font-size: 0.95rem;
+  }
+  .turnos-semana-dia-label {
+    font-size: 0.98rem;
+  }
+  .turnos-semana-dia-num {
+    font-size: 1.1rem;
+  }
+}
 #titulo{
     color:#fff;
 }
