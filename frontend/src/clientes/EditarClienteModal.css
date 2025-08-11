@@ -151,18 +151,19 @@
   margin-top: 2px;
 }
 
-/* Switch personalizado */
 .switch {
   position: relative;
   display: inline-block;
   width: 44px;
   height: 24px;
 }
+
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
+
 .slider {
   position: absolute;
   cursor: pointer;
@@ -170,10 +171,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #18181b;
+  background-color: #52525b !important; /* This will force the background color to be visible */
   border-radius: 24px;
-  transition: background 0.4s;
+  transition: 0.4s;
 }
+
 .slider:before {
   position: absolute;
   content: "";
@@ -181,27 +183,18 @@
   width: 18px;
   left: 3px;
   bottom: 3px;
-  background: #b3b3b3;
+  background-color: #e4e4e7; /* A light gray for the handle */
   border-radius: 50%;
   transition: 0.4s;
 }
 
-/* Activo: fondo clarito y círculo de color */
 .switch input:checked + .slider {
-  background: #ade9ff;
-}
-.switch input:checked + .slider:before {
-  background: linear-gradient(135deg, #000000 0%, #000000 100%);
-  transform: translateX(20px);
+  background-color: #ade9ff !important; /* The "on" state background */
 }
 
-/* Inactivo: fondo oscuro y círculo gris */
-.switch input:not(:checked) + .slider {
-  background: #18181b;
-}
-.switch input:not(:checked) + .slider:before {
-  background: #b3b3b3;
-  transform: translateX(0);
+.switch input:checked + .slider:before {
+  background-color: #18181b; /* The "on" state handle color */
+  transform: translateX(20px);
 }
 
 /* Botones */

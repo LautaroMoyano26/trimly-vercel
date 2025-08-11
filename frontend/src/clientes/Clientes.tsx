@@ -105,7 +105,10 @@ export default function Clientes() {
 
   const handleClienteDesactivado = async () => {
     await fetchClientes();
-
+    setSuccessModal({
+      show: true,
+      message: "Cliente desactivado correctamente",
+    });
     setShowDeleteModal(false);
     setClienteToDelete(undefined);
   };
@@ -186,6 +189,7 @@ export default function Clientes() {
           className="btn-accion eliminar"
           title="Desactivar"
           onClick={() => handleDeleteClick(c)}
+          disabled={!c.activo}
         >
           <FaTrash />
         </button>

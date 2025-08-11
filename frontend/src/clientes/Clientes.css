@@ -89,6 +89,11 @@
   color: #00b3ff;
 }
 
+.btn-accion.eliminar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .table-dark {
   --bs-table-bg: #232329;
   --bs-table-striped-bg: #232329;
