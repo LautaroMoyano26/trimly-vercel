@@ -1,28 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./NuevoTurnoModal.css";
-import { FaArrowLeft } from "react-icons/fa"; // Icono flecha para volver
+import { FaArrowLeft } from "react-icons/fa";
 
-export default function NuevoTurnoModal({ show, onClose }: { show: boolean; onClose: () => void }) {
+interface Cliente {
+  id: number;
+  nombre: string;
+  apellido: string;
+}
+
+interface Servicio {
+  id: number;
+  servicio: string;
+}
+
+interface NuevoTurnoModalProps {
+  show: boolean;
+  onClose: () => void;
+  onTurnoCreado: () => Promise<void>;
+  clientes: Cliente[];
+  servicios: Servicio[];
+}
+
+export default function NuevoTurnoModal({
+  show,
+  onClose,
+  onTurnoCreado,
+  clientes,
+  servicios
+}: NuevoTurnoModalProps) {
   const [cliente, setCliente] = useState("");
   const [servicio, setServicio] = useState("");
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
-  const [clientes, setClientes] = useState<{ id: number; nombre: string; apellido: string }[]>([]);
-  const [servicios, setServicios] = useState<{ id: number; servicio: string }[]>([]);
-
-  useEffect(() => {
-    if (show) {
-      fetch("http://localhost:3000/clientes")
-        .then(res => res.json())
-        .then(data => setClientes(data))
-        .catch(() => setClientes([]));
-      fetch("http://localhost:3000/servicios")
-        .then(res => res.json())
-        .then(data => setServicios(data))
-        .catch(() => setServicios([]));
-    }
-  }, [show]);
 
   if (!show) return null;
 
@@ -41,7 +51,9 @@ export default function NuevoTurnoModal({ show, onClose }: { show: boolean; onCl
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(turno),
       });
+
       if (response.ok) {
+        await onTurnoCreado(); // avisar al padre que se creó un turno
         onClose();
       } else {
         alert("Error al guardar el turno");
@@ -55,7 +67,7 @@ export default function NuevoTurnoModal({ show, onClose }: { show: boolean; onCl
     <div className="modal-overlay">
       <div className="modal-content">
 
-        {/* Encabezado con flecha y subtítulo */}
+        {/* Encabezado */}
         <div className="modal-header">
           <FaArrowLeft className="back-arrow" onClick={onClose} />
           <div>
@@ -64,7 +76,7 @@ export default function NuevoTurnoModal({ show, onClose }: { show: boolean; onCl
           </div>
         </div>
 
-        {/* Contenedor del formulario */}
+        {/* Formulario */}
         <div className="form-container">
           <div className="form-row">
             <div className="form-group">
