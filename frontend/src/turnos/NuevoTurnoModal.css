@@ -27,7 +27,7 @@
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
-/* Encabezado con flecha y subtítulo */
+
 .modal-header {
   display: flex;
   align-items: center;
@@ -58,7 +58,7 @@
   margin-top: 4px;
 }
 
-/* Contenedor del formulario */
+
 .form-container {
   background: #1f1f23;
   padding: 20px;
@@ -154,4 +154,17 @@
 
 .save-btn:hover {
   opacity: 0.85;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator,
+.form-group input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0%); 
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+
+.form-group input[type="date"]:hover::-webkit-calendar-picker-indicator,
+.form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
+  filter: invert(60%); 
 }

@@ -6,11 +6,13 @@ interface Cliente {
   id: number;
   nombre: string;
   apellido: string;
+  activo: boolean;
 }
 
 interface Servicio {
   id: number;
   servicio: string;
+  estado: boolean;
 }
 
 interface NuevoTurnoModalProps {
@@ -33,6 +35,14 @@ export default function NuevoTurnoModal({
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
+  
+  const resetForm = () => {
+    setCliente("");
+    setServicio("");
+    setFecha("");
+    setHora("");
+    setNotas("");
+  };
 
   if (!show) return null;
 
@@ -53,7 +63,8 @@ export default function NuevoTurnoModal({
       });
 
       if (response.ok) {
-        await onTurnoCreado(); // avisar al padre que se creó un turno
+        await onTurnoCreado(); 
+        resetForm();
         onClose();
       } else {
         alert("Error al guardar el turno");
@@ -83,9 +94,11 @@ export default function NuevoTurnoModal({
               <label>Cliente</label>
               <select value={cliente} onChange={e => setCliente(e.target.value)}>
                 <option value="">Seleccionar cliente</option>
-                {clientes.map(c => (
+                {clientes
+                  .filter( c => c.activo)
+                  .map(c => (
                   <option key={c.id} value={c.id}>
-                    {c.nombre} {c.apellido}
+                  {c.nombre} {c.apellido}
                   </option>
                 ))}
               </select>
@@ -94,7 +107,10 @@ export default function NuevoTurnoModal({
               <label>Servicio</label>
               <select value={servicio} onChange={e => setServicio(e.target.value)}>
                 <option value="">Seleccionar servicio</option>
-                {servicios.map(s => (
+
+                {servicios
+                .filter( s => s.estado)
+                .map(s => (
                   <option key={s.id} value={s.id}>
                     {s.servicio}
                   </option>
