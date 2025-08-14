@@ -33,6 +33,14 @@ export default function NuevoTurnoModal({
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
+  
+  const resetForm = () => {
+    setCliente("");
+    setServicio("");
+    setFecha("");
+    setHora("");
+    setNotas("");
+  };
 
   if (!show) return null;
 
@@ -53,7 +61,8 @@ export default function NuevoTurnoModal({
       });
 
       if (response.ok) {
-        await onTurnoCreado(); // avisar al padre que se creó un turno
+        await onTurnoCreado(); 
+        resetForm();
         onClose();
       } else {
         alert("Error al guardar el turno");
