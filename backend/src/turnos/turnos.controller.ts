@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { TurnosService } from './turnos.service';
 import { CreateTurnoDto } from '../dto/create-turno.dto';
 import { UpdateTurnoDto } from '../dto/update-turno.dto';
@@ -23,8 +32,18 @@ export class TurnosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTurnoDto: UpdateTurnoDto) {
-    return this.turnosService.update(+id, updateTurnoDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateTurnoDto: UpdateTurnoDto,
+  ) {
+    try {
+      return await this.turnosService.update(+id, updateTurnoDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new Error(`Failed to update turno: ${error.message}`);
+    }
   }
 
   @Delete(':id')

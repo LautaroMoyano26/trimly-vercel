@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
 
@@ -6,6 +12,12 @@ import { Servicio } from '../servicios/servicio.entity';
 export class Turno {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  clienteId: number;
+
+  @Column()
+  servicioId: number;
 
   @ManyToOne(() => Cliente, { eager: true })
   @JoinColumn({ name: 'clienteId' })
@@ -22,5 +34,5 @@ export class Turno {
   hora: string;
 
   @Column({ type: 'text', nullable: true })
-  notasAdicionales?: string;
+  notas?: string; // Changed from notasAdicionales to match your DTOs
 }
