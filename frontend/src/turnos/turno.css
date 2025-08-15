@@ -1,3 +1,164 @@
+/* --- DIA --- */
+.turnos-dia-calendar-section {
+  /* No existe, pero lo agregamos para el layout */
+}
+.turnos-dia-calendar-section {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+.turnos-dia-calendar-section > div:first-child {
+  min-width: 320px;
+  max-width: 360px;
+  flex: 0 0 340px;
+  background: none;
+  border-radius: 16px;
+  border: 1px solid #393940;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.turnos-dia-calendar-section > div:last-child {
+  flex: 1;
+  min-width: 320px;
+  background: #232329;
+  border-radius: 16px;
+  border: 1px solid #393940;
+  padding: 32px 32px 24px 32px;
+  box-sizing: border-box;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.turnos-list-section {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 16px;
+  background: none;
+  padding: 0;
+}
+.turnos-list {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.turno-card {
+  background: #393940;
+  border-radius: 12px;
+  margin-bottom: 0;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  box-shadow: none;
+  border: none;
+  transition: none;
+  gap: 0;
+}
+.turno-card-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.turno-card-icon {
+  background: #232329;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.turno-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.turno-card-servicio {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+.turno-card-meta {
+  display: flex;
+  gap: 12px;
+  color: #b3b3b3;
+  font-size: 0.98rem;
+  align-items: center;
+}
+.turno-card-hora {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-cliente {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-actions {
+  display: flex;
+  gap: 8px;
+}
+.turno-btn {
+  background: #393940;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: none;
+  box-shadow: none;
+}
+.turno-btn.editar:hover, .turno-btn.cancelar:hover {
+  background: #232329;
+  color: #fff;
+}
+.no-turnos-msg {
+  width: 100%;
+  text-align: center;
+  color: #b3b3b3;
+  font-size: 1.15rem;
+  padding: 32px 0;
+  background: none;
+  border-radius: 12px;
+}
+
+@media (max-width: 900px) {
+  .turnos-dia-calendar-section {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .turnos-dia-calendar-section > div:first-child,
+  .turnos-dia-calendar-section > div:last-child {
+    min-width: 0;
+    max-width: 100vw;
+    width: 100%;
+    padding: 0;
+  }
+  .turnos-dia-calendar-section > div:last-child {
+    padding: 18px 8px 12px 8px;
+  }
+}
 /* --- SEMANA --- */
 .turnos-semana-list-section {
   display: flex;

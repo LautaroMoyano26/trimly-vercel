@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
+import Calendar from "react-calendar";
+import "./calendar-dark.css";
 import { FaPlus, FaClock, FaUser, FaEdit, FaTrash } from "react-icons/fa";
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
+// import type { Value } from "react-calendar";
 
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
-  const [selectedDate, setSelectedDate] = useState(() => {
+  // For calendar range selection (up to 2 days)
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
   });
+  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(new Date());
   const [activeTab, setActiveTab] = useState<"dia" | "semana" | "mes">("dia");
   const [clientes, setClientes] = useState<any[]>([]); // Add state for clientes
   const [servicios, setServicios] = useState<any[]>([]); // Add state for servicios
@@ -59,18 +64,64 @@ export default function Turnos() {
   };
 
   // --- DÍA ---
-  const fechaStr = selectedDate.toISOString().split("T")[0];
-  const turnosDelDia = turnos.filter((t) => t.fecha === fechaStr);
-  const fechaFormateada = selectedDate.toLocaleDateString("es-AR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const cambiarDia = (delta: number) => {
-    const nuevaFecha = new Date(selectedDate);
-    nuevaFecha.setDate(nuevaFecha.getDate() + delta);
-    setSelectedDate(nuevaFecha);
+  // Calendar range logic
+  const isRange = Array.isArray(selectedRange);
+  let rangeStart: Date, rangeEnd: Date;
+  if (isRange && selectedRange[0] && selectedRange[1]) {
+    rangeStart = new Date(selectedRange[0]);
+    rangeEnd = new Date(selectedRange[1]);
+    rangeStart.setHours(0, 0, 0, 0);
+    rangeEnd.setHours(0, 0, 0, 0);
+  } else {
+    rangeStart = new Date(selectedDate);
+    rangeEnd = new Date(selectedDate);
+  }
+
+  // Get all dates in range
+  const getDatesInRange = (start: Date, end: Date) => {
+    const dates = [];
+    let current = new Date(start);
+    while (current <= end) {
+      dates.push(current.toISOString().split("T")[0]);
+      current = new Date(current);
+      current.setDate(current.getDate() + 1);
+    }
+    return dates;
+  };
+  const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
+  const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
+  // For label
+  const fechaFormateada = isRange && selectedRange[0] && selectedRange[1]
+    ? `${selectedRange[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${selectedRange[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
+    : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  // Calendar change handler
+
+  const onCalendarChange = (
+      value: any,
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+    if (!value) {
+      // If value is null, reset to today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      setSelectedRange(today);
+      setSelectedDate(today);
+      return;
+    }
+    if (Array.isArray(value)) {
+      const [start, end] = value;
+      if (start instanceof Date && end instanceof Date) {
+        setSelectedRange([start, end]);
+        setSelectedDate(start);
+      } else if (start instanceof Date) {
+        setSelectedRange(start);
+        setSelectedDate(start);
+      }
+    } else if (value instanceof Date) {
+      setSelectedRange(value);
+      setSelectedDate(value);
+    }
   };
 
   // --- SEMANA ---
@@ -141,73 +192,68 @@ export default function Turnos() {
         </button>
       </div>
       {activeTab === "dia" && (
-        <>
-          <div className="turnos-date-row">
-            <button className="date-nav-btn" onClick={() => cambiarDia(-1)}>
-              &lt;
-            </button>
-            <span className="turnos-date-label">
-              {fechaFormateada.charAt(0).toUpperCase() +
-                fechaFormateada.slice(1)}
-            </span>
-            <button className="date-nav-btn" onClick={() => cambiarDia(1)}>
-              &gt;
-            </button>
+        <div className="turnos-dia-calendar-section" style={{ display: "flex", gap: 32, alignItems: "flex-start", width: "100%", flexWrap: "wrap" }}>
+          <div style={{ minWidth: 280, maxWidth: 340, flex: "0 0 320px" }}>
+            <Calendar
+              onChange={onCalendarChange}
+              value={selectedRange}
+              selectRange={true}
+              maxDetail="month"
+              minDetail="month"
+              locale="es-AR"
+              calendarType="iso8601"
+            />
           </div>
-          <div className="turnos-list-section">
-            {turnosDelDia.length === 0 ? (
-              <div className="no-turnos-msg">
-                No hay turnos programados para este día
-              </div>
-            ) : (
-              <ul className="turnos-list">
-                {turnosDelDia.map((turno) => (
-                  <li key={turno.id} className="turno-card">
-                    <div className="turno-card-left">
-                      <div className="turno-card-icon">
-                        <FaClock size={28} color="#23b3c7" />
-                      </div>
-                      <div className="turno-card-info">
-                        <div className="turno-card-servicio">
-                          {turno.servicio?.servicio || "-"}
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <div className="turnos-date-row">
+              <span className="turnos-date-label">
+                {fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}
+              </span>
+            </div>
+            <div className="turnos-list-section">
+              {turnosDelRango.length === 0 ? (
+                <div className="no-turnos-msg">
+                  No hay turnos programados para este rango
+                </div>
+              ) : (
+                <ul className="turnos-list">
+                  {turnosDelRango.map((turno) => (
+                    <li key={turno.id} className="turno-card">
+                      <div className="turno-card-left">
+                        <div className="turno-card-icon">
+                          <FaClock size={28} color="#23b3c7" />
                         </div>
-                        <div className="turno-card-meta">
-                          <span className="turno-card-hora">
-                            <FaClock
-                              size={13}
-                              style={{ marginRight: 4, marginBottom: -2 }}
-                            />
-                            {turno.hora
-                              ? `${turno.hora} (Estimado)`
-                              : "hh:mm (Estimado)"}
-                          </span>
-                          <span className="turno-card-cliente">
-                            <FaUser
-                              size={13}
-                              style={{ marginRight: 4, marginBottom: -2 }}
-                            />
-                            {turno.cliente?.nombre} {turno.cliente?.apellido}
-                          </span>
+                        <div className="turno-card-info">
+                          <div className="turno-card-servicio">
+                            {turno.servicio?.servicio || "-"}
+                          </div>
+                          <div className="turno-card-meta">
+                            <span className="turno-card-hora">
+                              <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
+                              {turno.hora ? `${turno.hora} (Estimado)` : "hh:mm (Estimado)"}
+                            </span>
+                            <span className="turno-card-cliente">
+                              <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
+                              {turno.cliente?.nombre} {turno.cliente?.apellido}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="turno-card-actions">
-                      <button
-                        className="turno-btn editar"
-                        onClick={() => handleEditClick(turno)}
-                      >
-                        <FaEdit style={{ marginRight: 4 }} /> Editar
-                      </button>
-                      <button className="turno-btn cancelar">
-                        <FaTrash style={{ marginRight: 4 }} /> Cancelar
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                      <div className="turno-card-actions">
+                        <button className="turno-btn editar" onClick={() => handleEditClick(turno)}>
+                          <FaEdit style={{ marginRight: 4 }} /> Editar
+                        </button>
+                        <button className="turno-btn cancelar">
+                          <FaTrash style={{ marginRight: 4 }} /> Cancelar
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-        </>
+        </div>
       )}
       {activeTab === "semana" && (
         <>
