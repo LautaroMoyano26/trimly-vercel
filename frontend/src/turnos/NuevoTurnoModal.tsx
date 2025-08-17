@@ -35,6 +35,7 @@ export default function NuevoTurnoModal({
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
+  const [errores, setErrores] = useState<{[key:string]: string}>({});
   
   const resetForm = () => {
     setCliente("");
@@ -45,8 +46,20 @@ export default function NuevoTurnoModal({
   };
 
   if (!show) return null;
+  
+
 
   const handleGuardar = async () => {
+    const nuevosErrores: {[key:string]: string} = {};
+    if (!cliente) nuevosErrores.cliente = "El cliente es obligatorio";
+    if (!servicio) nuevosErrores.servicio = "El servicio es obligatorio";
+    if (!fecha) nuevosErrores.fecha = "La fecha es obligatoria";
+    if (!hora) nuevosErrores.hora = "La hora es obligatoria";
+
+    setErrores(nuevosErrores);
+
+    if (Object.keys(nuevosErrores).length > 0) return;
+
     const turno = {
       clienteId: Number(cliente),
       servicioId: Number(servicio),
@@ -80,7 +93,7 @@ export default function NuevoTurnoModal({
 
         {/* Encabezado */}
         <div className="modal-header">
-          <FaArrowLeft className="back-arrow" onClick={onClose} />
+          <FaArrowLeft className="back-arrow" onClick={()=>{onClose(); resetForm()}} />
           <div>
             <h2 className="modal-title">Nuevo Turno</h2>
             <p className="modal-subtitle">Agenda un nuevo turno para un cliente</p>
@@ -102,6 +115,7 @@ export default function NuevoTurnoModal({
                   </option>
                 ))}
               </select>
+              {errores.cliente && <p className="error">{errores.cliente}</p>}
             </div>
             <div className="form-group">
               <label>Servicio</label>
@@ -116,6 +130,7 @@ export default function NuevoTurnoModal({
                   </option>
                 ))}
               </select>
+              {errores.servicio && <p className="error">{errores.servicio}</p>}
             </div>
           </div>
 
@@ -123,10 +138,12 @@ export default function NuevoTurnoModal({
             <div className="form-group">
               <label>Fecha</label>
               <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} />
+              {errores.fecha && <p className="error">{errores.fecha}</p>}
             </div>
             <div className="form-group">
               <label>Hora</label>
               <input type="time" value={hora} onChange={e => setHora(e.target.value)} />
+              {errores.hora && <p className="error">{errores.hora}</p>}
             </div>
           </div>
 
@@ -141,7 +158,7 @@ export default function NuevoTurnoModal({
           </div>
 
           <div className="modal-actions">
-            <button className="cancel-btn" onClick={onClose}>Cancelar</button>
+            <button className="cancel-btn" onClick={()=>{onClose(); resetForm();}}>Cancelar</button>
             <button className="save-btn" onClick={handleGuardar}>Guardar Turno</button>
           </div>
         </div>
