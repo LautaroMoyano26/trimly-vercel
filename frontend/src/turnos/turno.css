@@ -7,16 +7,15 @@
   gap: 32px;
   align-items: flex-start;
   width: 100%;
-  flex-wrap: wrap;
   margin-top: 32px;
 }
 .turnos-dia-calendar-section > div:first-child {
-  min-width: 320px;
-  max-width: 360px;
-  flex: 0 0 340px;
+  min-width: 340px;
+  max-width: 380px;
+  flex: 0 0 360px;
   background: none;
   border-radius: 16px;
-  border: 1px solid #393940;
+  border: none;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -113,23 +112,31 @@
   align-items: center;
   gap: 4px;
 }
+.turno-card-notas {
+  margin-top: 6px;
+  color: #a1a1aa;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .turno-card-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 .turno-btn {
   background: #393940;
   color: #b3b3b3;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 7px 18px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: none;
-  box-shadow: none;
+  transition: background 0.2s, color 0.2s;
 }
-.turno-btn.editar:hover, .turno-btn.cancelar:hover {
+.turno-btn.editar:hover,
+.turno-btn.cancelar:hover {
   background: #232329;
   color: #fff;
 }

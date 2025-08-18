@@ -1,13 +1,13 @@
 /* Calendar custom styles for dark mode */
 
 .react-calendar {
-  background: #19191d;
+  background: #232329;
   border-radius: 16px;
-  border: none;
+  border: 1px solid #393940;
   color: #fff;
   font-family: inherit;
   box-shadow: none;
-  padding: 0;
+  padding: 24px 18px 18px 18px;
   margin: 0;
 }
 .react-calendar__navigation {
@@ -59,31 +59,31 @@
   margin: 2px 0;
 }
 .react-calendar__tile {
-  background: transparent;
-  color: #fff;
   border-radius: 50%;
-  transition: background 0.2s, color 0.2s;
   font-size: 1rem;
   font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  background: transparent;
+  color: #fff;
   padding: 8px 0;
 }
 .react-calendar__tile--active,
 .react-calendar__tile--range,
 .react-calendar__tile--rangeStart,
 .react-calendar__tile--rangeEnd {
-  background: #a259ff;
-  color: #fff;
+  background: #a259ff !important;
+  color: #fff !important;
 }
 .react-calendar__tile:enabled:hover {
-  background: #232329;
+  background: #383840;
   color: #a259ff;
 }
 .react-calendar__month-view__days__day--weekend {
   color: #a259ff;
 }
 .react-calendar__tile--now {
-  background: #232329;
-  color: #a259ff;
+  background: #232329 !important;
+  color: #a259ff !important;
 }
 .react-calendar__tile--hasActive {
   background: #a259ff;
