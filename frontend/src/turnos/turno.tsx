@@ -5,13 +5,16 @@ import { FaPlus, FaClock, FaUser, FaEdit, FaTrash } from "react-icons/fa";
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
+import EliminarTurnoModal from "./EliminarTurnoModal"; // Add this import
 // import type { Value } from "react-calendar";
 
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
   const [turnos, setTurnos] = useState<any[]>([]);
-  const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
+  const [turnoToEdit, setTurnoToEdit] = useState<any>(null);
+  const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // State for the turno being deleted
   // For calendar range selection (up to 2 days)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
@@ -44,12 +47,18 @@ export default function Turnos() {
       .then((res) => res.json())
       .then((data) => setServicios(Array.isArray(data) ? data : []))
       .catch(() => setServicios([]));
-  }, [showModal, showEditModal]); // reload when any modal closes
+  }, [showModal, showEditModal, showDeleteModal]); // reload when any modal closes
 
   // Function to handle edit button click
   const handleEditClick = (turno: any) => {
     setTurnoToEdit(turno);
     setShowEditModal(true);
+  };
+
+  // Function to handle delete button click
+  const handleDeleteClick = (turno: any) => {
+    setTurnoToDelete(turno);
+    setShowDeleteModal(true);
   };
 
   // Function to reload data after a turno is edited
@@ -60,6 +69,19 @@ export default function Turnos() {
       setTurnos(Array.isArray(data) ? data : []);
       setShowEditModal(false);
       setTurnoToEdit(null);
+    } catch (error) {
+      console.error("Error al cargar turnos:", error);
+    }
+  };
+
+  // Function to reload data after a turno is deleted
+  const handleTurnoCancelado = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/turnos");
+      const data = await res.json();
+      setTurnos(Array.isArray(data) ? data : []);
+      setShowDeleteModal(false);
+      setTurnoToDelete(null);
     } catch (error) {
       console.error("Error al cargar turnos:", error);
     }
@@ -301,7 +323,20 @@ export default function Turnos() {
                           >
                             <FaEdit style={{ marginRight: 4 }} /> Editar
                           </button>
-                          <button className="turno-btn cancelar">
+                          <button
+                            className={`turno-btn cancelar ${
+                              !isEditable ? "disabled" : ""
+                            }`}
+                            onClick={() =>
+                              isEditable && handleDeleteClick(turno)
+                            }
+                            disabled={!isEditable}
+                            title={
+                              !isEditable
+                                ? "No se pueden cancelar turnos pasados"
+                                : ""
+                            }
+                          >
                             <FaTrash style={{ marginRight: 4 }} /> Cancelar
                           </button>
                         </div>
@@ -381,6 +416,15 @@ export default function Turnos() {
         turnoToEdit={turnoToEdit}
         clientes={clientes}
         servicios={servicios}
+      />
+      <EliminarTurnoModal
+        show={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setTurnoToDelete(null);
+        }}
+        onTurnoCancelado={handleTurnoCancelado}
+        turnoToDelete={turnoToDelete}
       />
     </div>
   );
