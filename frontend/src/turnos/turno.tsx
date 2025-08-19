@@ -18,7 +18,9 @@ export default function Turnos() {
     today.setHours(0, 0, 0, 0);
     return today;
   });
-  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(new Date());
+  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(
+    new Date()
+  );
   const [activeTab, setActiveTab] = useState<"dia" | "semana" | "mes">("dia");
   const [clientes, setClientes] = useState<any[]>([]); // Add state for clientes
   const [servicios, setServicios] = useState<any[]>([]); // Add state for servicios
@@ -89,18 +91,33 @@ export default function Turnos() {
     return dates;
   };
   const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
-  const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
+  const turnosDelRango = turnos.filter((t) =>
+    fechasSeleccionadas.includes(t.fecha)
+  );
   // For label
-  const fechaFormateada = isRange && selectedRange[0] && selectedRange[1]
-    ? `${selectedRange[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${selectedRange[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
-    : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  const fechaFormateada =
+    isRange && selectedRange[0] && selectedRange[1]
+      ? `${selectedRange[0].toLocaleDateString("es-AR", {
+          day: "numeric",
+          month: "short",
+        })} - ${selectedRange[1].toLocaleDateString("es-AR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })}`
+      : selectedDate.toLocaleDateString("es-AR", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
 
   // Calendar change handler
 
   const onCalendarChange = (
-      value: any,
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
+    value: any,
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     if (!value) {
       // If value is null, reset to today
       const today = new Date();
@@ -192,7 +209,16 @@ export default function Turnos() {
         </button>
       </div>
       {activeTab === "dia" && (
-        <div className="turnos-dia-calendar-section" style={{ display: "flex", gap: 32, alignItems: "flex-start", width: "100%", flexWrap: "wrap" }}>
+        <div
+          className="turnos-dia-calendar-section"
+          style={{
+            display: "flex",
+            gap: 32,
+            alignItems: "flex-start",
+            width: "100%",
+            flexWrap: "wrap",
+          }}
+        >
           <div style={{ minWidth: 280, maxWidth: 340, flex: "0 0 320px" }}>
             <Calendar
               onChange={onCalendarChange}
@@ -207,7 +233,8 @@ export default function Turnos() {
           <div style={{ flex: 1, minWidth: 260 }}>
             <div className="turnos-date-row">
               <span className="turnos-date-label">
-                {fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}
+                {fechaFormateada.charAt(0).toUpperCase() +
+                  fechaFormateada.slice(1)}
               </span>
             </div>
             <div className="turnos-list-section">
@@ -217,38 +244,70 @@ export default function Turnos() {
                 </div>
               ) : (
                 <ul className="turnos-list">
-                  {turnosDelRango.map((turno) => (
-                    <li key={turno.id} className="turno-card">
-                      <div className="turno-card-left">
-                        <div className="turno-card-icon">
-                          <FaClock size={28} color="#23b3c7" />
-                        </div>
-                        <div className="turno-card-info">
-                          <div className="turno-card-servicio">
-                            {turno.servicio?.servicio || "-"}
+                  {turnosDelRango.map((turno) => {
+                    // Verificar si el turno es de una fecha pasada
+                    const isPastDate = () => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const turnoDate = new Date(turno.fecha);
+                      return turnoDate < today;
+                    };
+
+                    const isEditable = !isPastDate();
+
+                    return (
+                      <li key={turno.id} className="turno-card">
+                        <div className="turno-card-left">
+                          <div className="turno-card-icon">
+                            <FaClock size={28} color="#23b3c7" />
                           </div>
-                          <div className="turno-card-meta">
-                            <span className="turno-card-hora">
-                              <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.hora ? `${turno.hora} (Estimado)` : "hh:mm (Estimado)"}
-                            </span>
-                            <span className="turno-card-cliente">
-                              <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.cliente?.nombre} {turno.cliente?.apellido}
-                            </span>
+                          <div className="turno-card-info">
+                            <div className="turno-card-servicio">
+                              {turno.servicio?.servicio || "-"}
+                            </div>
+                            <div className="turno-card-meta">
+                              <span className="turno-card-hora">
+                                <FaClock
+                                  size={13}
+                                  style={{ marginRight: 4, marginBottom: -2 }}
+                                />
+                                {turno.hora
+                                  ? `${turno.hora} (Estimado)`
+                                  : "hh:mm (Estimado)"}
+                              </span>
+                              <span className="turno-card-cliente">
+                                <FaUser
+                                  size={13}
+                                  style={{ marginRight: 4, marginBottom: -2 }}
+                                />
+                                {turno.cliente?.nombre}{" "}
+                                {turno.cliente?.apellido}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="turno-card-actions">
-                        <button className="turno-btn editar" onClick={() => handleEditClick(turno)}>
-                          <FaEdit style={{ marginRight: 4 }} /> Editar
-                        </button>
-                        <button className="turno-btn cancelar">
-                          <FaTrash style={{ marginRight: 4 }} /> Cancelar
-                        </button>
-                      </div>
-                    </li>
-                  ))}
+                        <div className="turno-card-actions">
+                          <button
+                            className={`turno-btn editar ${
+                              !isEditable ? "disabled" : ""
+                            }`}
+                            onClick={() => isEditable && handleEditClick(turno)}
+                            disabled={!isEditable}
+                            title={
+                              !isEditable
+                                ? "No se pueden editar turnos pasados"
+                                : ""
+                            }
+                          >
+                            <FaEdit style={{ marginRight: 4 }} /> Editar
+                          </button>
+                          <button className="turno-btn cancelar">
+                            <FaTrash style={{ marginRight: 4 }} /> Cancelar
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
