@@ -97,3 +97,8 @@
 .btn-accion.eliminar:hover {
   background-color: rgba(239, 68, 68, 0.2); /* Rojo */
 }
+
+.btn-accion.eliminar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

@@ -5,19 +5,22 @@ import { FaPlus, FaClock, FaUser, FaEdit, FaTrash } from "react-icons/fa";
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
+// import type { Value } from "react-calendar";
 
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); // New state for edit modal
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
-  // Solo selección de un día
+  // For calendar range selection (up to 2 days)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
   });
-  const [activeTab, setActiveTab] = useState<"dia" | "semana">("dia");
+  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(new Date());
+  const [activeTab, setActiveTab] = useState<"dia" | "semana" | "mes">("dia");
   const [clientes, setClientes] = useState<any[]>([]); // Add state for clientes
   const [servicios, setServicios] = useState<any[]>([]); // Add state for servicios
 
@@ -40,12 +43,18 @@ export default function Turnos() {
       .then((res) => res.json())
       .then((data) => setServicios(Array.isArray(data) ? data : []))
       .catch(() => setServicios([]));
-  }, [showModal, showEditModal]); // reload when any modal closes
+  }, [showModal, showEditModal, showDeleteModal]); // reload when any modal closes
 
   // Function to handle edit button click
   const handleEditClick = (turno: any) => {
     setTurnoToEdit(turno);
     setShowEditModal(true);
+  };
+
+  // Function to handle delete button click
+  const handleDeleteClick = (turno: any) => {
+    setTurnoToDelete(turno);
+    setShowDeleteModal(true);
   };
 
   // Function to reload data after a turno is edited
@@ -61,18 +70,57 @@ export default function Turnos() {
     }
   };
 
+  // Function to reload data after a turno is deleted
+  const handleTurnoCancelado = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/turnos");
+      const data = await res.json();
+      setTurnos(Array.isArray(data) ? data : []);
+      setShowDeleteModal(false);
+      setTurnoToDelete(null);
+    } catch (error) {
+      console.error("Error al cargar turnos:", error);
+    }
+  };
+
   // --- DÍA ---
-  // Solo selección de un día
-  const fechaStr = selectedDate.toISOString().split("T")[0];
-  const turnosDelDia = turnos.filter((t) => t.fecha === fechaStr);
-  const fechaFormateada = selectedDate.toLocaleDateString("es-AR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // Calendar range logic
+  const isRange = Array.isArray(selectedRange);
+  let rangeStart: Date, rangeEnd: Date;
+  if (isRange && selectedRange[0] && selectedRange[1]) {
+    rangeStart = new Date(selectedRange[0]);
+    rangeEnd = new Date(selectedRange[1]);
+    rangeStart.setHours(0, 0, 0, 0);
+    rangeEnd.setHours(0, 0, 0, 0);
+  } else {
+    rangeStart = new Date(selectedDate);
+    rangeEnd = new Date(selectedDate);
+  }
+
+  // Get all dates in range
+  const getDatesInRange = (start: Date, end: Date) => {
+    const dates = [];
+    let current = new Date(start);
+    while (current <= end) {
+      dates.push(current.toISOString().split("T")[0]);
+      current = new Date(current);
+      current.setDate(current.getDate() + 1);
+    }
+    return dates;
+  };
+  const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
+  const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
+  // For label
+  const fechaFormateada = isRange && selectedRange[0] && selectedRange[1]
+    ? `${selectedRange[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${selectedRange[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
+    : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
   // Calendar change handler
-  const onCalendarChange = (value: any) => {
+
+  const onCalendarChange = (
+      value: any,
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
     if (!value) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -146,8 +194,8 @@ export default function Turnos() {
         </button>
       </div>
       {activeTab === "dia" && (
-        <div className="turnos-dia-calendar-section">
-          <div>
+        <div className="turnos-dia-calendar-section" style={{ display: "flex", gap: 32, alignItems: "flex-start", width: "100%", flexWrap: "wrap" }}>
+          <div style={{ minWidth: 280, maxWidth: 340, flex: "0 0 320px" }}>
             <Calendar
               onChange={onCalendarChange}
               value={selectedDate}
@@ -159,7 +207,12 @@ export default function Turnos() {
               className="custom-calendar"
             />
           </div>
-          <div>
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <div className="turnos-date-row">
+              <span className="turnos-date-label">
+                {fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}
+              </span>
+            </div>
             <div className="turnos-list-section">
               {turnosDelDia.length === 0 ? (
                 <div className="no-turnos-msg">
@@ -167,7 +220,7 @@ export default function Turnos() {
                 </div>
               ) : (
                 <ul className="turnos-list">
-                  {turnosDelDia.map((turno) => (
+                  {turnosDelRango.map((turno) => (
                     <li key={turno.id} className="turno-card">
                       <div className="turno-card-left">
                         <div className="turno-card-icon">
@@ -180,28 +233,21 @@ export default function Turnos() {
                           <div className="turno-card-meta">
                             <span className="turno-card-hora">
                               <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.hora
-                                ? `${turno.hora.slice(0,5)} (Estimado)`
-                                : "hh:mm (Estimado)"}
+                              {turno.hora ? `${turno.hora} (Estimado)` : "hh:mm (Estimado)"}
                             </span>
                             <span className="turno-card-cliente">
                               <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
                               {turno.cliente?.nombre} {turno.cliente?.apellido}
                             </span>
                           </div>
-                          {turno.notas && (
-                            <div className="turno-card-notas">
-                              <span>📝 {turno.notas}</span>
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className="turno-card-actions">
                         <button className="turno-btn editar" onClick={() => handleEditClick(turno)}>
-                          Editar
+                          <FaEdit style={{ marginRight: 4 }} /> Editar
                         </button>
                         <button className="turno-btn cancelar">
-                          Cancelar
+                          <FaTrash style={{ marginRight: 4 }} /> Cancelar
                         </button>
                       </div>
                     </li>
@@ -279,6 +325,15 @@ export default function Turnos() {
         turnoToEdit={turnoToEdit}
         clientes={clientes}
         servicios={servicios}
+      />
+      <EliminarTurnoModal
+        show={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setTurnoToDelete(null);
+        }}
+        onTurnoCancelado={handleTurnoCancelado}
+        turnoToDelete={turnoToDelete}
       />
     </div>
   );

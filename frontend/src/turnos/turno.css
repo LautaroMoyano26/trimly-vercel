@@ -266,8 +266,8 @@
     font-size: 1.1rem;
   }
 }
-#titulo{
-    color:#fff;
+#titulo {
+  color: #fff;
 }
 
 .turnos-dashboard-container {
@@ -458,7 +458,7 @@
   align-items: center;
   justify-content: space-between;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.2s;
 }
 .turno-card-left {
@@ -540,4 +540,15 @@
   gap: 8px;
   margin-left: auto;
   margin-right: 30px;
+}
+
+/* En turno.css */
+.turno-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.turno-btn.disabled:hover {
+  background-color: inherit;
+  transform: none;
 }

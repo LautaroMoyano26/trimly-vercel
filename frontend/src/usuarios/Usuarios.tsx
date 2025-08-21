@@ -148,6 +148,7 @@ export default function Usuarios() {
           className="btn-accion eliminar"
           title="Desactivar usuario"
           onClick={() => handleDeleteClick(u)}
+          disabled={!u.activo} // Add this line to disable the button for inactive users
         >
           <FaTrash />
         </button>
