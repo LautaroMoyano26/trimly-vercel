@@ -5,7 +5,7 @@ import { FaPlus, FaClock, FaUser, FaEdit, FaTrash } from "react-icons/fa";
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
-// import type { Value } from "react-calendar";
+import EliminarTurnoModal from "./EliminarTurnoModal"; // Asegúrate de importar el modal
 
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
@@ -13,6 +13,7 @@ export default function Turnos() {
   const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
+  const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // Faltaba este estado
   // For calendar range selection (up to 2 days)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
@@ -85,11 +86,11 @@ export default function Turnos() {
 
   // --- DÍA ---
   // Calendar range logic
-  const isRange = Array.isArray(selectedRange);
+  const isRange = Array.isArray(selectedRange) && selectedRange.length === 2 && selectedRange[1];
   let rangeStart: Date, rangeEnd: Date;
-  if (isRange && selectedRange[0] && selectedRange[1]) {
-    rangeStart = new Date(selectedRange[0]);
-    rangeEnd = new Date(selectedRange[1]);
+  if (isRange) {
+    rangeStart = new Date((selectedRange as [Date, Date])[0]);
+    rangeEnd = new Date((selectedRange as [Date, Date])[1]);
     rangeStart.setHours(0, 0, 0, 0);
     rangeEnd.setHours(0, 0, 0, 0);
   } else {
@@ -110,25 +111,29 @@ export default function Turnos() {
   };
   const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
   const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
+  // Para compatibilidad con el renderizado condicional
+  const turnosDelDia = turnosDelRango;
+
   // For label
-  const fechaFormateada = isRange && selectedRange[0] && selectedRange[1]
-    ? `${selectedRange[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${selectedRange[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
+  const fechaFormateada = isRange
+    ? `${(selectedRange as [Date, Date])[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${(selectedRange as [Date, Date])[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
     : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
-  // Calendar change handler
-
-  const onCalendarChange = (
-      value: any,
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
+  // Calendar change handler (soporta rango)
+  const onCalendarChange = (value: any) => {
     if (!value) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       setSelectedDate(today);
+      setSelectedRange(today);
       return;
     }
-    if (value instanceof Date) {
+    if (Array.isArray(value) && value[1]) {
+      setSelectedRange(value as [Date, Date]);
+      setSelectedDate(value[0]);
+    } else if (value instanceof Date) {
       setSelectedDate(value);
+      setSelectedRange(value);
     }
   };
 
@@ -233,20 +238,27 @@ export default function Turnos() {
                           <div className="turno-card-meta">
                             <span className="turno-card-hora">
                               <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.hora ? `${turno.hora} (Estimado)` : "hh:mm (Estimado)"}
+                              {turno.hora ? `${turno.hora.slice(0,5)} (Estimado)` : "hh:mm (Estimado)"}
                             </span>
                             <span className="turno-card-cliente">
                               <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
                               {turno.cliente?.nombre} {turno.cliente?.apellido}
                             </span>
                           </div>
+                          {turno.notas && (
+                            <div className="turno-card-notas">
+                              <span style={{ color: "#a1a1aa", fontSize: "0.97rem" }}>
+                                📝 {turno.notas}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="turno-card-actions">
                         <button className="turno-btn editar" onClick={() => handleEditClick(turno)}>
                           <FaEdit style={{ marginRight: 4 }} /> Editar
                         </button>
-                        <button className="turno-btn cancelar">
+                        <button className="turno-btn cancelar" onClick={() => handleDeleteClick(turno)}>
                           <FaTrash style={{ marginRight: 4 }} /> Cancelar
                         </button>
                       </div>
