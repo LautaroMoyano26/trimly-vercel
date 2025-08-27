@@ -16,14 +16,14 @@ export class Turno {
   @Column()
   clienteId: number;
 
-  @Column()
+  @Column({ nullable: true })  
   servicioId: number;
 
   @ManyToOne(() => Cliente, { eager: true })
   @JoinColumn({ name: 'clienteId' })
   cliente: Cliente;
 
-  @ManyToOne(() => Servicio, { eager: true })
+  @ManyToOne(() => Servicio, { eager: true, onDelete: 'SET NULL' }) // <- cambio aquí
   @JoinColumn({ name: 'servicioId' })
   servicio: Servicio;
 
@@ -34,5 +34,5 @@ export class Turno {
   hora: string;
 
   @Column({ type: 'text', nullable: true })
-  notas?: string; // Changed from notasAdicionales to match your DTOs
+  notas?: string;
 }

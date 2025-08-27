@@ -55,7 +55,10 @@ export default function NuevoTurnoModal({
     if (!servicio) nuevosErrores.servicio = "El servicio es obligatorio";
     if (!fecha) nuevosErrores.fecha = "La fecha es obligatoria";
     if (!hora) nuevosErrores.hora = "La hora es obligatoria";
-
+    if (fecha && hora) {
+    if (fecha && hora) {
+    }
+  }
     setErrores(nuevosErrores);
 
     if (Object.keys(nuevosErrores).length > 0) return;
@@ -95,7 +98,7 @@ export default function NuevoTurnoModal({
         <div className="modal-header">
           <FaArrowLeft className="back-arrow" onClick={()=>{onClose(); resetForm()}} />
           <div>
-            <h2 className="modal-title">Nuevo Turno</h2>
+            <h2 className="modal-title3">Nuevo Turno</h2>
             <p className="modal-subtitle">Agenda un nuevo turno para un cliente</p>
           </div>
         </div>

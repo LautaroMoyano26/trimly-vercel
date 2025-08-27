@@ -233,7 +233,7 @@ export default function Turnos() {
                         </div>
                         <div className="turno-card-info">
                           <div className="turno-card-servicio">
-                            {turno.servicio?.servicio || "-"}
+                            {turno.servicio?.servicio || "EL servicio ya no esta disponible"}
                           </div>
                           <div className="turno-card-meta">
                             <span className="turno-card-hora">
