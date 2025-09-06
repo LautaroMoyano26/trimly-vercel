@@ -63,12 +63,22 @@ export default function EditarTurnoModal({
     message: string;
   }>({ show: false, message: "" });
 
-  // Función para verificar si una fecha es pasada (anterior a hoy)
+  // Función para verificar si una fecha es anterior a hoy (no incluye el día actual)
   const isPastDate = (dateStr: string): boolean => {
+    // Obtenemos la fecha actual y la configuramos a las 00:00:00
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Resetear horas para comparar solo fechas
-    const checkDate = new Date(dateStr);
-    return checkDate < today;
+    today.setHours(0, 0, 0, 0);
+
+    // Convertimos la cadena de fecha a componentes de año, mes y día
+    // para evitar problemas de zona horaria
+    const [year, month, day] = dateStr.split("-").map(Number);
+
+    // Creamos una nueva fecha usando los componentes
+    // Nota: en JavaScript, los meses van de 0 a 11, por eso restamos 1 al mes
+    const checkDate = new Date(year, month - 1, day);
+
+    // Comparamos los timestamps para mayor precisión
+    return checkDate.getTime() < today.getTime();
   };
 
   useEffect(() => {
@@ -99,7 +109,7 @@ export default function EditarTurnoModal({
 
     // Validar fecha si está cambiando ese campo
     if (name === "fecha" && isPastDate(value)) {
-      setError("No se pueden programar turnos en fechas pasadas.");
+      setError("No se pueden programar turnos en fechas anteriores a hoy.");
       return;
     }
 
@@ -114,7 +124,7 @@ export default function EditarTurnoModal({
 
     // Validar que la fecha no sea pasada
     if (isPastDate(form.fecha)) {
-      return "No se pueden editar turnos para fechas pasadas";
+      return "No se pueden editar turnos para fechas anteriores a hoy";
     }
 
     if (!form.hora) return "Debes seleccionar una hora";
@@ -183,7 +193,7 @@ export default function EditarTurnoModal({
           </button>
           <h2 className="editar-turno-title">No se puede editar</h2>
           <p className="editar-turno-subtitle">
-            No es posible editar turnos de fechas pasadas.
+            No es posible editar turnos de fechas anteriores a hoy.
           </p>
           <div className="editar-turno-actions">
             <button
@@ -258,7 +268,7 @@ export default function EditarTurnoModal({
                   type="date"
                   name="fecha"
                   value={form.fecha}
-                  min={new Date().toISOString().split("T")[0]} // Establecer fecha mínima como hoy
+                  min={new Date().toISOString().split("T")[0]} // Esto ya permite desde hoy correctamente
                   onChange={handleChange}
                   required
                 />
