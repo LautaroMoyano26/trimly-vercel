@@ -29,7 +29,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
   });
 
   useEffect(() => {
-    if (producto) {
+    if (show && producto) {
       setForm({
         nombre: producto.nombre,
         categoria: producto.categoria,
@@ -39,7 +39,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
         estado: producto.estado,
       });
     }
-  }, [producto]);
+  }, [show, producto]);
 
   // Función que determina el estado según el stock
   const calcularEstado = (stockStr: string): string => {
