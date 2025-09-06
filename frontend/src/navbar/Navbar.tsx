@@ -17,7 +17,7 @@ const navItems = [
   { icon: FaCalendarAlt, label: "Turnos", path: "/turnos" },
   { icon: FaUserFriends, label: "Clientes", path: "/clientes" },
   { icon: FaBoxOpen, label: "Productos", path: "/stock" },
-  { icon: FaClipboardList, label: "Tareas", path: "/tareas" },
+  { icon: FaClipboardList, label: "Reportes y facturación", path: "/reportes" }, // ✅ CAMBIO AQUÍ
   { icon: FaUserCog, label: "Usuarios", path: "/usuarios" },
   { icon: FaCog, label: "Configuración", path: "/configuracion" },
 ];

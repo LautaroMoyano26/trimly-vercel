@@ -1,0 +1,163 @@
+.reportes-container {
+  background: #19191d;
+  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+  color: #fff;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 32px 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Header */
+.reportes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.reportes-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  color: #fff;
+}
+
+.reportes-description {
+  color: #b3b3b3;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.exportar-pdf-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.exportar-pdf-btn:hover {
+  opacity: 0.85;
+}
+
+/* Tabs */
+.tabs-container {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: #232329;
+  padding: 6px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.tab-button {
+  background: transparent;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+}
+
+/* Content */
+.tab-content {
+  background: #232329;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #393940;
+  min-height: 400px;
+}
+
+.tab-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state {
+  color: #666;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reportes-container {
+    padding: 16px 8px;
+  }
+
+  .reportes-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .exportar-pdf-btn {
+    align-self: flex-end;
+  }
+
+  .reportes-title {
+    font-size: 1.8rem;
+  }
+
+  .tabs-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tab-button {
+    flex: 1;
+    text-align: center;
+  }
+
+  .tab-content {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tab-button {
+    width: 100%;
+  }
+}

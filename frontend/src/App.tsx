@@ -7,7 +7,7 @@ import LoginPage from "./loginpage/loginpage";
 import ProductosDashboard from "./stock/ProductosDashboard.tsx";
 import Usuarios from "./usuarios/Usuarios";
 import Turnos from "./turnos/turno";
-
+import ReportesDashboard from "./reportes/ReportesDashboard"; // ✅ AGREGAR IMPORT
 
 // ✅ CAMBIAR A sessionStorage para que no persista
 const isAuthenticated = () => {
@@ -16,19 +16,19 @@ const isAuthenticated = () => {
 
 // Componente para proteger rutas que requieren autenticación
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
 // Componente para rutas que solo se ven sin autenticación (como login)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  return !isAuthenticated() ? <>{children}</> : <Navigate to="/servicios" />;
+  return !isAuthenticated() ? <>{children}</> : <Navigate to="/clientes" replace />;
 };
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta de login (sin navbar) */}
+        {/* Ruta de login */}
         <Route
           path="/login"
           element={
@@ -38,29 +38,7 @@ export default function App() {
           }
         />
 
-        {/* Rutas protegidas (con navbar) */}
-        <Route
-          path="/servicios"
-          element={
-            <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Servicios />
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-
+        {/* Ruta de clientes */}
         <Route
           path="/clientes"
           element={
@@ -83,7 +61,30 @@ export default function App() {
           }
         />
 
-        {/* ✅ NUEVA RUTA: Stock/Productos */}
+        {/* Ruta de servicios */}
+        <Route
+          path="/servicios"
+          element={
+            <ProtectedRoute>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
+                <Navbar />
+                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+                  <Servicios />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta de stock */}
         <Route
           path="/stock"
           element={
@@ -106,7 +107,7 @@ export default function App() {
           }
         />
 
-        {/* ✅ NUEVA RUTA: Usuarios */}
+        {/* Ruta de usuarios */}
         <Route
           path="/usuarios"
           element={
@@ -128,7 +129,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-           <Route
+
+        {/* Ruta de turnos */}
+        <Route
           path="/turnos"
           element={
             <ProtectedRoute>
@@ -149,29 +152,35 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        {/* Ruta por defecto */}
+
+        {/* ✅ NUEVA RUTA: Reportes y Facturación */}
         <Route
-          path="/"
+          path="/reportes"
           element={
-            isAuthenticated() ? (
-              <Navigate to="/servicios" />
-            ) : (
-              <Navigate to="/login" />
-            )
+            <ProtectedRoute>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
+                <Navbar />
+                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+                  <ReportesDashboard />
+                </div>
+              </div>
+            </ProtectedRoute>
           }
         />
 
-        {/* Ruta para rutas no encontradas */}
-        <Route
-          path="*"
-          element={
-            isAuthenticated() ? (
-              <Navigate to="/servicios" />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+        {/* Redirección por defecto */}
+        <Route path="/" element={<Navigate to="/clientes" replace />} />
+        
+        {/* Ruta catch-all para rutas no encontradas */}
+        <Route path="*" element={<Navigate to="/clientes" replace />} />
       </Routes>
     </BrowserRouter>
   );
