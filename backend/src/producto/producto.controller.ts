@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
@@ -15,6 +15,11 @@ export class ProductoController {
   @Get()
   findAll() {
     return this.productoService.findAll();
+  }
+
+  @Get('disponibles')
+  findDisponibles() {
+    return this.productoService.findDisponibles();
   }
 
   @Get(':id')

@@ -1,6 +1,9 @@
 .facturacion-container {
   padding: 20px;
   color: #fff;
+  width: 100%;
+  min-height: calc(100vh - 60px); /* 60px es el alto aproximado de la navbar */
+  box-sizing: border-box;
 }
 
 .mensaje-notificacion {
@@ -24,12 +27,41 @@
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 24px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .panel {
   background: #222;
   padding: 20px;
   border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.panel > div {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Estilizar el scrollbar */
+.panel > div::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel > div::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.panel > div::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+.panel > div::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 
 .vacio {
@@ -44,24 +76,35 @@
   align-items: center;
   padding: 12px;
   margin: 8px 0;
+  background: #2a2a2a;
+  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-2px);
   background: #333;
-  border-radius: 4px;
 }
 
 .nombre-item {
   font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
 }
 .precio-item {
-  color: #fff;
+  color: #a259e6;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
 }
 .stock-item {
   font-size: 0.9rem;
+  margin-bottom: 2px;
 }
 .stock-ok {
-  color: #8effba;
+  color: #4ade80;
 }
 .stock-error {
-  color: #ff8e8e;
+  color: #ff4d4d;
 }
 
 .btn-agregar {
@@ -134,4 +177,16 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.producto-info {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+.servicio-info {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 4px;
 }

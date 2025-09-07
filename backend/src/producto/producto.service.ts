@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, MoreThan } from 'typeorm';
 import { Producto } from './producto.entity';
 
 @Injectable()
@@ -10,12 +10,27 @@ export class ProductoService {
     private productoRepository: Repository<Producto>,
   ) {}
 
-  findAll(): Promise<Producto[]> {
+  async findAll(): Promise<Producto[]> {
     return this.productoRepository.find();
   }
 
-  findOne(id: number): Promise<Producto | null> {
-    return this.productoRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({ where: { id } });
+    if (!producto) {
+      throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+    }
+    return producto;
+  }
+
+  async findDisponibles(): Promise<Producto[]> {
+    return this.productoRepository.find({
+      where: {
+        stock: MoreThan(0), // Solo productos con stock mayor a 0
+      },
+      order: {
+        nombre: 'ASC', // Ordenados alfabéticamente
+      },
+    });
   }
 
   create(producto: Partial<Producto>) {

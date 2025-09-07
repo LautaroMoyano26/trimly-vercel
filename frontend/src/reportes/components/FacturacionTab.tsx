@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./FacturacionTab.css";
 
@@ -7,11 +7,16 @@ interface Producto {
   nombre: string;
   precio: number;
   stock: number;
+  estado: string;
+  categoria: string;
+  marca: string;
 }
 
 interface Servicio {
   id: number;
-  nombre: string;
+  servicio: string; // Cambiamos nombre por servicio para coincidir con la BD
+  descripcion: string;
+  duracion: number;
   precio: number;
   estado: boolean;
 }
@@ -25,21 +30,8 @@ interface ItemFactura {
 }
 
 const FacturacionTab: React.FC = () => {
-  const [productos] = useState<Producto[]>([
-    { id: 1, nombre: "Shampoo Premium", precio: 3500, stock: 10 },
-    { id: 2, nombre: "Acondicionador", precio: 2800, stock: 15 },
-    { id: 3, nombre: "Gel Fijador", precio: 2000, stock: 0 },
-    { id: 4, nombre: "Crema para Peinar", precio: 1800, stock: 8 },
-  ]);
-
-  const [servicios] = useState<Servicio[]>([
-    { id: 1, nombre: "Corte de Cabello", precio: 2500, estado: true },
-    { id: 2, nombre: "Peinado", precio: 1800, estado: true },
-    { id: 3, nombre: "Coloración", precio: 4000, estado: true },
-    { id: 4, nombre: "Barba", precio: 1200, estado: true },
-    { id: 5, nombre: "Lavado", precio: 1000, estado: true },
-  ]);
-
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [servicios, setServicios] = useState<Servicio[]>([]); // Ya no inicializamos con datos hardcodeados
   const [itemsFactura, setItemsFactura] = useState<ItemFactura[]>([]);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<string>("");
@@ -94,13 +86,13 @@ const FacturacionTab: React.FC = () => {
 
   const agregarServicio = (servicio: Servicio) => {
     const itemExistente = itemsFactura.find(
-      (item) => item.productoId === servicio.id && item.nombre === servicio.nombre
+      (item) => item.productoId === servicio.id && item.nombre === servicio.servicio
     );
 
     if (itemExistente) {
       setItemsFactura((items) =>
         items.map((item) =>
-          item.productoId === servicio.id && item.nombre === servicio.nombre
+          item.productoId === servicio.id && item.nombre === servicio.servicio
             ? { ...item, cantidad: item.cantidad + 1 }
             : item
         )
@@ -110,15 +102,15 @@ const FacturacionTab: React.FC = () => {
         ...itemsFactura,
         {
           productoId: servicio.id,
-          nombre: servicio.nombre,
+          nombre: servicio.servicio,
           cantidad: 1,
           precioUnitario: servicio.precio,
-          stockDisponible: 10,
+          stockDisponible: 999, // Los servicios no tienen límite de stock
         },
       ]);
     }
 
-    mostrarMensaje(`${servicio.nombre} agregado a la factura`, "exito");
+    mostrarMensaje(`${servicio.servicio} agregado a la factura`, "exito");
   };
 
   const incrementarCantidad = (productoId: number) => {
@@ -169,6 +161,45 @@ const FacturacionTab: React.FC = () => {
     0
   );
 
+  // Nuevo useEffect para cargar productos desde el backend
+  useEffect(() => {
+    const cargarProductos = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/producto");
+        if (!res.ok) {
+          throw new Error("Error al cargar productos");
+        }
+        const data = await res.json();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+        // Opcionalmente mostrar mensaje de error
+        mostrarMensaje("Error al cargar los productos", "error");
+      }
+    };
+
+    cargarProductos();
+  }, []);
+
+  // Cargar servicios activos desde el backend
+  useEffect(() => {
+    const cargarServicios = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/servicios/activos");
+        if (!res.ok) {
+          throw new Error("Error al cargar servicios");
+        }
+        const data = await res.json();
+        setServicios(data);
+      } catch (error) {
+        console.error("Error al cargar servicios:", error);
+        mostrarMensaje("Error al cargar los servicios", "error");
+      }
+    };
+
+    cargarServicios();
+  }, []);
+
   return (
     <div className="facturacion-container">
       {mensaje && (
@@ -188,16 +219,17 @@ const FacturacionTab: React.FC = () => {
         <div className="panel">
           <h3>Servicios Disponibles</h3>
           <div>
-            {servicios.filter((s) => s.estado).length === 0 && (
+            {servicios.length === 0 ? (
               <div className="vacio">No hay servicios activos</div>
-            )}
-            {servicios
-              .filter((s) => s.estado)
-              .map((servicio) => (
+            ) : (
+              servicios.map((servicio) => (
                 <div key={servicio.id} className="card-item">
                   <div>
-                    <div className="nombre-item">{servicio.nombre}</div>
+                    <div className="nombre-item">{servicio.servicio}</div>
                     <div className="precio-item">${servicio.precio}</div>
+                    <div className="servicio-info">
+                      <small>Duración: {servicio.duracion} min</small>
+                    </div>
                   </div>
                   <button
                     onClick={() => agregarServicio(servicio)}
@@ -207,7 +239,8 @@ const FacturacionTab: React.FC = () => {
                     <FaPlus />
                   </button>
                 </div>
-              ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -215,31 +248,40 @@ const FacturacionTab: React.FC = () => {
         <div className="panel">
           <h3>Productos Disponibles</h3>
           <div>
-            {productos.map((producto) => (
-              <div key={producto.id} className="card-item">
-                <div>
-                  <div className="nombre-item">{producto.nombre}</div>
-                  <div className="precio-item">Precio: ${producto.precio}</div>
-                  <div
-                    className={`stock-item ${
-                      producto.stock > 0 ? "stock-ok" : "stock-error"
-                    }`}
-                  >
-                    Stock: {producto.stock}
+            {productos.length === 0 ? (
+              <div className="vacio">No hay productos disponibles</div>
+            ) : (
+              productos.map((producto) => (
+                <div key={producto.id} className="card-item">
+                  <div>
+                    <div className="nombre-item">{producto.nombre}</div>
+                    <div className="precio-item">Precio: ${producto.precio}</div>
+                    <div
+                      className={`stock-item ${
+                        producto.stock > 0 ? "stock-ok" : "stock-error"
+                      }`}
+                    >
+                      Stock: {producto.stock}
+                    </div>
+                    <div className="producto-info">
+                      <small>
+                        {producto.categoria} - {producto.marca}
+                      </small>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => agregarProducto(producto)}
+                    disabled={producto.stock <= 0}
+                    className={`btn-agregar producto ${
+                      producto.stock <= 0 ? "disabled" : ""
+                    }`}
+                    title={producto.stock <= 0 ? "Sin stock" : "Agregar producto"}
+                  >
+                    <FaPlus />
+                  </button>
                 </div>
-                <button
-                  onClick={() => agregarProducto(producto)}
-                  disabled={producto.stock <= 0}
-                  className={`btn-agregar producto ${
-                    producto.stock <= 0 ? "disabled" : ""
-                  }`}
-                  title="Agregar producto"
-                >
-                  <FaPlus />
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -14,9 +14,18 @@ export class ServiciosController {
     return this.ServicioService.findAll();
   }
 
+  @Get('activos')
+  findActivos(): Promise<Servicio[]> {
+    return this.ServicioService.findActivos();
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Servicio|null> {
-    return this.ServicioService.findOne(id);
+  findOne(@Param('id') id: string): Promise<Servicio> {
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+      throw new Error('ID inválido');
+    }
+    return this.ServicioService.findOne(numericId);
   }
 
   @Post()

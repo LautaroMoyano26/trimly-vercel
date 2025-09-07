@@ -11,12 +11,29 @@ export class ServicioService {
     private ServicioRepository: Repository<Servicio>,
   ) {}
 
-  findAll(): Promise<Servicio[]> {
-    return this.ServicioRepository.find();
+  async findAll(): Promise<Servicio[]> {
+    return this.ServicioRepository.find({
+      order: {
+        servicio: 'ASC'
+      }
+    });
   }
 
-  findOne(id: number): Promise<Servicio | null> {
-    return this.ServicioRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Servicio> {
+    const servicio = await this.ServicioRepository.findOneBy({ id });
+    if (!servicio) {
+      throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
+    }
+    return servicio;
+  }
+
+  async findActivos(): Promise<Servicio[]> {
+    return this.ServicioRepository.find({
+      where: { estado: true },
+      order: {
+        servicio: 'ASC'
+      }
+    });
   }
 
   create(servicio: Partial<Servicio>) {
