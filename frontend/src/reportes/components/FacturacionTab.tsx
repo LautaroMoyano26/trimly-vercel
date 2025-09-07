@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
+import "./FacturacionTab.css";
 
-// Simple interfaces
 interface Producto {
   id: number;
   nombre: string;
   precio: number;
   stock: number;
+}
+
+interface Servicio {
+  id: number;
+  nombre: string;
+  precio: number;
+  estado: boolean;
 }
 
 interface ItemFactura {
@@ -18,12 +25,19 @@ interface ItemFactura {
 }
 
 const FacturacionTab: React.FC = () => {
-  // Mock data for demonstration
   const [productos] = useState<Producto[]>([
     { id: 1, nombre: "Shampoo Premium", precio: 3500, stock: 10 },
     { id: 2, nombre: "Acondicionador", precio: 2800, stock: 15 },
     { id: 3, nombre: "Gel Fijador", precio: 2000, stock: 0 },
     { id: 4, nombre: "Crema para Peinar", precio: 1800, stock: 8 },
+  ]);
+
+  const [servicios] = useState<Servicio[]>([
+    { id: 1, nombre: "Corte de Cabello", precio: 2500, estado: true },
+    { id: 2, nombre: "Peinado", precio: 1800, estado: true },
+    { id: 3, nombre: "Coloración", precio: 4000, estado: true },
+    { id: 4, nombre: "Barba", precio: 1200, estado: true },
+    { id: 5, nombre: "Lavado", precio: 1000, estado: true },
   ]);
 
   const [itemsFactura, setItemsFactura] = useState<ItemFactura[]>([]);
@@ -33,19 +47,12 @@ const FacturacionTab: React.FC = () => {
   const mostrarMensaje = (texto: string, tipo: string) => {
     setMensaje(texto);
     setTipoMensaje(tipo);
-    setTimeout(() => {
-      setMensaje(null);
-    }, 3000);
+    setTimeout(() => setMensaje(null), 3000);
   };
 
-  // Agregar producto con validación de stock
   const agregarProducto = (producto: Producto) => {
-    // Escenario 2: No hay stock disponible
     if (producto.stock <= 0) {
-      mostrarMensaje(
-        `No hay stock disponible para ${producto.nombre}`,
-        "error"
-      );
+      mostrarMensaje(`No hay stock disponible para ${producto.nombre}`, "error");
       return;
     }
 
@@ -54,7 +61,6 @@ const FacturacionTab: React.FC = () => {
     );
 
     if (itemExistente) {
-      // Escenario 3: Verificar que no exceda el stock disponible
       if (itemExistente.cantidad >= itemExistente.stockDisponible) {
         mostrarMensaje(
           `No se puede exceder el stock disponible para ${producto.nombre}`,
@@ -63,7 +69,6 @@ const FacturacionTab: React.FC = () => {
         return;
       }
 
-      // Incrementar cantidad
       setItemsFactura((items) =>
         items.map((item) =>
           item.productoId === producto.id
@@ -72,7 +77,6 @@ const FacturacionTab: React.FC = () => {
         )
       );
     } else {
-      // Escenario 1: Agregar producto nuevo con stock disponible
       setItemsFactura([
         ...itemsFactura,
         {
@@ -88,7 +92,35 @@ const FacturacionTab: React.FC = () => {
     mostrarMensaje(`${producto.nombre} agregado a la factura`, "exito");
   };
 
-  // Incrementar cantidad
+  const agregarServicio = (servicio: Servicio) => {
+    const itemExistente = itemsFactura.find(
+      (item) => item.productoId === servicio.id && item.nombre === servicio.nombre
+    );
+
+    if (itemExistente) {
+      setItemsFactura((items) =>
+        items.map((item) =>
+          item.productoId === servicio.id && item.nombre === servicio.nombre
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
+        )
+      );
+    } else {
+      setItemsFactura([
+        ...itemsFactura,
+        {
+          productoId: servicio.id,
+          nombre: servicio.nombre,
+          cantidad: 1,
+          precioUnitario: servicio.precio,
+          stockDisponible: 10,
+        },
+      ]);
+    }
+
+    mostrarMensaje(`${servicio.nombre} agregado a la factura`, "exito");
+  };
+
   const incrementarCantidad = (productoId: number) => {
     const item = itemsFactura.find((item) => item.productoId === productoId);
     if (!item) return;
@@ -107,7 +139,6 @@ const FacturacionTab: React.FC = () => {
     );
   };
 
-  // Decrementar cantidad
   const decrementarCantidad = (productoId: number) => {
     const item = itemsFactura.find((item) => item.productoId === productoId);
     if (!item) return;
@@ -127,37 +158,24 @@ const FacturacionTab: React.FC = () => {
     }
   };
 
-  // Eliminar producto
   const eliminarProducto = (productoId: number) => {
     setItemsFactura((items) =>
       items.filter((item) => item.productoId !== productoId)
     );
   };
 
-  // Calcular total
   const total = itemsFactura.reduce(
     (sum, item) => sum + item.cantidad * item.precioUnitario,
     0
   );
 
   return (
-    <div style={{ padding: "20px", color: "#fff" }}>
-      {/* Mensaje de notificación */}
+    <div className="facturacion-container">
       {mensaje && (
         <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            right: "20px",
-            padding: "12px 20px",
-            borderRadius: "8px",
-            backgroundColor:
-              tipoMensaje === "error"
-                ? "rgba(255,0,0,0.8)"
-                : "rgba(0,128,0,0.8)",
-            color: "white",
-            zIndex: 1000,
-          }}
+          className={`mensaje-notificacion ${
+            tipoMensaje === "error" ? "error" : "exito"
+          }`}
         >
           {mensaje}
         </div>
@@ -165,35 +183,47 @@ const FacturacionTab: React.FC = () => {
 
       <h2>Sistema de Facturación</h2>
 
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}
-      >
-        {/* Panel de productos */}
-        <div
-          style={{ background: "#222", padding: "20px", borderRadius: "8px" }}
-        >
-          <h3>Productos Disponibles</h3>
+      <div className="paneles">
+        {/* Panel de servicios */}
+        <div className="panel">
+          <h3>Servicios Disponibles</h3>
+          <div>
+            {servicios.filter((s) => s.estado).length === 0 && (
+              <div className="vacio">No hay servicios activos</div>
+            )}
+            {servicios
+              .filter((s) => s.estado)
+              .map((servicio) => (
+                <div key={servicio.id} className="card-item">
+                  <div>
+                    <div className="nombre-item">{servicio.nombre}</div>
+                    <div className="precio-item">${servicio.precio}</div>
+                  </div>
+                  <button
+                    onClick={() => agregarServicio(servicio)}
+                    className="btn-agregar servicio"
+                    title="Agregar servicio"
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
+              ))}
+          </div>
+        </div>
 
+        {/* Panel de productos */}
+        <div className="panel">
+          <h3>Productos Disponibles</h3>
           <div>
             {productos.map((producto) => (
-              <div
-                key={producto.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "12px",
-                  margin: "8px 0",
-                  background: "#333",
-                  borderRadius: "4px",
-                }}
-              >
+              <div key={producto.id} className="card-item">
                 <div>
-                  <div style={{ fontWeight: "bold" }}>{producto.nombre}</div>
-                  <div>Precio: ${producto.precio}</div>
+                  <div className="nombre-item">{producto.nombre}</div>
+                  <div className="precio-item">Precio: ${producto.precio}</div>
                   <div
-                    style={{
-                      color: producto.stock > 0 ? "#8effba" : "#ff8e8e",
-                    }}
+                    className={`stock-item ${
+                      producto.stock > 0 ? "stock-ok" : "stock-error"
+                    }`}
                   >
                     Stock: {producto.stock}
                   </div>
@@ -201,14 +231,10 @@ const FacturacionTab: React.FC = () => {
                 <button
                   onClick={() => agregarProducto(producto)}
                   disabled={producto.stock <= 0}
-                  style={{
-                    background: producto.stock > 0 ? "#4e54c8" : "#555",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "8px",
-                    cursor: producto.stock > 0 ? "pointer" : "not-allowed",
-                  }}
+                  className={`btn-agregar producto ${
+                    producto.stock <= 0 ? "disabled" : ""
+                  }`}
+                  title="Agregar producto"
                 >
                   <FaPlus />
                 </button>
@@ -216,124 +242,70 @@ const FacturacionTab: React.FC = () => {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Panel de factura */}
-        <div
-          style={{ background: "#222", padding: "20px", borderRadius: "8px" }}
-        >
-          <h3>Detalle de Factura</h3>
-
-          {itemsFactura.length === 0 ? (
-            <div
-              style={{ textAlign: "center", padding: "20px", color: "#999" }}
-            >
-              No hay productos agregados
-            </div>
-          ) : (
-            <>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid #444" }}>
-                    <th style={{ textAlign: "left", padding: "8px" }}>
-                      Producto
-                    </th>
-                    <th style={{ textAlign: "center", padding: "8px" }}>
-                      Cantidad
-                    </th>
-                    <th style={{ textAlign: "right", padding: "8px" }}>
-                      Precio
-                    </th>
-                    <th style={{ textAlign: "right", padding: "8px" }}>
-                      Subtotal
-                    </th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {itemsFactura.map((item) => (
-                    <tr
-                      key={item.productoId}
-                      style={{ borderBottom: "1px solid #333" }}
-                    >
-                      <td style={{ padding: "8px" }}>{item.nombre}</td>
-                      <td style={{ textAlign: "center", padding: "8px" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <button
-                            onClick={() => decrementarCantidad(item.productoId)}
-                          >
-                            <FaMinus size={10} />
-                          </button>
-                          <span>
-                            {item.cantidad}{" "}
-                            <small>(max: {item.stockDisponible})</small>
-                          </span>
-                          <button
-                            onClick={() => incrementarCantidad(item.productoId)}
-                            disabled={item.cantidad >= item.stockDisponible}
-                          >
-                            <FaPlus size={10} />
-                          </button>
-                        </div>
-                      </td>
-                      <td style={{ textAlign: "right", padding: "8px" }}>
-                        ${item.precioUnitario}
-                      </td>
-                      <td style={{ textAlign: "right", padding: "8px" }}>
-                        ${item.cantidad * item.precioUnitario}
-                      </td>
-                      <td style={{ padding: "8px" }}>
+      {/* Panel de factura */}
+      <div className="panel">
+        <h3>Detalle de Factura</h3>
+        {itemsFactura.length === 0 ? (
+          <div className="vacio">No hay servicios o productos agregados</div>
+        ) : (
+          <>
+            <table className="tabla-factura">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {itemsFactura.map((item) => (
+                  <tr key={item.productoId + item.nombre}>
+                    <td>{item.nombre}</td>
+                    <td>
+                      <div className="cantidad-controls">
                         <button
-                          onClick={() => eliminarProducto(item.productoId)}
+                          onClick={() => decrementarCantidad(item.productoId)}
                         >
-                          <FaTrash color="red" />
+                          <FaMinus size={10} />
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        <span>
+                          {item.cantidad}{" "}
+                          <small>(max: {item.stockDisponible})</small>
+                        </span>
+                        <button
+                          onClick={() => incrementarCantidad(item.productoId)}
+                          disabled={item.cantidad >= item.stockDisponible}
+                        >
+                          <FaPlus size={10} />
+                        </button>
+                      </div>
+                    </td>
+                    <td>${item.precioUnitario}</td>
+                    <td>${item.cantidad * item.precioUnitario}</td>
+                    <td>
+                      <button
+                        onClick={() => eliminarProducto(item.productoId)}
+                      >
+                        <FaTrash color="red" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "20px",
-                  padding: "12px",
-                  background: "#333",
-                  borderRadius: "4px",
-                }}
-              >
-                <span>Total:</span>
-                <span style={{ fontWeight: "bold", color: "#4e54c8" }}>
-                  ${total}
-                </span>
-              </div>
+            <div className="total-bar">
+              <span>Total:</span>
+              <span className="total">${total}</span>
+            </div>
 
-              <button
-                style={{
-                  display: "block",
-                  width: "100%",
-                  padding: "12px",
-                  marginTop: "20px",
-                  background: "linear-gradient(to right, #4e54c8, #8f94fb)",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                Finalizar Factura
-              </button>
-            </>
-          )}
-        </div>
+            <button className="btn-finalizar">Finalizar Factura</button>
+          </>
+        )}
       </div>
     </div>
   );
