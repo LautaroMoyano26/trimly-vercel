@@ -14,11 +14,18 @@ interface Producto {
 
 interface Servicio {
   id: number;
-  servicio: string; // Cambiamos nombre por servicio para coincidir con la BD
+  servicio: string;
   descripcion: string;
   duracion: number;
   precio: number;
   estado: boolean;
+}
+
+interface Turno {
+  id: number;
+  cliente: { nombre: string };
+  servicio: { servicio: string; precio: number };
+  fecha: string;
 }
 
 interface ItemFactura {
@@ -31,7 +38,8 @@ interface ItemFactura {
 
 const FacturacionTab: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [servicios, setServicios] = useState<Servicio[]>([]); // Ya no inicializamos con datos hardcodeados
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [turnosPendientes, setTurnosPendientes] = useState<Turno[]>([]);
   const [itemsFactura, setItemsFactura] = useState<ItemFactura[]>([]);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<string>("");
@@ -42,6 +50,32 @@ const FacturacionTab: React.FC = () => {
     setTimeout(() => setMensaje(null), 3000);
   };
 
+  // Agregar un turno a la factura
+  const seleccionarTurno = (turno: Turno) => {
+    const itemExistente = itemsFactura.find(
+      (item) => item.productoId === turno.id
+    );
+
+    if (itemExistente) {
+      mostrarMensaje(`${turno.cliente.nombre} - ${turno.servicio.servicio} ya está agregado.`, "error");
+      return;
+    }
+
+    setItemsFactura([
+      ...itemsFactura,
+      {
+        productoId: turno.id, // ID del turno
+        nombre: `${turno.cliente.nombre} - ${turno.servicio.servicio}`, // Nombre del cliente y servicio
+        cantidad: 1, // En este caso, el turno es siempre una unidad
+        precioUnitario: turno.servicio.precio, // Precio del servicio
+        stockDisponible: 999, // Stock no aplicable para turnos, puedes asignar un número alto
+      },
+    ]);
+
+    mostrarMensaje(`${turno.cliente.nombre} - ${turno.servicio.servicio} agregado a la factura`, "exito");
+  };
+
+  // Agregar un producto a la factura
   const agregarProducto = (producto: Producto) => {
     if (producto.stock <= 0) {
       mostrarMensaje(`No hay stock disponible para ${producto.nombre}`, "error");
@@ -84,6 +118,7 @@ const FacturacionTab: React.FC = () => {
     mostrarMensaje(`${producto.nombre} agregado a la factura`, "exito");
   };
 
+  // Agregar un servicio a la factura
   const agregarServicio = (servicio: Servicio) => {
     const itemExistente = itemsFactura.find(
       (item) => item.productoId === servicio.id && item.nombre === servicio.servicio
@@ -113,6 +148,7 @@ const FacturacionTab: React.FC = () => {
     mostrarMensaje(`${servicio.servicio} agregado a la factura`, "exito");
   };
 
+  // Función para incrementar la cantidad de un producto/servicio
   const incrementarCantidad = (productoId: number) => {
     const item = itemsFactura.find((item) => item.productoId === productoId);
     if (!item) return;
@@ -131,11 +167,13 @@ const FacturacionTab: React.FC = () => {
     );
   };
 
+  // Función para decrementar la cantidad de un producto/servicio
   const decrementarCantidad = (productoId: number) => {
     const item = itemsFactura.find((item) => item.productoId === productoId);
     if (!item) return;
 
     if (item.cantidad <= 1) {
+      // Eliminar el producto si la cantidad es 1 y se quiere decrementar
       setItemsFactura((items) =>
         items.filter((item) => item.productoId !== productoId)
       );
@@ -150,18 +188,20 @@ const FacturacionTab: React.FC = () => {
     }
   };
 
+  // Función para eliminar un producto/servicio de la factura
   const eliminarProducto = (productoId: number) => {
     setItemsFactura((items) =>
       items.filter((item) => item.productoId !== productoId)
     );
   };
 
+  // Calcular el total de la factura
   const total = itemsFactura.reduce(
     (sum, item) => sum + item.cantidad * item.precioUnitario,
     0
   );
 
-  // Nuevo useEffect para cargar productos desde el backend
+  // Obtener los productos desde el backend
   useEffect(() => {
     const cargarProductos = async () => {
       try {
@@ -173,7 +213,6 @@ const FacturacionTab: React.FC = () => {
         setProductos(data);
       } catch (error) {
         console.error("Error al cargar productos:", error);
-        // Opcionalmente mostrar mensaje de error
         mostrarMensaje("Error al cargar los productos", "error");
       }
     };
@@ -181,7 +220,7 @@ const FacturacionTab: React.FC = () => {
     cargarProductos();
   }, []);
 
-  // Cargar servicios activos desde el backend
+  // Obtener los servicios activos desde el backend
   useEffect(() => {
     const cargarServicios = async () => {
       try {
@@ -200,6 +239,42 @@ const FacturacionTab: React.FC = () => {
     cargarServicios();
   }, []);
 
+  // Obtener los turnos pendientes de cobro
+  useEffect(() => {
+    const cargarTurnosPendientes = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/turnos");
+        if (!res.ok) {
+          throw new Error("Error al cargar los turnos");
+        }
+        const data = await res.json();
+        setTurnosPendientes(data);
+      } catch (error) {
+        console.error("Error al cargar los turnos:", error);
+        mostrarMensaje("Error al cargar los turnos", "error");
+      }
+    };
+
+    cargarTurnosPendientes();
+  }, []);
+
+  // Calcular la demora de los turnos
+  const calcularDemora = (fechaTurno: string) => {
+    const fechaActual = new Date();
+    const fechaTurnoDate = new Date(fechaTurno);
+    const diferenciaTiempo = fechaActual.getTime() - fechaTurnoDate.getTime();
+    const diasDeDemora = Math.floor(diferenciaTiempo / (1000 * 3600 * 24));
+    return diasDeDemora;
+  };
+
+  // Asignar el color del badge según los días de demora
+  const obtenerColorBadge = (dias: number) => {
+    if (dias <= 0) return "green"; // Hoy
+    if (dias <= 2) return "yellow"; // 1-2 días
+    if (dias <= 7) return "orange"; // 3-7 días
+    return "red"; // Más de 8 días
+  };
+
   return (
     <div className="facturacion-container">
       {mensaje && (
@@ -215,31 +290,38 @@ const FacturacionTab: React.FC = () => {
       <h2>Sistema de Facturación</h2>
 
       <div className="paneles">
-        {/* Panel de servicios */}
+        {/* Panel de turnos pendientes */}
         <div className="panel">
-          <h3>Servicios Disponibles</h3>
+          <h3>Turnos Pendientes de Cobro</h3>
           <div>
-            {servicios.length === 0 ? (
-              <div className="vacio">No hay servicios activos</div>
+            {turnosPendientes.length === 0 ? (
+              <div className="vacio">No hay turnos pendientes de cobro</div>
             ) : (
-              servicios.map((servicio) => (
-                <div key={servicio.id} className="card-item">
-                  <div>
-                    <div className="nombre-item">{servicio.servicio}</div>
-                    <div className="precio-item">${servicio.precio}</div>
-                    <div className="servicio-info">
-                      <small>Duración: {servicio.duracion} min</small>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => agregarServicio(servicio)}
-                    className="btn-agregar servicio"
-                    title="Agregar servicio"
+              turnosPendientes.map((turno) => {
+                const diasDeDemora = calcularDemora(turno.fecha);
+                const colorBadge = obtenerColorBadge(diasDeDemora);
+
+                return (
+                  <div
+                    key={turno.id}
+                    className={`card-item ${
+                      turno.id === itemsFactura.productoId ? "seleccionado" : ""
+                    }`}
+                    onClick={() => seleccionarTurno(turno)}
                   >
-                    <FaPlus />
-                  </button>
-                </div>
-              ))
+                    <div>
+                      <div className="nombre-item">{turno.cliente.nombre}</div>
+                      <div className="precio-item">{turno.servicio.servicio}</div>
+                      <div className="servicio-info">
+                        <small>Fecha: {turno.fecha}</small>
+                      </div>
+                    </div>
+                    <span className={`badge ${colorBadge}`}>
+                      {diasDeDemora} días
+                    </span>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
@@ -284,19 +366,48 @@ const FacturacionTab: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Panel de servicios */}
+        <div className="panel">
+          <h3>Servicios Disponibles</h3>
+          <div>
+            {servicios.length === 0 ? (
+              <div className="vacio">No hay servicios disponibles</div>
+            ) : (
+              servicios.map((servicio) => (
+                <div key={servicio.id} className="card-item">
+                  <div>
+                    <div className="nombre-item">{servicio.servicio}</div>
+                    <div className="precio-item">${servicio.precio}</div>
+                    <div className="servicio-info">
+                      <small>Duración: {servicio.duracion} min</small>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => agregarServicio(servicio)}
+                    className="btn-agregar servicio"
+                    title="Agregar servicio"
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Panel de factura */}
       <div className="panel">
         <h3>Detalle de Factura</h3>
         {itemsFactura.length === 0 ? (
-          <div className="vacio">No hay servicios o productos agregados</div>
+          <div className="vacio">No hay productos ni turnos agregados</div>
         ) : (
           <>
             <table className="tabla-factura">
               <thead>
                 <tr>
-                  <th>Producto</th>
+                  <th>Producto/Servicio</th>
                   <th>Cantidad</th>
                   <th>Precio</th>
                   <th>Subtotal</th>
@@ -305,38 +416,34 @@ const FacturacionTab: React.FC = () => {
               </thead>
               <tbody>
                 {itemsFactura.map((item) => (
-                  <tr key={item.productoId + item.nombre}>
-                    <td>{item.nombre}</td>
-                    <td>
-                      <div className="cantidad-controls">
-                        <button
-                          onClick={() => decrementarCantidad(item.productoId)}
-                        >
-                          <FaMinus size={10} />
-                        </button>
-                        <span>
-                          {item.cantidad}{" "}
-                          <small>(max: {item.stockDisponible})</small>
-                        </span>
-                        <button
-                          onClick={() => incrementarCantidad(item.productoId)}
-                          disabled={item.cantidad >= item.stockDisponible}
-                        >
-                          <FaPlus size={10} />
-                        </button>
-                      </div>
-                    </td>
-                    <td>${item.precioUnitario}</td>
-                    <td>${item.cantidad * item.precioUnitario}</td>
-                    <td>
-                      <button
-                        onClick={() => eliminarProducto(item.productoId)}
-                      >
-                        <FaTrash color="red" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+  <tr key={item.productoId + item.nombre}>
+    <td>{item.nombre}</td>
+    <td>
+      <div className="cantidad-controls">
+        <button
+          onClick={() => decrementarCantidad(item.productoId)}
+          disabled={item.cantidad <= 1} // Deshabilitar decremento si cantidad es 1
+        >
+          <FaMinus size={10} />
+        </button>
+        <span>{item.cantidad}</span> {/* Cantidad centrada */}
+        <button
+          onClick={() => incrementarCantidad(item.productoId)}
+          disabled={item.cantidad >= item.stockDisponible}
+        >
+          <FaPlus size={10} />
+        </button>
+      </div>
+    </td>
+    <td>${item.precioUnitario}</td>
+    <td>${item.cantidad * item.precioUnitario}</td>
+    <td>
+      <button onClick={() => eliminarProducto(item.productoId)}>
+        <FaTrash color="red" />
+      </button>
+    </td>
+  </tr>
+))}
               </tbody>
             </table>
 

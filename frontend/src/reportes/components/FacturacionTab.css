@@ -107,6 +107,33 @@
   color: #ff4d4d;
 }
 
+/* Estilos para turnos pendientes de cobro */
+.badge {
+  padding: 5px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.badge.green {
+  background-color: green;
+  color: white;
+}
+
+.badge.yellow {
+  background-color: yellow;
+  color: black;
+}
+
+.badge.orange {
+  background-color: orange;
+  color: white;
+}
+
+.badge.red {
+  background-color: red;
+  color: white;
+}
+
 .btn-agregar {
   border: none;
   border-radius: 4px;
@@ -152,6 +179,19 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.cantidad-controls span {
+  font-size: 1rem; /* Ajusta el tamaño de la cantidad */
+  text-align: center; /* Asegura que la cantidad esté centrada */
+}
+
+.card-item .cantidad-controls button {
+  padding: 5px 10px; /* Ajuste de los botones */
+}
+
+.card-item .cantidad-controls button:disabled {
+  background: #ccc; /* Deshabilitar los botones si es necesario */
 }
 
 .total-bar {
