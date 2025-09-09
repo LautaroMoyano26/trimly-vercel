@@ -290,8 +290,8 @@ const FacturacionTab: React.FC = () => {
       <h2>Sistema de Facturación</h2>
 
       <div className="paneles">
-        {/* Panel de turnos pendientes */}
-        <div className="panel">
+        {/* Panel de turnos pendientes (ahora ocupará toda la anchura) */}
+        <div className="panel-turnos">
           <h3>Turnos Pendientes de Cobro</h3>
           <div>
             {turnosPendientes.length === 0 ? (
@@ -305,7 +305,7 @@ const FacturacionTab: React.FC = () => {
                   <div
                     key={turno.id}
                     className={`card-item ${
-                      turno.id === itemsFactura.productoId ? "seleccionado" : ""
+                      itemsFactura.some(item => item.productoId === turno.id) ? "seleccionado" : ""
                     }`}
                     onClick={() => seleccionarTurno(turno)}
                   >
@@ -326,78 +326,81 @@ const FacturacionTab: React.FC = () => {
           </div>
         </div>
 
-        {/* Panel de productos */}
-        <div className="panel">
-          <h3>Productos Disponibles</h3>
-          <div>
-            {productos.length === 0 ? (
-              <div className="vacio">No hay productos disponibles</div>
-            ) : (
-              productos.map((producto) => (
-                <div key={producto.id} className="card-item">
-                  <div>
-                    <div className="nombre-item">{producto.nombre}</div>
-                    <div className="precio-item">Precio: ${producto.precio}</div>
-                    <div
-                      className={`stock-item ${
-                        producto.stock > 0 ? "stock-ok" : "stock-error"
-                      }`}
+        {/* Panel para productos y servicios (con dos columnas) */}
+        <div className="panel-productos-servicios">
+          {/* Panel de servicios (ahora a la izquierda) */}
+          <div className="panel">
+            <h3>Servicios Disponibles</h3>
+            <div>
+              {servicios.length === 0 ? (
+                <div className="vacio">No hay servicios disponibles</div>
+              ) : (
+                servicios.map((servicio) => (
+                  <div key={servicio.id} className="card-item">
+                    <div>
+                      <div className="nombre-item">{servicio.servicio}</div>
+                      <div className="precio-item">${servicio.precio}</div>
+                      <div className="servicio-info">
+                        <small>Duración: {servicio.duracion} min</small>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => agregarServicio(servicio)}
+                      className="btn-agregar servicio"
+                      title="Agregar servicio"
                     >
-                      Stock: {producto.stock}
-                    </div>
-                    <div className="producto-info">
-                      <small>
-                        {producto.categoria} - {producto.marca}
-                      </small>
-                    </div>
+                      <FaPlus />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => agregarProducto(producto)}
-                    disabled={producto.stock <= 0}
-                    className={`btn-agregar producto ${
-                      producto.stock <= 0 ? "disabled" : ""
-                    }`}
-                    title={producto.stock <= 0 ? "Sin stock" : "Agregar producto"}
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Panel de servicios */}
-        <div className="panel">
-          <h3>Servicios Disponibles</h3>
-          <div>
-            {servicios.length === 0 ? (
-              <div className="vacio">No hay servicios disponibles</div>
-            ) : (
-              servicios.map((servicio) => (
-                <div key={servicio.id} className="card-item">
-                  <div>
-                    <div className="nombre-item">{servicio.servicio}</div>
-                    <div className="precio-item">${servicio.precio}</div>
-                    <div className="servicio-info">
-                      <small>Duración: {servicio.duracion} min</small>
+          {/* Panel de productos (ahora a la derecha) */}
+          <div className="panel">
+            <h3>Productos Disponibles</h3>
+            <div>
+              {productos.length === 0 ? (
+                <div className="vacio">No hay productos disponibles</div>
+              ) : (
+                productos.map((producto) => (
+                  <div key={producto.id} className="card-item">
+                    <div>
+                      <div className="nombre-item">{producto.nombre}</div>
+                      <div className="precio-item">Precio: ${producto.precio}</div>
+                      <div
+                        className={`stock-item ${
+                          producto.stock > 0 ? "stock-ok" : "stock-error"
+                        }`}
+                      >
+                        Stock: {producto.stock}
+                      </div>
+                      <div className="producto-info">
+                        <small>
+                          {producto.categoria} - {producto.marca}
+                        </small>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => agregarProducto(producto)}
+                      disabled={producto.stock <= 0}
+                      className={`btn-agregar producto ${
+                        producto.stock <= 0 ? "disabled" : ""
+                      }`}
+                      title={producto.stock <= 0 ? "Sin stock" : "Agregar producto"}
+                    >
+                      <FaPlus />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => agregarServicio(servicio)}
-                    className="btn-agregar servicio"
-                    title="Agregar servicio"
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Panel de factura */}
+      {/* Panel de factura (sin cambios) */}
       <div className="panel">
         <h3>Detalle de Factura</h3>
         {itemsFactura.length === 0 ? (
