@@ -8,6 +8,7 @@ import { ServiciosModule } from './servicios/servicios.module';
 import { ProductoModule } from './producto/producto.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { TurnosModule } from './turnos/turnos.module';
+import { FacturacionModule } from './facturacion/facturacion.module';
 //  Hay que agregar un .gitignore para que no se actualice este modulo.
 
 @Module({
@@ -27,6 +28,7 @@ import { TurnosModule } from './turnos/turnos.module';
     UsuariosModule,
     ProductoModule,
     TurnosModule,
+    FacturacionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

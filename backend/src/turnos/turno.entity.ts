@@ -19,6 +19,9 @@ export class Turno {
   @Column({ nullable: true })  
   servicioId: number;
 
+  @Column({ default: 'pendiente' })
+  estado: 'pendiente' | 'cobrado' | 'cancelado';
+
   @ManyToOne(() => Cliente, { eager: true })
   @JoinColumn({ name: 'clienteId' })
   cliente: Cliente;

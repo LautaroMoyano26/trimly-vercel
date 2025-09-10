@@ -23,6 +23,8 @@ interface Servicio {
 
 interface Turno {
   id: number;
+  clienteId: number;
+  servicioId: number;
   cliente: { nombre: string };
   servicio: { servicio: string; precio: number };
   fecha: string;
@@ -275,6 +277,74 @@ const FacturacionTab: React.FC = () => {
     return "red"; // Más de 8 días
   };
 
+  const finalizarFactura = async () => {
+    try {
+      // Obtener clienteId del primer turno seleccionado
+      const turnoItem = itemsFactura.find(item => item.nombre.includes(" - "));
+      let clienteId = null;
+      if (turnoItem) {
+        const turno = turnosPendientes.find(t => t.id === turnoItem.productoId);
+        clienteId = turno?.clienteId;
+      }
+
+      if (!clienteId) {
+        mostrarMensaje("Debes seleccionar al menos un turno para facturar.", "error");
+        return;
+      }
+
+      const detalles = itemsFactura.map(item => {
+        // Si el nombre tiene " - " es un turno/servicio asociado a turno
+        if (item.nombre.includes(" - ")) {
+          const turno = turnosPendientes.find(t => t.id === item.productoId);
+          return {
+            tipo_item: "servicio",
+            itemId: turno?.servicioId ?? Number(item.productoId), // id del servicio real
+            cantidad: Number(item.cantidad),
+            precioUnitario: Number(item.precioUnitario),
+            subtotal: Number(item.cantidad) * Number(item.precioUnitario),
+            turnoId: turno?.id ? Number(turno.id) : undefined
+          };
+        } else if (servicios.some(s => s.id === item.productoId)) {
+          // Es un servicio agregado directamente
+          return {
+            tipo_item: "servicio",
+            itemId: Number(item.productoId), // id del servicio
+            cantidad: Number(item.cantidad),
+            precioUnitario: Number(item.precioUnitario),
+            subtotal: Number(item.cantidad) * Number(item.precioUnitario)
+          };
+        } else {
+          // Es producto
+          return {
+            tipo_item: "producto",
+            itemId: Number(item.productoId),
+            cantidad: Number(item.cantidad),
+            precioUnitario: Number(item.precioUnitario),
+            subtotal: Number(item.cantidad) * Number(item.precioUnitario)
+          };
+        }
+      });
+
+      const payload = {
+        clienteId,
+        detalles
+      };
+
+      const res = await fetch("http://localhost:3000/facturacion/finalizar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Error al finalizar la factura");
+
+      mostrarMensaje("Factura finalizada correctamente", "exito");
+      setItemsFactura([]);
+    } catch (error) {
+      mostrarMensaje("Error al finalizar la factura", "error");
+    }
+  };
+
   return (
     <div className="facturacion-container">
       {mensaje && (
@@ -455,7 +525,9 @@ const FacturacionTab: React.FC = () => {
               <span className="total">${total}</span>
             </div>
 
-            <button className="btn-finalizar">Finalizar Factura</button>
+            <button className="btn-finalizar" onClick={finalizarFactura}>
+              Finalizar Factura
+            </button>
           </>
         )}
       </div>
