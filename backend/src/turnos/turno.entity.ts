@@ -16,7 +16,7 @@ export class Turno {
   @Column()
   clienteId: number;
 
-  @Column({ nullable: true })  
+  @Column({ nullable: true })
   servicioId: number;
 
   @Column({ default: 'pendiente' })

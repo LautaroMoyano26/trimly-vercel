@@ -28,6 +28,7 @@ export class FacturacionService {
     const factura = this.facturaRepo.create({
       clienteId: dto.clienteId,
       estado: 'cobrada',
+      metodoPago: dto.metodoPago,
     });
     await this.facturaRepo.save(factura);
 
@@ -47,27 +48,44 @@ export class FacturacionService {
 
       // Si es producto, descuenta stock
       if (item.tipo_item === 'producto') {
-        await this.productoRepo.decrement({ id: item.itemId }, 'stock', item.cantidad);
+        await this.productoRepo.decrement(
+          { id: item.itemId },
+          'stock',
+          item.cantidad,
+        );
       }
+
       // Si es servicio, suma al contador de realizados
       if (item.tipo_item === 'servicio') {
         if (item.turnoId) {
-          const turno = await this.turnoRepo.findOne({ where: { id: item.turnoId } });
+          const turno = await this.turnoRepo.findOne({
+            where: { id: item.turnoId },
+          });
           if (turno) {
-            await this.servicioRepo.increment({ id: turno.servicioId }, 'realizados', item.cantidad);
+            await this.servicioRepo.increment(
+              { id: turno.servicioId },
+              'realizados',
+              item.cantidad,
+            );
           }
         } else {
-          await this.servicioRepo.increment({ id: item.itemId }, 'realizados', item.cantidad);
+          await this.servicioRepo.increment(
+            { id: item.itemId },
+            'realizados',
+            item.cantidad,
+          );
         }
       }
     }
 
-    // 3. Cambiar estado de turno a cobrado (solo si se envía turnoId en el detalle)
+    // 3. Cambiar estado de turno a cobrado (CORRECCIÓN AQUÍ)
     for (const item of dto.detalles) {
       if (item.tipo_item === 'servicio' && item.turnoId) {
-        const turno = await this.turnoRepo.findOne({ where: { id: item.turnoId } });
+        const turno = await this.turnoRepo.findOne({
+          where: { id: item.turnoId },
+        });
         if (turno) {
-          turno.estado = 'cobrado';
+          turno.estado = 'cobrado'; // ✅ Usar 'estado' en lugar de 'cobrado'
           await this.turnoRepo.save(turno);
         }
       }

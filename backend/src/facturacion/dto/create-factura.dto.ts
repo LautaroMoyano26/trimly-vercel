@@ -1,4 +1,10 @@
-import { IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateFacturaDetalleDto {
@@ -19,7 +25,7 @@ export class CreateFacturaDetalleDto {
 
   @IsOptional()
   @IsNumber()
-  turnoId?: number; // solo para servicios
+  turnoId?: number;
 }
 
 export class CreateFacturaDto {
@@ -29,6 +35,9 @@ export class CreateFacturaDto {
   @IsOptional()
   @IsEnum(['pendiente', 'cobrada', 'cancelada'])
   estado?: 'pendiente' | 'cobrada' | 'cancelada';
+
+  @IsString()
+  metodoPago: string;
 
   @ValidateNested({ each: true })
   @Type(() => CreateFacturaDetalleDto)

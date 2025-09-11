@@ -629,3 +629,54 @@
     font-size: 0.8rem;
   }
 }
+/* Agregar al final del archivo existente */
+
+/* Estilos para cliente bloqueado */
+.cliente-search-input:disabled {
+  background: #2a2a2a;
+  color: #8eb8b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cliente-bloqueado-badge {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+/* Estilos para botones de turno deshabilitados */
+.btn-agregar.turno.disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Ajustar posicionamiento del badge en turnos */
+.panel-turnos .card-item {
+  position: relative;
+  padding-right: 100px; /* Espacio para badge y botón */
+}
+
+.panel-turnos .badge {
+  position: absolute;
+  top: 8px;
+  right: 50px; /* Dejar espacio para el botón */
+}
+
+.panel-turnos .btn-agregar {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+/* Información del cliente bloqueado */
+.cliente-seleccionado.bloqueado {
+  border-left-color: #ff6b6b;
+}
+
+.cliente-seleccionado.bloqueado .cliente-info-card h4 {
+  color: #ff6b6b;
+}

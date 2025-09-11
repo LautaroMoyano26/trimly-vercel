@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { FacturaDetalle } from './factura-detalle.entity';
 
@@ -16,7 +24,14 @@ export class Factura {
   @Column({ default: 'pendiente' })
   estado: 'pendiente' | 'cobrada' | 'cancelada';
 
-  @OneToMany(() => FacturaDetalle, (detalle: FacturaDetalle) => detalle.factura, { cascade: true })
+  @Column()
+  metodoPago: string;
+
+  @OneToMany(
+    () => FacturaDetalle,
+    (detalle: FacturaDetalle) => detalle.factura,
+    { cascade: true },
+  )
   detalles: FacturaDetalle[];
 
   @CreateDateColumn()

@@ -60,6 +60,7 @@ const FacturacionTab: React.FC = () => {
   const [busquedaCliente, setBusquedaCliente] = useState("");
   const [clientesFiltrados, setClientesFiltrados] = useState<Cliente[]>([]);
   const [mostrarDropdownClientes, setMostrarDropdownClientes] = useState(false);
+  const [clienteBloqueado, setClienteBloqueado] = useState(false);
   const [tipoMensaje, setTipoMensaje] = useState<string>("");
   const [metodoPago, setMetodoPago] = useState<string>("Efectivo");
 
@@ -179,12 +180,26 @@ const FacturacionTab: React.FC = () => {
 
   // Limpiar selección de cliente
   const limpiarCliente = () => {
+    // Solo permitir limpiar si no hay turnos en la factura
+    const hayTurnos = itemsFactura.some((item) =>
+      turnosPendientes.some((t) => t.id === item.productoId)
+    );
+
+    if (hayTurnos && clienteBloqueado) {
+      mostrarMensaje(
+        "No puedes cambiar el cliente mientras haya turnos en la factura",
+        "error"
+      );
+      return;
+    }
+
     setClienteSeleccionado(null);
     setBusquedaCliente("");
     setMostrarDropdownClientes(false);
+    setClienteBloqueado(false);
   };
   // Agregar un turno a la factura
-  const seleccionarTurno = (turno: Turno) => {
+  const agregarTurno = (turno: Turno) => {
     const itemExistente = itemsFactura.find(
       (item) => item.productoId === turno.id
     );
@@ -197,14 +212,33 @@ const FacturacionTab: React.FC = () => {
       return;
     }
 
+    // Cargar automáticamente el cliente del turno
+    const clienteDelTurno = clientes.find((c) => c.id === turno.clienteId);
+    if (clienteDelTurno && !clienteSeleccionado) {
+      setClienteSeleccionado(clienteDelTurno);
+      setBusquedaCliente(
+        `${clienteDelTurno.nombre} ${clienteDelTurno.apellido}`
+      );
+      setClienteBloqueado(true); // Bloquear edición del cliente
+    }
+
+    // Si ya hay un cliente seleccionado y es diferente al del turno
+    if (clienteSeleccionado && clienteSeleccionado.id !== turno.clienteId) {
+      mostrarMensaje(
+        "No puedes agregar turnos de diferentes clientes en la misma factura",
+        "error"
+      );
+      return;
+    }
+
     setItemsFactura([
       ...itemsFactura,
       {
-        productoId: turno.id, // ID del turno
-        nombre: `${turno.cliente.nombre} - ${turno.servicio.servicio}`, // Nombre del cliente y servicio
-        cantidad: 1, // En este caso, el turno es siempre una unidad
-        precioUnitario: turno.servicio.precio, // Precio del servicio
-        stockDisponible: 999, // Stock no aplicable para turnos, puedes asignar un número alto
+        productoId: turno.id,
+        nombre: turno.servicio.servicio, // ✅ Solo el nombre del servicio
+        cantidad: 1,
+        precioUnitario: turno.servicio.precio,
+        stockDisponible: 999,
       },
     ]);
 
@@ -422,7 +456,7 @@ const FacturacionTab: React.FC = () => {
     try {
       // Obtener clienteId del primer turno seleccionado
       const turnoItem = itemsFactura.find((item) =>
-        item.nombre.includes(" - ")
+        turnosPendientes.some((t) => t.id === item.productoId)
       );
       let clienteId = null;
       if (turnoItem) {
@@ -442,7 +476,9 @@ const FacturacionTab: React.FC = () => {
 
       const detalles = itemsFactura.map((item) => {
         // Si el nombre tiene " - " es un turno/servicio asociado a turno
-        if (item.nombre.includes(" - ")) {
+        // Verificar si es un turno por su productoId en lugar del nombre
+        const esTurno = turnosPendientes.some((t) => t.id === item.productoId);
+        if (esTurno) {
           const turno = turnosPendientes.find((t) => t.id === item.productoId);
           return {
             tipo_item: "servicio",
@@ -478,6 +514,8 @@ const FacturacionTab: React.FC = () => {
         detalles,
         metodoPago,
       };
+      console.log("Payload enviado:", payload);
+      console.log("Método de pago:", metodoPago);
 
       const res = await fetch("http://localhost:3000/facturacion/finalizar", {
         method: "POST",
@@ -488,9 +526,14 @@ const FacturacionTab: React.FC = () => {
       if (!res.ok) throw new Error("Error al finalizar la factura");
 
       mostrarMensaje("Factura finalizada correctamente", "exito");
+
+      // Limpiar todo el estado
       setItemsFactura([]);
       setMetodoPago("Efectivo");
-      limpiarCliente();
+      setClienteSeleccionado(null);
+      setBusquedaCliente("");
+      setMostrarDropdownClientes(false);
+      setClienteBloqueado(false); // ✅ IMPORTANTE: Desbloquear cliente
     } catch (error) {
       mostrarMensaje("Error al finalizar la factura", "error");
     }
@@ -530,7 +573,7 @@ const FacturacionTab: React.FC = () => {
                         ? "seleccionado"
                         : ""
                     }`}
-                    onClick={() => seleccionarTurno(turno)}
+                    onClick={() => agregarTurno(turno)}
                   >
                     <div>
                       <div className="nombre-item">{turno.cliente.nombre}</div>
@@ -652,20 +695,36 @@ const FacturacionTab: React.FC = () => {
           <div className="cliente-metodo-pago-row">
             {/* Búsqueda de cliente - 50% */}
             <div className="cliente-search-container">
-              <label className="cliente-label">Cliente:</label>
+              <label className="cliente-label">
+                Cliente:
+                {clienteBloqueado && (
+                  <span className="cliente-bloqueado-badge">
+                    (Bloqueado por turno)
+                  </span>
+                )}
+              </label>
               <div className="search-input-container">
                 <input
                   type="text"
-                  placeholder="Buscar cliente por nombre, DNI, teléfono..."
+                  placeholder={
+                    clienteBloqueado
+                      ? "Cliente bloqueado por turno seleccionado"
+                      : "Buscar cliente por nombre, DNI, teléfono..."
+                  }
                   value={busquedaCliente}
                   onChange={(e) => {
-                    setBusquedaCliente(e.target.value);
-                    setMostrarDropdownClientes(true);
+                    if (!clienteBloqueado) {
+                      setBusquedaCliente(e.target.value);
+                      setMostrarDropdownClientes(true);
+                    }
                   }}
-                  onFocus={() => setMostrarDropdownClientes(true)}
+                  onFocus={() =>
+                    !clienteBloqueado && setMostrarDropdownClientes(true)
+                  }
                   className="cliente-search-input"
+                  disabled={clienteBloqueado}
                 />
-                {clienteSeleccionado && (
+                {clienteSeleccionado && !clienteBloqueado && (
                   <button
                     className="clear-cliente-btn"
                     onClick={limpiarCliente}
@@ -676,7 +735,8 @@ const FacturacionTab: React.FC = () => {
                 )}
 
                 {/* Dropdown de clientes */}
-                {mostrarDropdownClientes &&
+                {!clienteBloqueado &&
+                  mostrarDropdownClientes &&
                   busquedaCliente &&
                   clientesFiltrados.length > 0 && (
                     <div className="clientes-dropdown">
@@ -706,7 +766,10 @@ const FacturacionTab: React.FC = () => {
               <label className="metodo-pago-label">Método de Pago:</label>
               <select
                 value={metodoPago}
-                onChange={(e) => setMetodoPago(e.target.value)}
+                onChange={(e) => {
+                  console.log("Método seleccionado:", e.target.value);
+                  setMetodoPago(e.target.value);
+                }}
                 className="metodo-pago-select"
               >
                 <option value="Efectivo">Efectivo</option>
@@ -780,7 +843,9 @@ const FacturacionTab: React.FC = () => {
                         </button>
                       </div>
                       <small className="stock-info">
-                        {!item.nombre.includes(" - ") &&
+                        {!turnosPendientes.some(
+                          (t) => t.id === item.productoId
+                        ) &&
                           !servicios.some((s) => s.id === item.productoId) && (
                             <>
                               max:{" "}
