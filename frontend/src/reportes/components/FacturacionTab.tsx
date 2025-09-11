@@ -12,6 +12,16 @@ interface Producto {
   marca: string;
 }
 
+interface Cliente {
+  id: number;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  email: string;
+  dni: string;
+  activo: boolean;
+}
+
 interface Servicio {
   id: number;
   servicio: string;
@@ -44,7 +54,14 @@ const FacturacionTab: React.FC = () => {
   const [turnosPendientes, setTurnosPendientes] = useState<Turno[]>([]);
   const [itemsFactura, setItemsFactura] = useState<ItemFactura[]>([]);
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [clienteSeleccionado, setClienteSeleccionado] =
+    useState<Cliente | null>(null);
+  const [busquedaCliente, setBusquedaCliente] = useState("");
+  const [clientesFiltrados, setClientesFiltrados] = useState<Cliente[]>([]);
+  const [mostrarDropdownClientes, setMostrarDropdownClientes] = useState(false);
   const [tipoMensaje, setTipoMensaje] = useState<string>("");
+  const [metodoPago, setMetodoPago] = useState<string>("Efectivo");
 
   const mostrarMensaje = (texto: string, tipo: string) => {
     setMensaje(texto);
@@ -52,7 +69,7 @@ const FacturacionTab: React.FC = () => {
     setTimeout(() => setMensaje(null), 3000);
   };
 
-  // Añade esta función después de mostrarMensaje
+  // Función para calcular stock disponible
   const calcularStockDisponible = (productoId: number): number => {
     const producto = productos.find((p) => p.id === productoId);
     if (!producto) return 0;
@@ -67,6 +84,104 @@ const FacturacionTab: React.FC = () => {
 
     // Retornar el stock real disponible
     return producto.stock - cantidadReservada;
+  };
+
+  // Función para cambiar cantidad manualmente
+  const cambiarCantidadManual = (productoId: number, nuevaCantidad: string) => {
+    // Validar que solo contenga números
+    if (!/^\d*$/.test(nuevaCantidad)) {
+      return; // No hacer nada si contiene caracteres no numéricos
+    }
+
+    const cantidad = parseInt(nuevaCantidad) || 0;
+    const item = itemsFactura.find((item) => item.productoId === productoId);
+
+    if (!item) return;
+
+    // Si la cantidad es 0, eliminar el item
+    if (cantidad === 0) {
+      setItemsFactura((items) =>
+        items.filter((item) => item.productoId !== productoId)
+      );
+      return;
+    }
+
+    // Validar que no exceda el stock disponible para productos
+    const esProducto =
+      !item.nombre.includes(" - ") &&
+      !servicios.some((s) => s.id === productoId);
+
+    if (esProducto) {
+      const producto = productos.find((p) => p.id === productoId);
+      const stockTotal = producto?.stock || 0;
+
+      if (cantidad > stockTotal) {
+        mostrarMensaje(
+          `No se puede exceder el stock total disponible (${stockTotal} unidades)`,
+          "error"
+        );
+        return;
+      }
+    } else if (cantidad > item.stockDisponible) {
+      // Para servicios y turnos, usar el límite configurado
+      mostrarMensaje(`No se puede exceder el límite disponible`, "error");
+      return;
+    }
+
+    // Actualizar la cantidad
+    setItemsFactura((items) =>
+      items.map((item) =>
+        item.productoId === productoId ? { ...item, cantidad: cantidad } : item
+      )
+    );
+  };
+  // Cargar clientes
+  useEffect(() => {
+    const cargarClientes = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/clientes");
+        if (!res.ok) throw new Error("Error al cargar clientes");
+        const data = await res.json();
+        const clientesActivos = data.filter((c: Cliente) => c.activo);
+        setClientes(clientesActivos);
+        setClientesFiltrados(clientesActivos);
+      } catch (error) {
+        console.error("Error al cargar clientes:", error);
+        mostrarMensaje("Error al cargar clientes", "error");
+      }
+    };
+
+    cargarClientes();
+  }, []);
+
+  // Filtrar clientes según búsqueda
+  useEffect(() => {
+    const filtrados = clientes.filter((cliente) => {
+      const nombreCompleto =
+        `${cliente.nombre} ${cliente.apellido}`.toLowerCase();
+      const termino = busquedaCliente.toLowerCase();
+      return (
+        nombreCompleto.includes(termino) ||
+        cliente.dni.includes(termino) ||
+        cliente.telefono.includes(termino) ||
+        cliente.email.toLowerCase().includes(termino)
+      );
+    });
+    setClientesFiltrados(filtrados);
+  }, [busquedaCliente, clientes]);
+
+  // Manejar selección de cliente
+  const seleccionarCliente = (cliente: Cliente) => {
+    setClienteSeleccionado(cliente);
+    setBusquedaCliente(`${cliente.nombre} ${cliente.apellido}`);
+    setMostrarDropdownClientes(false);
+  };
+
+  // Limpiar selección de cliente
+  const limpiarCliente = () => {
+    setClienteSeleccionado(null);
+    setBusquedaCliente("");
+    setMostrarDropdownClientes(false);
   };
   // Agregar un turno a la factura
   const seleccionarTurno = (turno: Turno) => {
@@ -359,8 +474,9 @@ const FacturacionTab: React.FC = () => {
       });
 
       const payload = {
-        clienteId,
+        clienteId: clienteSeleccionado?.id || clienteId,
         detalles,
+        metodoPago,
       };
 
       const res = await fetch("http://localhost:3000/facturacion/finalizar", {
@@ -373,6 +489,8 @@ const FacturacionTab: React.FC = () => {
 
       mostrarMensaje("Factura finalizada correctamente", "exito");
       setItemsFactura([]);
+      setMetodoPago("Efectivo");
+      limpiarCliente();
     } catch (error) {
       mostrarMensaje("Error al finalizar la factura", "error");
     }
@@ -526,7 +644,93 @@ const FacturacionTab: React.FC = () => {
 
       {/* Panel de factura (sin cambios) */}
       <div className="panel">
-        <h3>Detalle de Factura</h3>
+        <div className="panel-header">
+          <h3>Detalle de Factura</h3>
+
+          {/* Búsqueda de cliente */}
+          {/* Búsqueda de cliente y método de pago en la misma línea */}
+          <div className="cliente-metodo-pago-row">
+            {/* Búsqueda de cliente - 50% */}
+            <div className="cliente-search-container">
+              <label className="cliente-label">Cliente:</label>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="Buscar cliente por nombre, DNI, teléfono..."
+                  value={busquedaCliente}
+                  onChange={(e) => {
+                    setBusquedaCliente(e.target.value);
+                    setMostrarDropdownClientes(true);
+                  }}
+                  onFocus={() => setMostrarDropdownClientes(true)}
+                  className="cliente-search-input"
+                />
+                {clienteSeleccionado && (
+                  <button
+                    className="clear-cliente-btn"
+                    onClick={limpiarCliente}
+                    title="Limpiar selección"
+                  >
+                    ×
+                  </button>
+                )}
+
+                {/* Dropdown de clientes */}
+                {mostrarDropdownClientes &&
+                  busquedaCliente &&
+                  clientesFiltrados.length > 0 && (
+                    <div className="clientes-dropdown">
+                      {clientesFiltrados.slice(0, 5).map((cliente) => (
+                        <div
+                          key={cliente.id}
+                          className="cliente-option"
+                          onClick={() => seleccionarCliente(cliente)}
+                        >
+                          <div className="cliente-info">
+                            <span className="cliente-nombre">
+                              {cliente.nombre} {cliente.apellido}
+                            </span>
+                            <span className="cliente-detalles">
+                              DNI: {cliente.dni} | Tel: {cliente.telefono}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            {/* Método de pago - 50% */}
+            <div className="metodo-pago-container">
+              <label className="metodo-pago-label">Método de Pago:</label>
+              <select
+                value={metodoPago}
+                onChange={(e) => setMetodoPago(e.target.value)}
+                className="metodo-pago-select"
+              >
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Cuenta corriente">Cuenta corriente</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Información del cliente seleccionado */}
+          {clienteSeleccionado && (
+            <div className="cliente-seleccionado">
+              <div className="cliente-info-card">
+                <h4>
+                  {clienteSeleccionado.nombre} {clienteSeleccionado.apellido}
+                </h4>
+                <p>DNI: {clienteSeleccionado.dni}</p>
+                <p>Tel: {clienteSeleccionado.telefono}</p>
+                <p>Email: {clienteSeleccionado.email}</p>
+              </div>
+            </div>
+          )}
+        </div>
         {itemsFactura.length === 0 ? (
           <div className="vacio">No hay productos ni turnos agregados</div>
         ) : (
@@ -549,18 +753,42 @@ const FacturacionTab: React.FC = () => {
                       <div className="cantidad-controls">
                         <button
                           onClick={() => decrementarCantidad(item.productoId)}
-                          disabled={item.cantidad <= 1} // Deshabilitar decremento si cantidad es 1
+                          disabled={item.cantidad <= 1}
+                          className="cantidad-btn"
                         >
                           <FaMinus size={10} />
                         </button>
-                        <span>{item.cantidad}</span> {/* Cantidad centrada */}
+
+                        <input
+                          type="text"
+                          value={item.cantidad}
+                          onChange={(e) =>
+                            cambiarCantidadManual(
+                              item.productoId,
+                              e.target.value
+                            )
+                          }
+                          className="cantidad-input"
+                        />
+
                         <button
                           onClick={() => incrementarCantidad(item.productoId)}
                           disabled={item.cantidad >= item.stockDisponible}
+                          className="cantidad-btn"
                         >
                           <FaPlus size={10} />
                         </button>
                       </div>
+                      <small className="stock-info">
+                        {!item.nombre.includes(" - ") &&
+                          !servicios.some((s) => s.id === item.productoId) && (
+                            <>
+                              max:{" "}
+                              {calcularStockDisponible(item.productoId) +
+                                item.cantidad}
+                            </>
+                          )}
+                      </small>
                     </td>
                     <td>${item.precioUnitario}</td>
                     <td>${item.cantidad * item.precioUnitario}</td>
@@ -579,7 +807,11 @@ const FacturacionTab: React.FC = () => {
               <span className="total">${total}</span>
             </div>
 
-            <button className="btn-finalizar" onClick={finalizarFactura}>
+            <button
+              className="btn-finalizar"
+              onClick={finalizarFactura}
+              disabled={!clienteSeleccionado || itemsFactura.length === 0}
+            >
               Finalizar Factura
             </button>
           </>
