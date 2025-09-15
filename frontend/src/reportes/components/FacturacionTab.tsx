@@ -38,6 +38,7 @@ interface Turno {
   cliente: { nombre: string };
   servicio: { servicio: string; precio: number };
   fecha: string;
+  estado: string;
 }
 
 interface ItemFactura {
@@ -425,7 +426,9 @@ const FacturacionTab: React.FC = () => {
           throw new Error("Error al cargar los turnos");
         }
         const data = await res.json();
-        setTurnosPendientes(data);
+        // Filtrar solo los turnos con estado 'pendiente'
+        const pendientes = data.filter((t: Turno) => t.estado === 'pendiente');
+        setTurnosPendientes(pendientes);
       } catch (error) {
         console.error("Error al cargar los turnos:", error);
         mostrarMensaje("Error al cargar los turnos", "error");
