@@ -576,9 +576,9 @@ const FacturacionTab: React.FC = () => {
                     onClick={() => agregarTurno(turno)}
                   >
                     <div>
-                      <div className="nombre-item">{turno.cliente.nombre}</div>
+                      <div className="nombre-item"> {turno.cliente?.nombre || "Cliente desconocido"}</div>
                       <div className="precio-item">
-                        {turno.servicio.servicio}
+                        {turno.servicio?.servicio || "Servicio no disponible"}
                       </div>
                       <div className="servicio-info">
                         <small>Fecha: {turno.fecha}</small>
