@@ -1,0 +1,331 @@
+/* Variables CSS para colores */
+:root {
+  --bg-primary: #18181b;
+  --bg-secondary: #27272a;
+  --bg-tertiary: #3f3f46;
+  --text-primary: white;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-cyan: #00e6e6;
+  --accent-purple: #8b47ee;
+  --error-color: #ef4444;
+  --gradient: linear-gradient(
+    135deg,
+    var(--accent-cyan) 0%,
+    var(--accent-purple) 100%
+  );
+}
+
+/* Layout principal - LOGIN CENTRADO */
+.loginContainer {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-primary);
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.formSection {
+  width: 100%;
+  max-width: 28rem;
+  background-color: var(--bg-primary);
+}
+
+.formWrapper {
+  width: 100%;
+}
+
+/* Logo y título */
+.logoSection {
+  margin-bottom: 2rem;
+  text-align: center;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.logoContainer {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: var(--gradient);
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.titleGradient {
+  background: var(--gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+/* Formulario */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: fadeIn 0.5s ease-out 0.2s both;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.input {
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--bg-tertiary);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(139, 71, 238, 0.1);
+}
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Opciones del formulario */
+.formOptions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #52525b;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.checkbox:checked {
+  background-color: var(--accent-purple);
+  border-color: var(--accent-purple);
+}
+
+.checkboxLabel {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Botones */
+.forgotPassword,
+.supportLink {
+  font-size: 0.875rem;
+  color: var(--accent-cyan);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.forgotPassword:hover,
+.supportLink:hover {
+  color: var(--accent-purple);
+}
+
+.forgotPassword:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loginButton {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  background: var(--gradient);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loginButton:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(139, 71, 238, 0.25);
+}
+
+.loginButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading */
+.loadingContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--text-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Mensajes de error */
+.errorMessage {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Información adicional */
+.additionalInfo {
+  margin-top: 1.5rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease-out 0.4s both;
+}
+
+.supportText {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Credenciales demo */
+.demoCredentials {
+  margin-top: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--bg-tertiary);
+  background-color: rgba(39, 39, 42, 0.5);
+  padding: 1rem;
+  animation: fadeIn 0.5s ease-out 0.6s both;
+}
+
+.demoTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.demoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.demoList p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.demoLabel {
+  color: #d4d4d8;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loginContainer {
+    padding: 0.5rem;
+  }
+
+  .formSection {
+    max-width: 100%;
+  }
+}

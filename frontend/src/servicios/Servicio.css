@@ -1,0 +1,98 @@
+.servicio-container {
+  background: #19191d;
+  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+  color: #fff;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 32px 16px 32px 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.nuevo-servicio-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.nuevo-servicio-btn:hover {
+  opacity: 0.85;
+}
+
+
+.estado-badge {
+  background: #0e3e1a;
+  color: #1ed760;
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.table-dark {
+  --bs-table-bg: #232329;
+  --bs-table-striped-bg: #232329;
+  --bs-table-hover-bg: #232329;
+  color: #fff;
+}
+
+.table thead th {
+  color: #b3b3b3;
+  font-weight: bold;
+  font-size: 1.05rem;
+  border-bottom: 1px solid #28282f !important;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #28282f !important;
+  font-size: 1.05rem;
+  transition: background 0.2s;
+}
+
+.table-responsive {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #232329;
+}
+.btn-accion {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.btn-accion.editar:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00b3ff;
+}
+
+.btn-accion.eliminar:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff4f4f;
+}
+.icono-tijera {
+  color: #00E6F6;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.estado-badge-inactivo {
+  background: #4a1515; /* Rojo oscuro */
+  color: #ff4d4d; /* Rojo brillante */
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}

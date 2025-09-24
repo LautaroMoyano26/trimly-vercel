@@ -1,0 +1,683 @@
+.facturacion-container {
+  padding: 20px;
+  color: #fff;
+  width: 100%;
+  min-height: calc(100vh - 60px); /* 60px es el alto aproximado de la navbar */
+  box-sizing: border-box;
+}
+
+.mensaje-notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
+}
+.mensaje-notificacion.error {
+  background-color: rgba(255, 0, 0, 0.8);
+}
+.mensaje-notificacion.exito {
+  background-color: rgba(0, 128, 0, 0.8);
+}
+
+.paneles {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.panel-turnos {
+  grid-column: 1 / -1;
+  background: #222;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.panel-productos-servicios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.panel {
+  background: #222;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.panel > div {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Estilo específico para el panel de turnos pendientes */
+.panel-turnos > div {
+  max-height: 320px; /* Altura para mostrar aproximadamente 4 turnos */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Estilizar el scrollbar */
+.panel > div::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel > div::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.panel > div::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+.panel > div::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Estilo para el scrollbar del panel de turnos pendientes */
+.panel-turnos > div::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-turnos > div::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.panel-turnos > div::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+.panel-turnos > div::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+.vacio {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+.card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 8px 0;
+  background: #2a2a2a;
+  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-2px);
+  background: #333;
+}
+
+.nombre-item {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.precio-item {
+  color: #a259e6;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+.stock-item {
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+.stock-ok {
+  color: #4ade80;
+}
+.stock-error {
+  color: #ff4d4d;
+}
+
+/* Estilos para turnos pendientes de cobro */
+.badge {
+  padding: 5px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.badge.green {
+  background-color: green;
+  color: white;
+}
+
+.badge.yellow {
+  background-color: yellow;
+  color: black;
+}
+
+.badge.orange {
+  background-color: orange;
+  color: white;
+}
+
+.badge.red {
+  background-color: red;
+  color: white;
+}
+
+.btn-agregar {
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-agregar.servicio {
+  background: #a259e6;
+}
+.btn-agregar.servicio:hover {
+  background: #8633d6;
+}
+.btn-agregar.producto {
+  background: #00e6f6;
+}
+.btn-agregar.producto:hover {
+  background: #00c0d6;
+}
+.btn-agregar.disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.tabla-factura {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.tabla-factura th,
+.tabla-factura td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+.tabla-factura th {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+}
+
+.tabla-factura tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+/* Controles de cantidad en la tabla */
+.cantidad-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.cantidad-btn {
+  background: #18181b;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.cantidad-btn:hover:not(:disabled) {
+  background: #323238;
+  transform: scale(1.05);
+}
+
+.cantidad-btn:disabled {
+  color: #6c6c7a;
+  cursor: not-allowed;
+  background: #3a3a43;
+  opacity: 0.5;
+}
+
+.cantidad-input {
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 4px;
+  width: 60px;
+  height: 28px;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.cantidad-input:focus {
+  outline: none;
+  border-color: #00e6f6;
+  box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.3);
+}
+
+/* Eliminar flechas del input number */
+.cantidad-input::-webkit-outer-spin-button,
+.cantidad-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cantidad-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.stock-info {
+  display: block;
+  font-size: 0.7rem;
+  color: #8eb8b8;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.stock-original {
+  color: #888;
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+.total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 16px;
+  background: #333;
+  border-radius: 8px;
+  border-left: 4px solid #00e6f6;
+}
+
+.total {
+  font-weight: bold;
+  color: #00e6f6;
+  font-size: 1.2rem;
+}
+
+.btn-finalizar {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  background: linear-gradient(to right, #a259ff, #00e6f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.btn-finalizar:hover {
+  opacity: 0.9;
+}
+
+.producto-info {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+.servicio-info {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* Botón eliminar en la tabla */
+.tabla-factura button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.tabla-factura button:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .panel-productos-servicios {
+    grid-template-columns: 1fr;
+  }
+
+  .cantidad-controls {
+    min-width: 100px;
+  }
+
+  .cantidad-input {
+    width: 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabla-factura {
+    font-size: 0.9rem;
+  }
+
+  .tabla-factura th,
+  .tabla-factura td {
+    padding: 8px 4px;
+  }
+
+  .cantidad-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .cantidad-input {
+    width: 45px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+}
+/* Agregar al final del archivo existente */
+
+/* Estilos para la búsqueda de cliente */
+.panel-header {
+  margin-bottom: 20px;
+}
+
+.cliente-search-container {
+  margin-bottom: 16px;
+}
+
+.cliente-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.cliente-search-input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.cliente-search-input:focus {
+  outline: none;
+  border-color: #00e6f6;
+  box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.3);
+}
+
+.cliente-search-input::placeholder {
+  color: #8eb8b8;
+}
+
+.clear-cliente-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #8eb8b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.clear-cliente-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Dropdown de clientes */
+.clientes-dropdown {
+  position: static;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 260px;
+  background: #2a2a2a;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 3000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.cliente-option {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  transition: background 0.2s;
+}
+
+.cliente-option:hover {
+  background: #333;
+}
+
+.cliente-option:last-child {
+  border-bottom: none;
+}
+
+.cliente-nombre {
+  display: block;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.cliente-detalles {
+  display: block;
+  font-size: 0.8rem;
+  color: #8eb8b8;
+}
+
+/* Cliente seleccionado */
+.cliente-seleccionado {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border-left: 4px solid #00e6f6;
+}
+
+.cliente-info-card h4 {
+  margin: 0 0 8px 0;
+  color: #00e6f6;
+  font-size: 1.1rem;
+}
+
+.cliente-info-card p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* Botón finalizar deshabilitado */
+.btn-finalizar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive para la búsqueda de cliente */
+@media (max-width: 768px) {
+  .cliente-search-input {
+    font-size: 0.8rem;
+    padding: 10px 35px 10px 10px;
+  }
+
+  .cliente-info-card h4 {
+    font-size: 1rem;
+  }
+
+  .cliente-info-card p {
+    font-size: 0.8rem;
+  }
+}
+/* Estilos para método de pago */
+/* Layout para cliente y método de pago en la misma fila */
+.cliente-metodo-pago-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+/* Modificar cliente-search-container para quitar margin-bottom */
+.cliente-search-container {
+  margin-bottom: 0;
+}
+
+/* Estilos para método de pago como dropdown */
+.metodo-pago-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.metodo-pago-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.metodo-pago-select {
+  padding: 12px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.metodo-pago-select:focus {
+  outline: none;
+  border-color: #a259ff;
+  box-shadow: 0 0 0 2px rgba(162, 89, 255, 0.3);
+}
+
+.metodo-pago-select:hover {
+  border-color: #a259ff;
+  background: #2a2a2a;
+}
+
+/* Estilos para las opciones del select */
+.metodo-pago-select option {
+  background: #18181b;
+  color: #fff;
+  padding: 8px;
+}
+
+/* Responsive para método de pago */
+@media (max-width: 768px) {
+  .cliente-metodo-pago-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .cliente-search-container {
+    margin-bottom: 16px;
+  }
+
+  .metodo-pago-select {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+}
+/* Agregar al final del archivo existente */
+
+/* Estilos para cliente bloqueado */
+.cliente-search-input:disabled {
+  background: #2a2a2a;
+  color: #8eb8b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cliente-bloqueado-badge {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+/* Estilos para botones de turno deshabilitados */
+.btn-agregar.turno.disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Ajustar posicionamiento del badge en turnos */
+.panel-turnos .card-item {
+  position: relative;
+  padding-right: 100px; /* Espacio para badge y botón */
+}
+
+.panel-turnos .badge {
+  position: absolute;
+  top: 8px;
+  right: 50px; /* Dejar espacio para el botón */
+}
+
+.panel-turnos .btn-agregar {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+/* Información del cliente bloqueado */
+.cliente-seleccionado.bloqueado {
+  border-left-color: #ff6b6b;
+}
+
+.cliente-seleccionado.bloqueado .cliente-info-card h4 {
+  color: #ff6b6b;
+}

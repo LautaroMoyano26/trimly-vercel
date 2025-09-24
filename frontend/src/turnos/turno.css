@@ -1,0 +1,554 @@
+/* --- DIA --- */
+.turnos-dia-calendar-section {
+  /* No existe, pero lo agregamos para el layout */
+}
+.turnos-dia-calendar-section {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 32px;
+}
+.turnos-dia-calendar-section > div:first-child {
+  min-width: 340px;
+  max-width: 380px;
+  flex: 0 0 360px;
+  background: none;
+  border-radius: 16px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.turnos-dia-calendar-section > div:last-child {
+  flex: 1;
+  min-width: 320px;
+  background: #232329;
+  border-radius: 16px;
+  border: 1px solid #393940;
+  padding: 32px 32px 24px 32px;
+  box-sizing: border-box;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.turnos-list-section {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 16px;
+  background: none;
+  padding: 0;
+}
+.turnos-list {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.turno-card {
+  background: #393940;
+  border-radius: 12px;
+  margin-bottom: 0;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  box-shadow: none;
+  border: none;
+  transition: none;
+  gap: 0;
+}
+.turno-card-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.turno-card-icon {
+  background: #232329;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.turno-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.turno-card-servicio {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+.turno-card-meta {
+  display: flex;
+  gap: 12px;
+  color: #b3b3b3;
+  font-size: 0.98rem;
+  align-items: center;
+}
+.turno-card-hora {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-cliente {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-notas {
+  margin-top: 6px;
+  color: #a1a1aa;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.turno-card-actions {
+  display: flex;
+  gap: 10px;
+}
+.turno-btn {
+  background: #393940;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 12px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.turno-btn.editar:hover,
+.turno-btn.cancelar:hover {
+  background: #232329;
+  color: #fff;
+}
+.no-turnos-msg {
+  width: 100%;
+  text-align: center;
+  color: #b3b3b3;
+  font-size: 1.15rem;
+  padding: 32px 0;
+  background: none;
+  border-radius: 12px;
+}
+
+@media (max-width: 900px) {
+  .turnos-dia-calendar-section {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .turnos-dia-calendar-section > div:first-child,
+  .turnos-dia-calendar-section > div:last-child {
+    min-width: 0;
+    max-width: 100vw;
+    width: 100%;
+    padding: 0;
+  }
+  .turnos-dia-calendar-section > div:last-child {
+    padding: 18px 8px 12px 8px;
+  }
+}
+/* --- SEMANA --- */
+.turnos-semana-list-section {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.turnos-semana-dia-card {
+  background: #232329;
+  border-radius: 18px;
+  padding: 24px 18px 18px 18px;
+  min-width: 160px;
+  max-width: 180px;
+  flex: 1 1 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 140px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+.turnos-semana-dia-label {
+  color: #b3b3b3;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.turnos-semana-dia-num {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.turnos-semana-sin-turnos {
+  color: #b3b3b3;
+  font-size: 1.05rem;
+  margin-top: 8px;
+}
+.turnos-semana-turnos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.turnos-semana-turno-item {
+  background: #393940;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.turnos-semana-turno-servicio {
+  font-weight: 600;
+  font-size: 1.08rem;
+}
+.turnos-semana-turno-hora {
+  color: #00e6f6;
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+.turnos-semana-turno-cliente {
+  color: #b3b3b3;
+  font-size: 0.97rem;
+}
+
+@media (max-width: 1100px) {
+  .turnos-semana-list-section {
+    gap: 10px;
+  }
+  .turnos-semana-dia-card {
+    min-width: 120px;
+    max-width: 140px;
+    padding: 18px 8px 12px 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .turnos-semana-list-section {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .turnos-semana-dia-card {
+    min-width: 90px;
+    max-width: 100px;
+    padding: 10px 2px 8px 2px;
+    font-size: 0.95rem;
+  }
+  .turnos-semana-dia-label {
+    font-size: 0.98rem;
+  }
+  .turnos-semana-dia-num {
+    font-size: 1.1rem;
+  }
+}
+#titulo {
+  color: #fff;
+}
+
+.turnos-dashboard-container {
+  background: #19191d;
+  min-height: 100vh;
+  width: 100%;
+  color: #fff;
+  box-sizing: border-box;
+  padding: 32px 32px 0 32px;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.turnos-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+.turnos-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.turnos-desc {
+  color: #b3b3b3;
+  margin-bottom: 0;
+}
+
+.nuevo-turno-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.nuevo-turno-btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+  .turnos-dashboard-container {
+    padding: 18px 8px 0 8px;
+  }
+  .turnos-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+  .nuevo-turno-btn {
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .turnos-dashboard-container {
+    padding: 8px 2vw 0 2vw;
+  }
+  .turnos-title {
+    font-size: 1.3rem;
+  }
+  .turnos-list-section {
+    padding: 0;
+  }
+  .turno-card {
+    padding: 12px 2vw;
+    font-size: 0.98rem;
+  }
+  .turno-card-servicio {
+    font-size: 1.05rem;
+  }
+  .turno-card-icon {
+    width: 38px;
+    height: 38px;
+  }
+  .turno-card-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .nuevo-turno-btn {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.turnos-tabs-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.tab-btn {
+  background: #232329;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 16px;
+  padding: 8px 28px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.tab-btn.active {
+  background: #a259ff;
+  color: #fff;
+}
+
+.turnos-date-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.date-nav-btn {
+  background: #232329;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.date-nav-btn:hover {
+  background: #a259ff;
+}
+.turnos-date-label {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.turnos-list-section {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.no-turnos-msg {
+  width: 100%;
+  text-align: center;
+  color: #b3b3b3;
+  font-size: 1.15rem;
+  padding: 48px 0;
+  background: #232329;
+  border-radius: 18px;
+}
+
+.turnos-list {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.turno-card {
+  background: #393940;
+  border-radius: 18px;
+  margin-bottom: 22px;
+  padding: 22px 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s;
+}
+.turno-card-left {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.turno-card-icon {
+  background: #232329;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.turno-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.turno-card-servicio {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.turno-card-meta {
+  display: flex;
+  gap: 18px;
+  color: #b3b3b3;
+  font-size: 1rem;
+  align-items: center;
+}
+.turno-card-hora {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-cliente {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.turno-card-actions {
+  display: flex;
+  gap: 10px;
+}
+.turno-btn {
+  background: #393940;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 12px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.turno-btn.editar:hover {
+  background: #a259ff;
+  color: #fff;
+}
+.turno-btn.cancelar:hover {
+  background: #232329;
+  color: #fff;
+}
+
+.nuevo-turno-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+/* En turno.css */
+.turno-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.turno-btn.disabled:hover {
+  background-color: inherit;
+  transform: none;
+}
