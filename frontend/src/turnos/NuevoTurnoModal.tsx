@@ -15,12 +15,21 @@ interface Servicio {
   estado: boolean;
 }
 
+interface Usuario {
+  id: number;
+  nombre: string;
+  apellido: string;
+  rol: string;
+  activo: boolean;
+}
+
 interface NuevoTurnoModalProps {
   show: boolean;
   onClose: () => void;
   onTurnoCreado: () => Promise<void>;
   clientes: Cliente[];
   servicios: Servicio[];
+  usuarios: Usuario[]; // <-- Nuevo prop
 }
 
 export default function NuevoTurnoModal({
@@ -28,37 +37,35 @@ export default function NuevoTurnoModal({
   onClose,
   onTurnoCreado,
   clientes,
-  servicios
+  servicios,
+  usuarios // <-- Nuevo prop
 }: NuevoTurnoModalProps) {
   const [cliente, setCliente] = useState("");
   const [servicio, setServicio] = useState("");
+  const [usuario, setUsuario] = useState(""); // <-- Nuevo estado
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
   const [errores, setErrores] = useState<{[key:string]: string}>({});
-  
+
   const resetForm = () => {
     setCliente("");
     setServicio("");
+    setUsuario(""); // <-- Nuevo reset
     setFecha("");
     setHora("");
     setNotas("");
   };
 
   if (!show) return null;
-  
-
 
   const handleGuardar = async () => {
     const nuevosErrores: {[key:string]: string} = {};
     if (!cliente) nuevosErrores.cliente = "El cliente es obligatorio";
     if (!servicio) nuevosErrores.servicio = "El servicio es obligatorio";
+    if (!usuario) nuevosErrores.usuario = "El profesional es obligatorio"; // <-- Validación usuario
     if (!fecha) nuevosErrores.fecha = "La fecha es obligatoria";
     if (!hora) nuevosErrores.hora = "La hora es obligatoria";
-    if (fecha && hora) {
-    if (fecha && hora) {
-    }
-  }
     setErrores(nuevosErrores);
 
     if (Object.keys(nuevosErrores).length > 0) return;
@@ -66,6 +73,7 @@ export default function NuevoTurnoModal({
     const turno = {
       clienteId: Number(cliente),
       servicioId: Number(servicio),
+      usuarioId: Number(usuario), // <-- Enviar usuarioId
       fecha,
       hora,
       notas,
@@ -110,30 +118,45 @@ export default function NuevoTurnoModal({
               <label>Cliente</label>
               <select value={cliente} onChange={e => setCliente(e.target.value)}>
                 <option value="">Seleccionar cliente</option>
-                {clientes
-                  .filter( c => c.activo)
+                {(clientes || [])
+                  .filter(c => c.activo)
                   .map(c => (
-                  <option key={c.id} value={c.id}>
-                  {c.nombre} {c.apellido}
-                  </option>
+                    <option key={c.id} value={c.id}>
+                      {c.nombre} {c.apellido}
+                    </option>
                 ))}
               </select>
               {errores.cliente && <p className="error">{errores.cliente}</p>}
             </div>
+
             <div className="form-group">
               <label>Servicio</label>
               <select value={servicio} onChange={e => setServicio(e.target.value)}>
                 <option value="">Seleccionar servicio</option>
-
-                {servicios
-                .filter( s => s.estado)
-                .map(s => (
-                  <option key={s.id} value={s.id}>
-                    {s.servicio}
-                  </option>
+                {(servicios || [])
+                  .filter(s => s.estado)
+                  .map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.servicio}
+                    </option>
                 ))}
               </select>
               {errores.servicio && <p className="error">{errores.servicio}</p>}
+            </div>
+
+            <div className="form-group">
+              <label>Profesional asignado</label>
+              <select value={usuario} onChange={e => setUsuario(e.target.value)}>
+                <option value="">Seleccionar profesional</option>
+                {(usuarios || [])
+                  .filter(u => u.activo && (u.rol === "empleado" || u.rol === "admin")) // <-- Filtrar correctamente
+                  .map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.nombre} {u.apellido} ({u.rol === "admin" ? "Administrador" : "Empleado"})
+                    </option>
+                ))}
+              </select>
+              {errores.usuario && <p className="error">{errores.usuario}</p>}
             </div>
           </div>
 

@@ -14,7 +14,6 @@ export default function Turnos() {
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
   const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // Faltaba este estado
-  // For calendar range selection (up to 2 days)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -24,27 +23,33 @@ export default function Turnos() {
   const [activeTab, setActiveTab] = useState<"dia" | "semana" | "mes">("dia");
   const [clientes, setClientes] = useState<any[]>([]); // Add state for clientes
   const [servicios, setServicios] = useState<any[]>([]); // Add state for servicios
+  const [usuarios, setUsuarios] = useState<any[]>([]); // Add state for usuarios
 
-  // Cargar turnos, clientes y servicios desde la API
   useEffect(() => {
-    // Fetch turnos
+    // --- Fetch turnos ---
     fetch("http://localhost:3000/turnos")
       .then((res) => res.json())
       .then((data) => setTurnos(Array.isArray(data) ? data : []))
       .catch(() => setTurnos([]));
 
-    // Fetch clientes
+    // --- Fetch clientes ---
     fetch("http://localhost:3000/clientes")
       .then((res) => res.json())
       .then((data) => setClientes(Array.isArray(data) ? data : []))
       .catch(() => setClientes([]));
 
-    // Fetch servicios
+    // --- Fetch servicios ---
     fetch("http://localhost:3000/servicios")
       .then((res) => res.json())
       .then((data) => setServicios(Array.isArray(data) ? data : []))
       .catch(() => setServicios([]));
-  }, [showModal, showEditModal, showDeleteModal]); // reload when any modal closes
+
+    // --- Fetch usuarios ---
+    fetch("http://localhost:3000/usuarios")
+      .then((res) => res.json())
+      .then((data) => setUsuarios(Array.isArray(data) ? data : []))
+      .catch(() => setUsuarios([]));
+  }, []); // Se ejecuta solo al montar el componente
 
   // Function to handle edit button click
   const handleEditClick = (turno: any) => {
@@ -85,7 +90,6 @@ export default function Turnos() {
   };
 
   // --- DÍA ---
-  // Calendar range logic
   const isRange = Array.isArray(selectedRange) && selectedRange.length === 2 && selectedRange[1];
   let rangeStart: Date, rangeEnd: Date;
   if (isRange) {
@@ -98,7 +102,6 @@ export default function Turnos() {
     rangeEnd = new Date(selectedDate);
   }
 
-  // Get all dates in range
   const getDatesInRange = (start: Date, end: Date) => {
     const dates = [];
     let current = new Date(start);
@@ -109,17 +112,15 @@ export default function Turnos() {
     }
     return dates;
   };
+
   const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
   const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
-  // Para compatibilidad con el renderizado condicional
   const turnosDelDia = turnosDelRango;
 
-  // For label
   const fechaFormateada = isRange
     ? `${(selectedRange as [Date, Date])[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${(selectedRange as [Date, Date])[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
     : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
-  // Calendar change handler (soporta rango)
   const onCalendarChange = (value: any) => {
     if (!value) {
       const today = new Date();
@@ -138,7 +139,6 @@ export default function Turnos() {
   };
 
   // --- SEMANA ---
-  // Calcular inicio y fin de semana (domingo a sábado)
   const getStartOfWeek = (date: Date) => {
     const d = new Date(date);
     d.setDate(d.getDate() - d.getDay());
@@ -157,20 +157,17 @@ export default function Turnos() {
     d.setDate(d.getDate() + i);
     return d;
   });
-  // Turnos por día de la semana
   const turnosPorDiaSemana = diasSemana.map((dia) => {
     const fecha = dia.toISOString().split("T")[0];
     return turnos.filter((t) => t.fecha === fecha);
   });
 
-  // Navegación de semanas
   const cambiarSemana = (delta: number) => {
     const nuevaFecha = new Date(startOfWeek);
     nuevaFecha.setDate(nuevaFecha.getDate() + delta * 7);
     setSelectedDate(nuevaFecha);
   };
 
-  // Etiquetas de días
   const diasCorto = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 
   return (
@@ -185,19 +182,10 @@ export default function Turnos() {
         </button>
       </div>
       <div className="turnos-tabs-row">
-        <button
-          className={`tab-btn${activeTab === "dia" ? " active" : ""}`}
-          onClick={() => setActiveTab("dia")}
-        >
-          Día
-        </button>
-        <button
-          className={`tab-btn${activeTab === "semana" ? " active" : ""}`}
-          onClick={() => setActiveTab("semana")}
-        >
-          Semana
-        </button>
+        <button className={`tab-btn${activeTab === "dia" ? " active" : ""}`} onClick={() => setActiveTab("dia")}>Día</button>
+        <button className={`tab-btn${activeTab === "semana" ? " active" : ""}`} onClick={() => setActiveTab("semana")}>Semana</button>
       </div>
+
       {activeTab === "dia" && (
         <div className="turnos-dia-calendar-section" style={{ display: "flex", gap: 32, alignItems: "flex-start", width: "100%", flexWrap: "wrap" }}>
           <div style={{ minWidth: 280, maxWidth: 340, flex: "0 0 320px" }}>
@@ -214,15 +202,11 @@ export default function Turnos() {
           </div>
           <div style={{ flex: 1, minWidth: 260 }}>
             <div className="turnos-date-row">
-              <span className="turnos-date-label">
-                {fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}
-              </span>
+              <span className="turnos-date-label">{fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}</span>
             </div>
             <div className="turnos-list-section">
               {turnosDelDia.length === 0 ? (
-                <div className="no-turnos-msg">
-                  No hay turnos programados para este día
-                </div>
+                <div className="no-turnos-msg">No hay turnos programados para este día</div>
               ) : (
                 <ul className="turnos-list">
                   {turnosDelRango.map((turno) => (
@@ -232,13 +216,11 @@ export default function Turnos() {
                           <FaClock size={28} color="#23b3c7" />
                         </div>
                         <div className="turno-card-info">
-                          <div className="turno-card-servicio">
-                            {turno.servicio?.servicio || "EL servicio ya no esta disponible"}
-                          </div>
+                          <div className="turno-card-servicio">{turno.servicio?.servicio || "EL servicio ya no esta disponible"}</div>
                           <div className="turno-card-meta">
                             <span className="turno-card-hora">
                               <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.hora ? `${turno.hora.slice(0,5)} (Estimado)` : "hh:mm (Estimado)"}
+                              {turno.hora ? `${turno.hora.slice(0, 5)} (Estimado)` : "hh:mm (Estimado)"}
                             </span>
                             <span className="turno-card-cliente">
                               <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
@@ -247,9 +229,7 @@ export default function Turnos() {
                           </div>
                           {turno.notas && (
                             <div className="turno-card-notas">
-                              <span style={{ color: "#a1a1aa", fontSize: "0.97rem" }}>
-                                📝 {turno.notas}
-                              </span>
+                              <span style={{ color: "#a1a1aa", fontSize: "0.97rem" }}>📝 {turno.notas}</span>
                             </div>
                           )}
                         </div>
@@ -270,26 +250,20 @@ export default function Turnos() {
           </div>
         </div>
       )}
+
       {activeTab === "semana" && (
         <>
           <div className="turnos-date-row">
-            <button className="date-nav-btn" onClick={() => cambiarSemana(-1)}>
-              &lt;
-            </button>
+            <button className="date-nav-btn" onClick={() => cambiarSemana(-1)}>&lt;</button>
             <span className="turnos-date-label">
-              Semana del {startOfWeek.toLocaleDateString("es-AR")} al{" "}
-              {endOfWeek.toLocaleDateString("es-AR")}
+              Semana del {startOfWeek.toLocaleDateString("es-AR")} al {endOfWeek.toLocaleDateString("es-AR")}
             </span>
-            <button className="date-nav-btn" onClick={() => cambiarSemana(1)}>
-              &gt;
-            </button>
+            <button className="date-nav-btn" onClick={() => cambiarSemana(1)}>&gt;</button>
           </div>
           <div className="turnos-semana-list-section">
             {diasSemana.map((dia, idx) => (
               <div className="turnos-semana-dia-card" key={dia.toISOString()}>
-                <div className="turnos-semana-dia-label">
-                  {diasCorto[dia.getDay()]}
-                </div>
+                <div className="turnos-semana-dia-label">{diasCorto[dia.getDay()]}</div>
                 <div className="turnos-semana-dia-num">{dia.getDate()}</div>
                 {turnosPorDiaSemana[idx].length === 0 ? (
                   <div className="turnos-semana-sin-turnos">Sin turnos</div>
@@ -297,15 +271,9 @@ export default function Turnos() {
                   <ul className="turnos-semana-turnos-list">
                     {turnosPorDiaSemana[idx].map((turno) => (
                       <li key={turno.id} className="turnos-semana-turno-item">
-                        <span className="turnos-semana-turno-servicio">
-                          {turno.servicio?.servicio || "-"}
-                        </span>
-                        <span className="turnos-semana-turno-hora">
-                          {turno.hora}
-                        </span>
-                        <span className="turnos-semana-turno-cliente">
-                          {turno.cliente?.nombre} {turno.cliente?.apellido}
-                        </span>
+                        <span className="turnos-semana-turno-servicio">{turno.servicio?.servicio || "-"}</span>
+                        <span className="turnos-semana-turno-hora">{turno.hora}</span>
+                        <span className="turnos-semana-turno-cliente">{turno.cliente?.nombre} {turno.cliente?.apellido}</span>
                       </li>
                     ))}
                   </ul>
@@ -315,6 +283,7 @@ export default function Turnos() {
           </div>
         </>
       )}
+
       <NuevoTurnoModal
         show={showModal}
         onClose={() => setShowModal(false)}
@@ -326,7 +295,9 @@ export default function Turnos() {
         }}
         clientes={clientes}
         servicios={servicios}
+        usuarios={usuarios} 
       />
+
       <EditarTurnoModal
         show={showEditModal}
         onClose={() => {
@@ -337,7 +308,9 @@ export default function Turnos() {
         turnoToEdit={turnoToEdit}
         clientes={clientes}
         servicios={servicios}
+        usuarios={usuarios} 
       />
+
       <EliminarTurnoModal
         show={showDeleteModal}
         onClose={() => {

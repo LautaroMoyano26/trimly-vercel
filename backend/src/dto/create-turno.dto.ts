@@ -6,6 +6,10 @@ export class CreateTurnoDto {
 
   @IsNumber()
   servicioId: number;
+  
+  @IsOptional()
+  @IsNumber()
+  usuarioId?: number;
 
   @IsDateString()
   fecha: string;

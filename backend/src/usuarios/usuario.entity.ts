@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Turno } from '../turnos/turno.entity'; // Ajusta la ruta si es necesario
 
 @Entity()
 export class Usuario {
@@ -32,4 +33,8 @@ export class Usuario {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fechaCreacion: Date;
+
+  // 🔹 Relación inversa con Turno
+  @OneToMany(() => Turno, turno => turno.usuario)
+  turnos?: Turno[]; // Opcional
 }

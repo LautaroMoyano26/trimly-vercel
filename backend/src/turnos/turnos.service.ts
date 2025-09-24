@@ -6,6 +6,7 @@ import { CreateTurnoDto } from '../dto/create-turno.dto';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
 import { UpdateTurnoDto } from '../dto/update-turno.dto';
+import { Usuario } from '../usuarios/usuario.entity'; // Importa la entidad Usuario
 
 @Injectable()
 export class TurnosService {
@@ -18,6 +19,9 @@ export class TurnosService {
 
     @InjectRepository(Servicio)
     private readonly servicioRepository: Repository<Servicio>,
+
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>, // Inyecta el repositorio de Usuario
   ) {}
 
   async create(createTurnoDto: CreateTurnoDto): Promise<Turno> {
@@ -32,9 +36,19 @@ export class TurnosService {
       throw new NotFoundException('Cliente o servicio no encontrado');
     }
 
+    // Usuario ahora es opcional
+    let usuario: Usuario | null = null; // <-- Cambio aquí
+    if (createTurnoDto.usuarioId) {
+      usuario = await this.usuarioRepository.findOneBy({ id: createTurnoDto.usuarioId });
+      if (!usuario) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+    }
+
     const turno = this.turnoRepository.create({
       cliente,
       servicio,
+      usuario, // puede ser null
       fecha: createTurnoDto.fecha,
       hora: createTurnoDto.hora,
       notas: createTurnoDto.notas, // Change this from notasAdicionales to notas
@@ -45,14 +59,14 @@ export class TurnosService {
 
   async findAll(): Promise<Turno[]> {
     return await this.turnoRepository.find({
-      relations: ['cliente', 'servicio'],
+      relations: ['cliente', 'servicio', 'usuario'], // Incluye usuario en las relaciones
     });
   }
 
   async findOne(id: number): Promise<Turno> {
     const turno = await this.turnoRepository.findOne({
       where: { id },
-      relations: ['cliente', 'servicio'],
+      relations: ['cliente', 'servicio', 'usuario'], // Incluye usuario en las relaciones
     });
     if (!turno) {
       throw new NotFoundException(`Turno con id ${id} no encontrado`);
@@ -94,6 +108,21 @@ export class TurnosService {
         );
       }
       updatedData.servicio = servicio;
+    }
+
+    // Maneja la relación con usuario si usuarioId es provisto
+    if (updateTurnoDto.usuarioId !== undefined) {
+      if (updateTurnoDto.usuarioId === null) {
+        updatedData.usuario = null; // quitar usuario del turno
+      } else {
+        const usuario = await this.usuarioRepository.findOneBy({ id: updateTurnoDto.usuarioId });
+        if (!usuario) {
+          throw new NotFoundException(
+            `Usuario with id ${updateTurnoDto.usuarioId} not found`,
+          );
+        }
+        updatedData.usuario = usuario;
+      }
     }
 
     // Handle direct fields

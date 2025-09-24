@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
+import { Usuario } from '../usuarios/usuario.entity';
 
 @Entity()
 export class Turno {
@@ -30,6 +31,11 @@ export class Turno {
   @JoinColumn({ name: 'servicioId' })
   servicio: Servicio;
 
+  @ManyToOne(() => Usuario, usuario => usuario.turnos, { nullable: true, onDelete: 'SET NULL' })
+@JoinColumn({ name: 'usuarioId' })
+usuario: Usuario | null; // debe incluir explícitamente null
+
+  
   @Column({ type: 'date' })
   fecha: string;
 
