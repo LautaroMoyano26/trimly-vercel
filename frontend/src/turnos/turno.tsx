@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "./calendar-dark.css";
-import { FaPlus, FaClock, FaUser, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus, FaClock, FaUser, FaEdit, FaTrash, FaCut } from "react-icons/fa"; // 👈 Importamos FaCut (tijeras)
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
@@ -170,6 +170,16 @@ export default function Turnos() {
 
   const diasCorto = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 
+  // --- Helper para obtener el nombre del usuario ---
+  const getNombreUsuario = (turno: any) => {
+    if (turno.usuario?.nombre) return turno.usuario.nombre;
+    if (turno.usuarioId) {
+      const u = usuarios.find((us) => us.id === turno.usuarioId);
+      return u ? u.nombre : "Sin profesional";
+    }
+    return "Sin profesional";
+  };
+
   return (
     <div className="turnos-dashboard-container">
       <div className="turnos-header-row">
@@ -226,6 +236,10 @@ export default function Turnos() {
                               <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
                               {turno.cliente?.nombre} {turno.cliente?.apellido}
                             </span>
+                            <span className="turno-card-usuario">
+                              <FaCut size={13} style={{ marginRight: 4, marginBottom: -2 }} /> {/* Ícono de peluquero/a */}
+                              {getNombreUsuario(turno)}
+                            </span>
                           </div>
                           {turno.notas && (
                             <div className="turno-card-notas">
@@ -274,6 +288,10 @@ export default function Turnos() {
                         <span className="turnos-semana-turno-servicio">{turno.servicio?.servicio || "-"}</span>
                         <span className="turnos-semana-turno-hora">{turno.hora}</span>
                         <span className="turnos-semana-turno-cliente">{turno.cliente?.nombre} {turno.cliente?.apellido}</span>
+                        <span className="turnos-semana-turno-usuario">
+                          <FaCut size={13} style={{ marginRight: 4, marginBottom: -2 }} /> {/* Ícono de peluquero/a */}
+                          {getNombreUsuario(turno)}
+                        </span>
                       </li>
                     ))}
                   </ul>
