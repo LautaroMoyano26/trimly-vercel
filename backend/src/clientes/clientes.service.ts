@@ -1,50 +1,79 @@
-// src/clientes/clientes.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cliente } from './cliente.entity'; // Asegúrate de que esta entidad exista y esté definida
-import { CreateClienteDto } from '../dto/create-cliente.dto'; // Asegúrate de que este DTO exista y la ruta sea correcta
-import { UpdateClienteDto } from '../dto/update-cliente.dto'; // Asegúrate de que este DTO exista y la ruta sea correcta
+import { Cliente } from './cliente.entity';
+import { CreateClienteDto } from '../dto/create-cliente.dto';
+import { UpdateClienteDto } from '../dto/update-cliente.dto';
+import { Turno } from '../turnos/turno.entity';
+import { Factura } from '../facturacion/factura.entity';
 
 @Injectable()
 export class ClientesService {
   constructor(
     @InjectRepository(Cliente)
-    private clientesRepository: Repository<Cliente>,
+    private clienteRepo: Repository<Cliente>,
+    @InjectRepository(Turno)
+    private turnoRepo: Repository<Turno>,
+    @InjectRepository(Factura)
+    private facturaRepo: Repository<Factura>,
   ) {}
 
   findAll(): Promise<Cliente[]> {
-    return this.clientesRepository.find();
+    return this.clienteRepo.find();
   }
 
   create(createClienteDto: CreateClienteDto): Promise<Cliente> {
-    const nuevoCliente = this.clientesRepository.create(createClienteDto);
-    return this.clientesRepository.save(nuevoCliente);
+    const nuevoCliente = this.clienteRepo.create(createClienteDto);
+    return this.clienteRepo.save(nuevoCliente);
   }
 
-  // --- ¡¡¡ESTE ES EL MÉTODO QUE NECESITAS ASEGURAR EN ESTE ARCHIVO!!! ---
   async update(
     id: number,
     updateClienteDto: UpdateClienteDto,
   ): Promise<Cliente | undefined> {
-    // 'preload' busca una entidad por ID y aplica los cambios del DTO.
-    // Retorna la entidad con los cambios aplicados, pero aún no guardados.
-    const cliente = await this.clientesRepository.preload({
+    const cliente = await this.clienteRepo.preload({
       id: id,
       ...updateClienteDto,
     });
 
     if (!cliente) {
-      // Si preload no encuentra un cliente con ese ID, devuelve undefined
       return undefined;
     }
 
-    // Si se encontró el cliente, guarda los cambios en la base de datos
-    return this.clientesRepository.save(cliente);
+    return this.clienteRepo.save(cliente);
   }
 
-  // Opcional: un método para encontrar un cliente por ID si lo necesitas en otro lugar
   findOne(id: number): Promise<Cliente | null> {
-    return this.clientesRepository.findOne({ where: { id } });
+    return this.clienteRepo.findOne({ where: { id } });
+  }
+
+  async obtenerTurnosCliente(clienteId: number) {
+    const cliente = await this.clienteRepo.findOne({
+      where: { id: clienteId },
+    });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente con ID ${clienteId} no encontrado`);
+    }
+
+    return await this.turnoRepo.find({
+      where: { clienteId },
+      relations: ['servicio', 'usuario'],
+      order: { fecha: 'DESC', hora: 'DESC' },
+    });
+  }
+
+  async obtenerFacturasCliente(clienteId: number) {
+    const cliente = await this.clienteRepo.findOne({
+      where: { id: clienteId },
+    });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente con ID ${clienteId} no encontrado`);
+    }
+
+    return await this.facturaRepo.find({
+      where: { clienteId },
+      relations: ['detalles'],
+      order: { createdAt: 'DESC' },
+    });
   }
 }

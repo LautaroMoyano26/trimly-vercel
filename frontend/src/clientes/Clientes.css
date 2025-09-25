@@ -94,6 +94,16 @@
   cursor: not-allowed;
 }
 
+.btn-accion.historial {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: white;
+}
+
+.btn-accion.historial:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 230, 246, 0.3);
+}
+
 .table-dark {
   --bs-table-bg: #232329;
   --bs-table-striped-bg: #232329;

@@ -5,13 +5,14 @@ import EditarClienteModal from "./EditarClienteModal";
 import EliminarClienteModal from "../components/EliminarClienteModal";
 import NuevoClienteModal from "./NuevoClienteModal";
 import SuccessModal from "../components/SuccessModal";
+import HistorialClienteModal from "./HistorialClienteModal";
 import {
   FaUserCircle,
   FaPhoneAlt,
   FaEnvelope,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaHistory } from "react-icons/fa";
 
 interface Cliente {
   id: number;
@@ -49,6 +50,10 @@ export default function Clientes() {
     show: boolean;
     message: string;
   }>({ show: false, message: "" });
+  const [mostrarHistorial, setMostrarHistorial] = useState(false);
+  const [clienteHistorial, setClienteHistorial] = useState<Cliente | null>(
+    null
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
@@ -84,6 +89,11 @@ export default function Clientes() {
   const handleDeleteClick = (cliente: Cliente) => {
     setClienteToDelete(cliente);
     setShowDeleteModal(true);
+  };
+
+  const abrirHistorial = (cliente: Cliente) => {
+    setClienteHistorial(cliente);
+    setMostrarHistorial(true);
   };
 
   // Callbacks para mostrar el modal de éxito
@@ -193,6 +203,13 @@ export default function Clientes() {
         >
           <FaTrash />
         </button>
+        <button
+          className="btn-accion historial"
+          onClick={() => abrirHistorial(c)}
+          title="Ver historial"
+        >
+          <FaHistory />
+        </button>
       </>
     ),
   }));
@@ -228,6 +245,11 @@ export default function Clientes() {
         show={successModal.show}
         message={successModal.message}
         onClose={() => setSuccessModal({ show: false, message: "" })}
+      />
+      <HistorialClienteModal
+        show={mostrarHistorial}
+        onClose={() => setMostrarHistorial(false)}
+        cliente={clienteHistorial}
       />
 
       {/* Encabezado y búsqueda */}
