@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./ReportesDashboard.css";
 import { FaFileAlt, FaFileInvoiceDollar, FaFilePdf } from "react-icons/fa";
 import FacturacionTab from "./components/FacturacionTab";
@@ -42,7 +42,7 @@ export default function ReportesDashboard() {
       {/* Content Area - Vacío por ahora */}
       <div className="tab-content">
         {activeTab === "reportes" && (
-          <div className="tab-panel">
+          <div className="tab-panel empty">
             <p className="empty-state">
               Contenido de Reportes - Por implementar
             </p>

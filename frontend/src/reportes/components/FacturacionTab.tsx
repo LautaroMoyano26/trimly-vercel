@@ -797,21 +797,24 @@ const FacturacionTab: React.FC = () => {
             </div>
           )}
         </div>
-        {itemsFactura.length === 0 ? (
+        
+        <div className="panel-content">
+          {itemsFactura.length === 0 ? (
           <div className="vacio">No hay productos ni turnos agregados</div>
         ) : (
           <>
-            <table className="tabla-factura">
-              <thead>
-                <tr>
-                  <th>Producto/Servicio</th>
-                  <th>Cantidad</th>
-                  <th>Precio</th>
-                  <th>Subtotal</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
+            <div className="tabla-wrapper">
+              <table className="tabla-factura">
+                <thead>
+                  <tr>
+                    <th>Producto/Servicio</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
                 {itemsFactura.map((item) => (
                   <tr key={item.productoId + item.nombre}>
                     <td>{item.nombre}</td>
@@ -867,8 +870,9 @@ const FacturacionTab: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
 
             <div className="total-bar">
               <span>Total:</span>
@@ -884,6 +888,7 @@ const FacturacionTab: React.FC = () => {
             </button>
           </>
         )}
+        </div>
       </div>
     </div>
   );

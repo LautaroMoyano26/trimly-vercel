@@ -2,7 +2,18 @@
   padding: 20px;
   color: #fff;
   width: 100%;
-  min-height: calc(100vh - 60px); /* 60px es el alto aproximado de la navbar */
+  height: auto;
+  min-height: 400px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 16px;
+  margin: 0;
+}
+
+.facturacion-container * {
   box-sizing: border-box;
 }
 
@@ -23,22 +34,26 @@
 }
 
 .paneles {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  margin-bottom: 24px;
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
+  flex: 1;
 }
 
 .panel-turnos {
-  grid-column: 1 / -1;
   background: #222;
   padding: 20px;
   border-radius: 8px;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  min-height: 200px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-productos-servicios {
@@ -46,6 +61,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .panel {
@@ -53,20 +71,28 @@
   padding: 20px;
   border-radius: 8px;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  height: auto;
+  min-height: auto;
 }
 
 .panel > div {
-  max-height: 400px;
-  overflow-y: auto;
   padding-right: 10px;
+  box-sizing: border-box;
 }
 
 /* Estilo específico para el panel de turnos pendientes */
 .panel-turnos > div {
+  flex: 1;
   max-height: 320px; /* Altura para mostrar aproximadamente 4 turnos */
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 10px;
+  box-sizing: border-box;
 }
 
 /* Estilizar el scrollbar */
@@ -111,6 +137,10 @@
   text-align: center;
   color: #999;
   padding: 20px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-item {
@@ -204,10 +234,40 @@
   cursor: not-allowed;
 }
 
+.tabla-wrapper {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* Scrollbar para la tabla wrapper */
+.tabla-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tabla-wrapper::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.tabla-wrapper::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+.tabla-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
 .tabla-factura {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  table-layout: auto;
+  box-sizing: border-box;
 }
 
 .tabla-factura th,
@@ -292,6 +352,7 @@
 
 .cantidad-input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .stock-info {
@@ -374,6 +435,7 @@
 @media (max-width: 1024px) {
   .panel-productos-servicios {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .cantidad-controls {
@@ -383,9 +445,47 @@
   .cantidad-input {
     width: 50px;
   }
+
+  .panel-turnos .card-item {
+    padding-right: 100px;
+  }
+
+  .panel-turnos .badge {
+    right: 50px;
+  }
 }
 
 @media (max-width: 768px) {
+  .facturacion-container {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .panel, .panel-turnos {
+    padding: 16px;
+  }
+
+  .panel-header {
+    gap: 12px;
+  }
+
+  .panel-turnos .card-item {
+    padding-right: 80px;
+    padding: 12px 80px 12px 12px;
+  }
+
+  .panel-turnos .badge {
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .panel-turnos .btn-agregar {
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   .tabla-factura {
     font-size: 0.9rem;
   }
@@ -412,6 +512,17 @@
 /* Estilos para la búsqueda de cliente */
 .panel-header {
   margin-bottom: 20px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
 }
 
 .cliente-search-container {
@@ -657,20 +768,24 @@
 /* Ajustar posicionamiento del badge en turnos */
 .panel-turnos .card-item {
   position: relative;
-  padding-right: 100px; /* Espacio para badge y botón */
+  padding-right: 120px; /* Más espacio para badge y botón */
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .panel-turnos .badge {
   position: absolute;
   top: 8px;
-  right: 50px; /* Dejar espacio para el botón */
+  right: 60px; /* Más espacio para el botón */
+  flex-shrink: 0;
 }
 
 .panel-turnos .btn-agregar {
   position: absolute;
-  top: 50%;
+  top: 8px;
   right: 8px;
-  transform: translateY(-50%);
+  flex-shrink: 0;
 }
 
 /* Información del cliente bloqueado */
@@ -680,4 +795,52 @@
 
 .cliente-seleccionado.bloqueado .cliente-info-card h4 {
   color: #ff6b6b;
+}
+
+/* Responsive para móviles pequeños */
+@media (max-width: 480px) {
+  .facturacion-container {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .panel, .panel-turnos {
+    padding: 12px;
+  }
+
+  .panel-header {
+    gap: 10px;
+  }
+
+  .panel-turnos .card-item {
+    padding: 8px 70px 8px 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .panel-turnos .badge {
+    position: static;
+    margin-top: 4px;
+    align-self: flex-end;
+  }
+
+  .panel-turnos .btn-agregar {
+    position: static;
+    margin-top: 8px;
+    align-self: flex-end;
+    transform: none;
+  }
+
+  .card-item {
+    padding: 10px;
+    margin: 6px 0;
+  }
+
+  .nombre-item {
+    font-size: 0.9rem;
+  }
+
+  .precio-item {
+    font-size: 0.85rem;
+  }
 }
