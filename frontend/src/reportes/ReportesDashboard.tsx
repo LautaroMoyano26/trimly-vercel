@@ -2,9 +2,19 @@ import { useState } from "react";
 import "./ReportesDashboard.css";
 import { FaFileAlt, FaFileInvoiceDollar, FaFilePdf } from "react-icons/fa";
 import FacturacionTab from "./components/FacturacionTab";
+import { exportarReporteGeneral } from "../utils/pdfGenerator";
 
 export default function ReportesDashboard() {
   const [activeTab, setActiveTab] = useState("facturacion");
+
+  const handleExportarPDF = async () => {
+    try {
+      await exportarReporteGeneral();
+    } catch (error) {
+      console.error("Error al exportar PDF:", error);
+      alert("Error al generar el PDF del reporte");
+    }
+  };
 
   return (
     <div className="reportes-container">
@@ -16,7 +26,7 @@ export default function ReportesDashboard() {
             Analiza datos y gestiona la facturación
           </p>
         </div>
-        <button className="exportar-pdf-btn">
+        <button className="exportar-pdf-btn" onClick={handleExportarPDF}>
           <FaFilePdf /> Exportar a PDF
         </button>
       </div>

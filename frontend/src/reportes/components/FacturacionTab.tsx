@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTrash, FaFilePdf } from "react-icons/fa";
 import "./FacturacionTab.css";
+import { generarFacturaPDF } from "../../utils/pdfGenerator";
 
 interface Producto {
   id: number;
@@ -457,12 +458,18 @@ const FacturacionTab: React.FC = () => {
 
   const finalizarFactura = async () => {
     try {
-      // Obtener clienteId del primer turno seleccionado
+      // Validar que hay cliente seleccionado
+      if (!clienteSeleccionado) {
+        mostrarMensaje("Debes seleccionar un cliente para facturar.", "error");
+        return;
+      }
+
+      // Obtener clienteId del primer turno seleccionado si no hay cliente seleccionado manualmente
       const turnoItem = itemsFactura.find((item) =>
         turnosPendientes.some((t) => t.id === item.productoId)
       );
-      let clienteId = null;
-      if (turnoItem) {
+      let clienteId: number | undefined = clienteSeleccionado?.id;
+      if (!clienteId && turnoItem) {
         const turno = turnosPendientes.find(
           (t) => t.id === turnoItem.productoId
         );
@@ -471,7 +478,7 @@ const FacturacionTab: React.FC = () => {
 
       if (!clienteId) {
         mostrarMensaje(
-          "Debes seleccionar al menos un turno para facturar.",
+          "Debes seleccionar un cliente para facturar.",
           "error"
         );
         return;
@@ -528,7 +535,21 @@ const FacturacionTab: React.FC = () => {
 
       if (!res.ok) throw new Error("Error al finalizar la factura");
 
-      mostrarMensaje("Factura finalizada correctamente", "exito");
+      // Generar PDF de la factura
+      try {
+        const numeroFactura = generarFacturaPDF({
+          fecha: new Date(),
+          cliente: clienteSeleccionado,
+          items: itemsFactura,
+          metodoPago,
+          total,
+        });
+        
+        mostrarMensaje(`Factura finalizada correctamente. PDF generado: Factura_${numeroFactura}`, "exito");
+      } catch (pdfError) {
+        console.error("Error al generar PDF:", pdfError);
+        mostrarMensaje("Factura finalizada, pero hubo un error al generar el PDF", "error");
+      }
 
       // Limpiar todo el estado
       setItemsFactura([]);
@@ -539,6 +560,46 @@ const FacturacionTab: React.FC = () => {
       setClienteBloqueado(false); // ✅ IMPORTANTE: Desbloquear cliente
     } catch (error) {
       mostrarMensaje("Error al finalizar la factura", "error");
+    }
+  };
+
+  // Función para generar solo el PDF sin finalizar la factura
+  const generarSoloPDF = () => {
+    console.log('=== INICIANDO GENERACIÓN DE PDF ===');
+    
+    if (!clienteSeleccionado) {
+      console.log('Error: No hay cliente seleccionado');
+      mostrarMensaje("Debes seleccionar un cliente para generar el PDF.", "error");
+      return;
+    }
+
+    if (itemsFactura.length === 0) {
+      console.log('Error: No hay items en la factura');
+      mostrarMensaje("Debes agregar al menos un producto o servicio.", "error");
+      return;
+    }
+
+    console.log('Cliente seleccionado:', clienteSeleccionado);
+    console.log('Items factura:', itemsFactura);
+    console.log('Método de pago:', metodoPago);
+    console.log('Total:', total);
+
+    try {
+      console.log('Llamando a generarFacturaPDF...');
+      const numeroFactura = generarFacturaPDF({
+        fecha: new Date(),
+        cliente: clienteSeleccionado,
+        items: itemsFactura,
+        metodoPago,
+        total,
+      });
+      
+      console.log('PDF generado exitosamente, número:', numeroFactura);
+      mostrarMensaje(`PDF generado correctamente: Factura_${numeroFactura}`, "exito");
+    } catch (error) {
+      console.error("Error detallado al generar PDF:", error);
+      console.error("Stack trace:", (error as Error).stack);
+      mostrarMensaje(`Error al generar el PDF: ${(error as Error).message}`, "error");
     }
   };
 
@@ -879,13 +940,24 @@ const FacturacionTab: React.FC = () => {
               <span className="total">${total}</span>
             </div>
 
-            <button
-              className="btn-finalizar"
-              onClick={finalizarFactura}
-              disabled={!clienteSeleccionado || itemsFactura.length === 0}
-            >
-              Finalizar Factura
-            </button>
+            <div className="botones-factura">
+              <button
+                className="btn-generar-pdf"
+                onClick={generarSoloPDF}
+                disabled={!clienteSeleccionado || itemsFactura.length === 0}
+                title="Generar PDF sin finalizar la factura"
+              >
+                <FaFilePdf /> Generar PDF
+              </button>
+              
+              <button
+                className="btn-finalizar"
+                onClick={finalizarFactura}
+                disabled={!clienteSeleccionado || itemsFactura.length === 0}
+              >
+                Finalizar Factura
+              </button>
+            </div>
           </>
         )}
         </div>

@@ -844,3 +844,80 @@
     font-size: 0.85rem;
   }
 }
+
+/* Estilos para los botones de la factura */
+.botones-factura {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.btn-generar-pdf {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(to right, #f39c12, #e74c3c);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: opacity 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-generar-pdf:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-generar-pdf:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-finalizar {
+  flex: 2;
+  display: block;
+  padding: 14px;
+  margin-top: 0;
+  background: linear-gradient(to right, #a259ff, #00e6f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-finalizar:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-finalizar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive para los botones */
+@media (max-width: 768px) {
+  .botones-factura {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-generar-pdf,
+  .btn-finalizar {
+    flex: none;
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+}
