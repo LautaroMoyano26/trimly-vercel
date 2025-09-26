@@ -1,12 +1,14 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
+import { TurnoProducto } from './turno-producto.entity';
 
 @Entity()
 export class Turno {
@@ -26,7 +28,7 @@ export class Turno {
   @JoinColumn({ name: 'clienteId' })
   cliente: Cliente;
 
-  @ManyToOne(() => Servicio, { eager: true, onDelete: 'SET NULL' }) // <- cambio aquí
+  @ManyToOne(() => Servicio, { eager: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'servicioId' })
   servicio: Servicio;
 
@@ -38,4 +40,7 @@ export class Turno {
 
   @Column({ type: 'text', nullable: true })
   notas?: string;
+
+  @OneToMany(() => TurnoProducto, (turnoProducto: TurnoProducto) => turnoProducto.turno, { eager: true })
+  productos: TurnoProducto[];
 }

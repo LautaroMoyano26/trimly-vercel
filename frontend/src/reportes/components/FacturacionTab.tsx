@@ -39,14 +39,23 @@ interface Turno {
   servicio: { servicio: string; precio: number };
   fecha: string;
   estado: string;
+  productos?: Array<{
+    id: number;
+    nombre: string;
+    precio: number;
+    cantidad: number;
+  }>;
 }
 
 interface ItemFactura {
-  productoId: number;
+  productoId: number | string;
   nombre: string;
   cantidad: number;
   precioUnitario: number;
   stockDisponible: number;
+  esTurnoServicio?: boolean;
+  esTurnoProducto?: boolean;
+  productoOriginalId?: number;
 }
 
 const FacturacionTab: React.FC = () => {
@@ -200,54 +209,72 @@ const FacturacionTab: React.FC = () => {
     setClienteBloqueado(false);
   };
   // Agregar un turno a la factura
-  const agregarTurno = (turno: Turno) => {
-    const itemExistente = itemsFactura.find(
-      (item) => item.productoId === turno.id
-    );
+const agregarTurno = (turno: Turno) => {
+  const itemExistente = itemsFactura.find(
+    (item) => item.productoId === turno.id
+  );
 
-    if (itemExistente) {
-      mostrarMensaje(
-        `${turno.cliente.nombre} - ${turno.servicio.servicio} ya está agregado.`,
-        "error"
-      );
-      return;
-    }
-
-    // Cargar automáticamente el cliente del turno
-    const clienteDelTurno = clientes.find((c) => c.id === turno.clienteId);
-    if (clienteDelTurno && !clienteSeleccionado) {
-      setClienteSeleccionado(clienteDelTurno);
-      setBusquedaCliente(
-        `${clienteDelTurno.nombre} ${clienteDelTurno.apellido}`
-      );
-      setClienteBloqueado(true); // Bloquear edición del cliente
-    }
-
-    // Si ya hay un cliente seleccionado y es diferente al del turno
-    if (clienteSeleccionado && clienteSeleccionado.id !== turno.clienteId) {
-      mostrarMensaje(
-        "No puedes agregar turnos de diferentes clientes en la misma factura",
-        "error"
-      );
-      return;
-    }
-
-    setItemsFactura([
-      ...itemsFactura,
-      {
-        productoId: turno.id,
-        nombre: turno.servicio.servicio, // ✅ Solo el nombre del servicio
-        cantidad: 1,
-        precioUnitario: turno.servicio.precio,
-        stockDisponible: 999,
-      },
-    ]);
-
+  if (itemExistente) {
     mostrarMensaje(
-      `${turno.cliente.nombre} - ${turno.servicio.servicio} agregado a la factura`,
-      "exito"
+      `${turno.cliente.nombre} - ${turno.servicio.servicio} ya está agregado.`,
+      "error"
     );
-  };
+    return;
+  }
+
+  // Cargar automáticamente el cliente del turno
+  const clienteDelTurno = clientes.find((c) => c.id === turno.clienteId);
+  if (clienteDelTurno && !clienteSeleccionado) {
+    setClienteSeleccionado(clienteDelTurno);
+    setBusquedaCliente(
+      `${clienteDelTurno.nombre} ${clienteDelTurno.apellido}`
+    );
+    setClienteBloqueado(true);
+  }
+
+  // Si ya hay un cliente seleccionado y es diferente al del turno
+  if (clienteSeleccionado && clienteSeleccionado.id !== turno.clienteId) {
+    mostrarMensaje(
+      "No puedes agregar turnos de diferentes clientes en la misma factura",
+      "error"
+    );
+    return;
+  }
+
+  // Agregar el servicio del turno
+  const nuevosItems = [
+    {
+      productoId: turno.id,
+      nombre: `${turno.servicio.servicio} (Turno)`,
+      cantidad: 1,
+      precioUnitario: turno.servicio.precio,
+      stockDisponible: 999,
+      esTurnoServicio: true,
+    }
+  ];
+
+  // Agregar productos del turno si los hay
+  if (turno.productos && turno.productos.length > 0) {
+    turno.productos.forEach(producto => {
+      nuevosItems.push({
+        productoId: `turno-producto-${turno.id}-${producto.id}` as any,
+        nombre: `${producto.nombre} (Turno)`,
+        cantidad: producto.cantidad,
+        precioUnitario: producto.precio,
+        stockDisponible: producto.cantidad,
+        esTurnoProducto: true,
+        productoOriginalId: producto.id,
+      });
+    });
+  }
+
+  setItemsFactura([...itemsFactura, ...nuevosItems]);
+
+  mostrarMensaje(
+    `Turno de ${turno.cliente.nombre} agregado a la factura`,
+    "exito"
+  );
+};
 
   // Agregar un producto a la factura
   const agregarProducto = (producto: Producto) => {
@@ -476,9 +503,19 @@ const finalizarFactura = async () => {
     }
 
     const detalles = itemsFactura.map((item) => {
-      // Verificar si es un turno por su productoId
-      const esTurno = turnosPendientes.some((t) => t.id === item.productoId);
-      if (esTurno) {
+      // Si es un producto de turno
+      if (item.esTurnoProducto) {
+        return {
+          tipo_item: "producto",
+          itemId: item.productoOriginalId!,
+          cantidad: Number(item.cantidad),
+          precioUnitario: Number(item.precioUnitario),
+          subtotal: Number(item.cantidad) * Number(item.precioUnitario),
+        };
+      }
+      
+      // Si es un servicio de turno
+      if (item.esTurnoServicio) {
         const turno = turnosPendientes.find((t) => t.id === item.productoId);
         return {
           tipo_item: "servicio",
@@ -488,8 +525,10 @@ const finalizarFactura = async () => {
           subtotal: Number(item.cantidad) * Number(item.precioUnitario),
           turnoId: turno?.id ? Number(turno.id) : undefined,
         };
-      } else if (servicios.some((s) => s.id === item.productoId)) {
-        // Es un servicio agregado directamente
+      }
+      
+      // Si es un servicio agregado directamente
+      if (servicios.some((s) => s.id === item.productoId)) {
         return {
           tipo_item: "servicio",
           itemId: Number(item.productoId),
@@ -498,7 +537,7 @@ const finalizarFactura = async () => {
           subtotal: Number(item.cantidad) * Number(item.precioUnitario),
         };
       } else {
-        // Es producto
+        // Es un producto agregado directamente
         return {
           tipo_item: "producto",
           itemId: Number(item.productoId),
@@ -514,8 +553,8 @@ const finalizarFactura = async () => {
       detalles,
       metodoPago,
     };
+    
     console.log("Payload enviado:", payload);
-    console.log("Método de pago:", metodoPago);
 
     const res = await fetch("http://localhost:3000/facturacion/finalizar", {
       method: "POST",
