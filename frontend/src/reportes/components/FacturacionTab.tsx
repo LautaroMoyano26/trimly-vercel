@@ -455,92 +455,93 @@ const FacturacionTab: React.FC = () => {
     return "red"; // Más de 8 días
   };
 
-  const finalizarFactura = async () => {
-    try {
-      // Obtener clienteId del primer turno seleccionado
-      const turnoItem = itemsFactura.find((item) =>
-        turnosPendientes.some((t) => t.id === item.productoId)
+const finalizarFactura = async () => {
+  try {
+    // Verificar que haya un cliente seleccionado
+    if (!clienteSeleccionado) {
+      mostrarMensaje(
+        "Debes seleccionar un cliente para facturar.",
+        "error"
       );
-      let clienteId = null;
-      if (turnoItem) {
-        const turno = turnosPendientes.find(
-          (t) => t.id === turnoItem.productoId
-        );
-        clienteId = turno?.clienteId;
-      }
-
-      if (!clienteId) {
-        mostrarMensaje(
-          "Debes seleccionar al menos un turno para facturar.",
-          "error"
-        );
-        return;
-      }
-
-      const detalles = itemsFactura.map((item) => {
-        // Si el nombre tiene " - " es un turno/servicio asociado a turno
-        // Verificar si es un turno por su productoId en lugar del nombre
-        const esTurno = turnosPendientes.some((t) => t.id === item.productoId);
-        if (esTurno) {
-          const turno = turnosPendientes.find((t) => t.id === item.productoId);
-          return {
-            tipo_item: "servicio",
-            itemId: turno?.servicioId ?? Number(item.productoId), // id del servicio real
-            cantidad: Number(item.cantidad),
-            precioUnitario: Number(item.precioUnitario),
-            subtotal: Number(item.cantidad) * Number(item.precioUnitario),
-            turnoId: turno?.id ? Number(turno.id) : undefined,
-          };
-        } else if (servicios.some((s) => s.id === item.productoId)) {
-          // Es un servicio agregado directamente
-          return {
-            tipo_item: "servicio",
-            itemId: Number(item.productoId), // id del servicio
-            cantidad: Number(item.cantidad),
-            precioUnitario: Number(item.precioUnitario),
-            subtotal: Number(item.cantidad) * Number(item.precioUnitario),
-          };
-        } else {
-          // Es producto
-          return {
-            tipo_item: "producto",
-            itemId: Number(item.productoId),
-            cantidad: Number(item.cantidad),
-            precioUnitario: Number(item.precioUnitario),
-            subtotal: Number(item.cantidad) * Number(item.precioUnitario),
-          };
-        }
-      });
-
-      const payload = {
-        clienteId: clienteSeleccionado?.id || clienteId,
-        detalles,
-        metodoPago,
-      };
-      console.log("Payload enviado:", payload);
-      console.log("Método de pago:", metodoPago);
-
-      const res = await fetch("http://localhost:3000/facturacion/finalizar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error("Error al finalizar la factura");
-
-      mostrarMensaje("Factura finalizada correctamente", "exito");
-
-      // Limpiar todo el estado
-      setItemsFactura([]);
-      setMetodoPago("Efectivo");
-      setClienteSeleccionado(null);
-      setBusquedaCliente("");
-      setMostrarDropdownClientes(false);
-      setClienteBloqueado(false); // ✅ IMPORTANTE: Desbloquear cliente
-    } catch (error) {
-      mostrarMensaje("Error al finalizar la factura", "error");
+      return;
     }
-  };
+
+    // Verificar que haya items en la factura
+    if (itemsFactura.length === 0) {
+      mostrarMensaje(
+        "Debes agregar al menos un producto o servicio para facturar.",
+        "error"
+      );
+      return;
+    }
+
+    const detalles = itemsFactura.map((item) => {
+      // Verificar si es un turno por su productoId
+      const esTurno = turnosPendientes.some((t) => t.id === item.productoId);
+      if (esTurno) {
+        const turno = turnosPendientes.find((t) => t.id === item.productoId);
+        return {
+          tipo_item: "servicio",
+          itemId: turno?.servicioId ?? Number(item.productoId),
+          cantidad: Number(item.cantidad),
+          precioUnitario: Number(item.precioUnitario),
+          subtotal: Number(item.cantidad) * Number(item.precioUnitario),
+          turnoId: turno?.id ? Number(turno.id) : undefined,
+        };
+      } else if (servicios.some((s) => s.id === item.productoId)) {
+        // Es un servicio agregado directamente
+        return {
+          tipo_item: "servicio",
+          itemId: Number(item.productoId),
+          cantidad: Number(item.cantidad),
+          precioUnitario: Number(item.precioUnitario),
+          subtotal: Number(item.cantidad) * Number(item.precioUnitario),
+        };
+      } else {
+        // Es producto
+        return {
+          tipo_item: "producto",
+          itemId: Number(item.productoId),
+          cantidad: Number(item.cantidad),
+          precioUnitario: Number(item.precioUnitario),
+          subtotal: Number(item.cantidad) * Number(item.precioUnitario),
+        };
+      }
+    });
+
+    const payload = {
+      clienteId: clienteSeleccionado.id,
+      detalles,
+      metodoPago,
+    };
+    console.log("Payload enviado:", payload);
+    console.log("Método de pago:", metodoPago);
+
+    const res = await fetch("http://localhost:3000/facturacion/finalizar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error("Error al finalizar la factura");
+
+    mostrarMensaje("Factura finalizada correctamente", "exito");
+
+    // Limpiar todo el estado
+    setItemsFactura([]);
+    setMetodoPago("Efectivo");
+    setClienteSeleccionado(null);
+    setBusquedaCliente("");
+    setMostrarDropdownClientes(false);
+    setClienteBloqueado(false);
+
+    // Recargar datos para actualizar stock y turnos
+    window.location.reload();
+  } catch (error) {
+    console.error("Error al finalizar factura:", error);
+    mostrarMensaje("Error al finalizar la factura", "error");
+  }
+};
 
   return (
     <div className="facturacion-container">

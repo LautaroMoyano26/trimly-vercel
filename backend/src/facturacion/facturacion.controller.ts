@@ -8,6 +8,7 @@ export class FacturacionController {
 
   @Post('finalizar')
   async finalizarFactura(@Body() dto: CreateFacturaDto) {
+    console.log('DTO recibido:', JSON.stringify(dto, null, 2)); // Debug temporal
     return await this.facturacionService.finalizarFactura(dto);
   }
 }

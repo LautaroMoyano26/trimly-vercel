@@ -1,36 +1,61 @@
-import React, { useState } from 'react';
-import { BarChart, DollarSign } from 'lucide-react';
-import { ReportesView } from './components/ReportesView';
-import './ReportesDashboard.css';
+import React, { useState } from "react";
+import { FaFilePdf } from "react-icons/fa";
+import "./ReportesDashboard.css";
+import FacturacionTab from "./components/FacturacionTab";
+import { ReportesView } from "./components/ReportesView";
 
-export const ReportesDashboard: React.FC = () => {
-  const [mainTab, setMainTab] = useState<'reportes' | 'facturacion'>('reportes');
+const ReportesDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<"reportes" | "facturacion">("reportes");
+
+  const handleExportPDF = () => {
+    // Implementar exportación PDF
+    console.log("Exportar PDF");
+  };
 
   return (
     <div className="reportes-container">
       <div className="reportes-header">
-        <h1>Reportes y Facturación</h1>
-        <p>Análisis detallado y sistema de facturación</p>
-      </div>
-
-      <div className="main-tabs">
-        <button
-          className={`main-tab-button ${mainTab === 'reportes' ? 'active' : ''}`}
-          onClick={() => setMainTab('reportes')}
-        >
-          <BarChart size={16} /> Reportes
-        </button>
-        <button
-          className={`main-tab-button ${mainTab === 'facturacion' ? 'active' : ''}`}
-          onClick={() => setMainTab('facturacion')}
-        >
-          <DollarSign size={16} /> Facturación
+        <div className="header-left">
+          <h1 className="reportes-title">Reportes</h1>
+          <p className="reportes-description">
+            Analiza el rendimiento de tu barbería con reportes detallados
+          </p>
+        </div>
+        <button className="exportar-pdf-btn" onClick={handleExportPDF}>
+          <FaFilePdf />
+          Exportar PDF
         </button>
       </div>
 
-      <div className="main-content-area">
-        {mainTab === 'reportes' ? <ReportesView /> : <FacturacionView />}
+      <div className="tabs-container">
+        <button
+          className={`tab-button ${activeTab === "reportes" ? "active" : ""}`}
+          onClick={() => setActiveTab("reportes")}
+        >
+          Reportes
+        </button>
+        <button
+          className={`tab-button ${activeTab === "facturacion" ? "active" : ""}`}
+          onClick={() => setActiveTab("facturacion")}
+        >
+          Facturación
+        </button>
+      </div>
+
+      <div className="tab-content">
+        {activeTab === "reportes" && (
+          <div className="tab-panel">
+            <ReportesView />
+          </div>
+        )}
+        {activeTab === "facturacion" && (
+          <div className="tab-panel">
+            <FacturacionTab />
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+export default ReportesDashboard;

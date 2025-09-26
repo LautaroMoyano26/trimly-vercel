@@ -7,7 +7,7 @@ import LoginPage from "./loginpage/loginpage";
 import ProductosDashboard from "./stock/ProductosDashboard.tsx";
 import Usuarios from "./usuarios/Usuarios";
 import Turnos from "./turnos/turno";
-import { ReportesDashboard } from "./reportes/ReportesDashboard";
+import ReportesDashboard from "./reportes/ReportesDashboard"; // ✅ AGREGAR IMPORT
 
 // ✅ CAMBIAR A sessionStorage para que no persista
 const isAuthenticated = () => {
@@ -177,10 +177,10 @@ export default function App() {
         />
 
         {/* Redirección por defecto */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/clientes" replace />} />
         
         {/* Ruta catch-all para rutas no encontradas */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/clientes" replace />} />
       </Routes>
     </BrowserRouter>
   );

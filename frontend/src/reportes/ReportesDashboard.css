@@ -1,191 +1,155 @@
 .reportes-container {
-  padding: 2rem;
-  color: #e0e0e0;
-  background-color: #19191d;
+  background: #19191d;
+  min-height: 100vh;
   height: 100vh;
+  width: 100%;
+  color: #fff;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 32px 16px;
   overflow-y: auto;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
 }
 
-.reportes-header h1 {
-  font-size: 2rem;
+/* Header */
+.reportes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.reportes-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  color: #fff;
+}
+
+.reportes-description {
+  color: #b3b3b3;
   margin: 0;
+  font-size: 1rem;
+}
+
+.exportar-pdf-btn {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 24px;
+  font-size: 1rem;
   font-weight: 600;
-}
-
-.reportes-header p {
-  color: #a0a0a0;
-  margin-bottom: 1.5rem;
-}
-
-.main-tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.main-tab-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid #3c3c43;
-  background-color: transparent;
-  color: #a0a0a0;
-  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-}
-
-.main-tab-button:hover {
-  background-color: #2c2c2e;
-  color: #fff;
-}
-
-.main-tab-button.active {
-  background-color: #2c2c2e;
-  color: #fff;
-  border-color: #4a4a50;
-}
-
-.main-content-area {
-  /* Este contenedor es para el contenido que cambia */
-}
-
-.periodo-selector {
-  background-color: #212125;
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
-
-.periodo-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 8px;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.periodo-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 500;
+.exportar-pdf-btn:hover {
+  opacity: 0.85;
 }
 
-.periodo-inputs {
+/* Tabs */
+.tabs-container {
   display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: #232329;
+  padding: 6px;
+  border-radius: 12px;
+  width: fit-content;
 }
 
-.input-group {
+.tab-button {
+  background: transparent;
+  color: #b3b3b3;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+}
+
+/* Content */
+.tab-content {
+  background: #232329;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #393940;
+  min-height: 400px;
+}
+
+.tab-panel {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.input-group label {
-  font-size: 0.85rem;
-  color: #a0a0a0;
+/* Responsive */
+@media (max-width: 768px) {
+  .reportes-container {
+    padding: 16px 8px;
+  }
+
+  .reportes-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .exportar-pdf-btn {
+    align-self: flex-end;
+  }
+
+  .reportes-title {
+    font-size: 1.8rem;
+  }
+
+  .tabs-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tab-button {
+    flex: 1;
+    text-align: center;
+  }
+
+  .tab-content {
+    padding: 24px 16px;
+  }
 }
 
-.input-group input[type="date"] {
-  background-color: #333;
-  border: 1px solid #444;
-  color: #e0e0e0;
-  padding: 0.5rem;
-  border-radius: 6px;
-  font-family: inherit;
-}
+@media (max-width: 480px) {
+  .tabs-container {
+    flex-direction: column;
+    gap: 8px;
+  }
 
-.generate-report-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(90deg, #00e6e6, #5a4fcf);
-  transition: opacity 0.2s;
-  margin-left: auto;
-}
-
-.generate-report-button:hover {
-  opacity: 0.9;
-}
-
-.generate-report-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.periodo-display {
-  background-color: #333;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #c0c0c0;
-}
-
-.report-content {
-  background-color: #212125;
-  padding: 1.5rem;
-  border-radius: 12px;
-}
-
-.report-tabs {
-  display: flex;
-  border-bottom: 1px solid #333;
-}
-
-.report-tab-button {
-  padding: 0.75rem 1.5rem;
-  background: none;
-  border: none;
-  color: #a0a0a0;
-  cursor: pointer;
-  font-size: 1rem;
-  position: relative;
-}
-
-.report-tab-button.active {
-  color: #fff;
-  font-weight: 600;
-}
-
-.report-tab-button.active::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #5a4fcf;
-}
-
-.facturacion-content {
-  background-color: #212125;
-  padding: 3rem;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.loading-message,
-.error-message {
-  text-align: center;
-  padding: 2rem;
-  background-color: #212125;
-  border-radius: 12px;
-  font-size: 1.1rem;
-}
-
-.error-message {
-  color: #ff6b6b;
+  .tab-button {
+    width: 100%;
+  }
 }

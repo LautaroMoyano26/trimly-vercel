@@ -5,12 +5,11 @@ import { AppService } from './app.service';
 import { join } from 'path';
 import { ClientesModule } from './clientes/clientes.module';
 import { ServiciosModule } from './servicios/servicios.module';
-import { ProductoModule } from './producto/producto.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { ProductoModule } from './producto/producto.module';
 import { TurnosModule } from './turnos/turnos.module';
 import { FacturacionModule } from './facturacion/facturacion.module';
 import { ReportesModule } from './reportes/reportes.module';
-//  Hay que agregar un .gitignore para que no se actualice este modulo.
 
 @Module({
   imports: [

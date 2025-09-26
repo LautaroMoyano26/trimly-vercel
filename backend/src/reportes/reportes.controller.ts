@@ -18,6 +18,20 @@ export class ReportesController {
     );
   }
 
+  @Get('completo')
+  async obtenerReporteCompleto(
+    @Query('fechaInicio') fechaInicio: string,
+    @Query('fechaFin') fechaFin: string,
+  ) {
+    const fechaInicioLimpia = fechaInicio.split('T')[0];
+    const fechaFinLimpia = fechaFin.split('T')[0];
+    
+    return await this.reportesService.generarReporteCompleto(
+      fechaInicioLimpia,
+      fechaFinLimpia
+    );
+  }
+
   @Get('facturacion')
   async obtenerFacturacionPorPeriodo(
     @Query('fechaInicio') fechaInicio: string,

@@ -1,0 +1,419 @@
+.reportes-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #fff;
+}
+
+/* Sección de Selección de Período */
+.period-selector-card {
+  background: rgba(39, 39, 42, 0.5);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #27272a;
+}
+
+.period-selector-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.period-selector-title {
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.period-selector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  color: #a1a1aa;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+}
+
+.date-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  background: #27272a;
+  color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #8b47ee;
+}
+
+.generate-report-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00e6e6 0%, #8b47ee 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+  height: fit-content;
+}
+
+.generate-report-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.generate-report-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.period-indicator {
+  background: rgba(63, 63, 70, 0.5);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #3f3f46;
+  margin-top: 16px;
+}
+
+.period-indicator-text {
+  color: #a1a1aa;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.period-date {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Sistema de Pestañas */
+.tabs-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(39, 39, 42, 0.5);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #27272a;
+}
+
+.tab-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tab-servicios-active {
+  background: #8b47ee !important;
+  color: white !important;
+}
+
+.tab-productos-active {
+  background: #00e6e6 !important;
+  color: white !important;
+}
+
+.tab-inactive {
+  background: transparent;
+  color: #a1a1aa;
+}
+
+.tab-inactive:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Contenido de Pestañas */
+.tab-content {
+  background: rgba(39, 39, 42, 0.5);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #27272a;
+  flex: 1;
+}
+
+.content-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 0 24px 0;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Items individuales */
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgba(63, 63, 70, 0.3);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.item-card:hover {
+  background: rgba(63, 63, 70, 0.5);
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle.servicios {
+  background: rgba(139, 71, 238, 0.1);
+}
+
+.icon-circle.productos {
+  background: rgba(0, 230, 230, 0.1);
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-name {
+  font-weight: 500;
+  color: #fff;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.item-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+.item-right {
+  text-align: right;
+}
+
+.item-amount {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Fila de totales */
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.total-row.servicios {
+  background: rgba(139, 71, 238, 0.1);
+  border: 1px solid rgba(139, 71, 238, 0.2);
+}
+
+.total-row.productos {
+  background: rgba(0, 230, 230, 0.1);
+  border: 1px solid rgba(0, 230, 230, 0.2);
+}
+
+.total-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.total-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.total-icon.servicios {
+  background: rgba(139, 71, 238, 0.2);
+}
+
+.total-icon.productos {
+  background: rgba(0, 230, 230, 0.2);
+}
+
+.total-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.total-title {
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.total-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+.total-right {
+  text-align: right;
+}
+
+.total-amount {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.total-amount.servicios {
+  color: #8b47ee;
+}
+
+.total-amount.productos {
+  color: #00e6e6;
+}
+
+.total-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #a1a1aa;
+}
+
+/* Estado vacío */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: #a1a1aa;
+}
+
+.empty-state p {
+  margin: 16px 0 0 0;
+  font-size: 1rem;
+}
+
+/* Loading */
+.loading-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #a1a1aa;
+  font-size: 1.125rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .period-selector-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .generate-report-button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .period-selector-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .item-card {
+    padding: 12px;
+  }
+
+  .item-left {
+    gap: 12px;
+  }
+
+  .icon-circle,
+  .total-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .content-title {
+    font-size: 1.125rem;
+  }
+
+  .item-amount,
+  .total-amount {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-button {
+    font-size: 0.875rem;
+    padding: 10px 16px;
+  }
+
+  .item-card {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .total-row {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
