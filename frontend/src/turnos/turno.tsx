@@ -14,6 +14,7 @@ export default function Turnos() {
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
   const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // Faltaba este estado
+  // For calendar range selection (up to 2 days)
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -121,6 +122,7 @@ export default function Turnos() {
     ? `${(selectedRange as [Date, Date])[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${(selectedRange as [Date, Date])[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
     : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
+  // Calendar change handler (soporta rango)
   const onCalendarChange = (value: any) => {
     if (!value) {
       const today = new Date();
@@ -139,6 +141,7 @@ export default function Turnos() {
   };
 
   // --- SEMANA ---
+  // Calcular inicio y fin de semana (domingo a sábado)
   const getStartOfWeek = (date: Date) => {
     const d = new Date(date);
     d.setDate(d.getDate() - d.getDay());
@@ -162,6 +165,7 @@ export default function Turnos() {
     return turnos.filter((t) => t.fecha === fecha);
   });
 
+  // Navegación de semanas
   const cambiarSemana = (delta: number) => {
     const nuevaFecha = new Date(startOfWeek);
     nuevaFecha.setDate(nuevaFecha.getDate() + delta * 7);
@@ -301,7 +305,6 @@ export default function Turnos() {
           </div>
         </>
       )}
-
       <NuevoTurnoModal
         show={showModal}
         onClose={() => setShowModal(false)}

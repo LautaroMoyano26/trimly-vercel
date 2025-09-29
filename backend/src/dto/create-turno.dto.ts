@@ -1,23 +1,48 @@
-import { IsNumber, IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsArray, ValidateNested, IsInt, IsNumber, IsDateString, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class CreateTurnoProductoDto {
+  @Type(() => Number)
+  @IsInt()
+  productoId: number;
+
+  @Type(() => Number)
+  @IsInt()
+  cantidad: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  precioUnitario: number;
+}
 
 export class CreateTurnoDto {
-  @IsNumber()
+  @Type(() => Number)
+  @IsInt()
   clienteId: number;
 
-  @IsNumber()
-  servicioId: number;
-  
+  @Type(() => Number)
   @IsOptional()
-  @IsNumber()
-  usuarioId?: number;
+  @IsInt()
+  servicioId?: number;
+  
+  @Type(() => Number)
+  @IsOptional()
+  @IsInt()
+  usuarioId?: number; 
 
   @IsDateString()
   fecha: string;
-  
+
   @IsString()
   hora: string;
 
   @IsOptional()
   @IsString()
   notas?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateTurnoProductoDto)
+  productos?: CreateTurnoProductoDto[];
 }

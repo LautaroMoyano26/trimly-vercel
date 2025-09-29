@@ -3,12 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
 import { Usuario } from '../usuarios/usuario.entity';
-
+import { TurnoProducto } from './turno-producto.entity';
 @Entity()
 export class Turno {
   @PrimaryGeneratedColumn()
@@ -44,4 +45,8 @@ usuario: Usuario | null; // debe incluir explícitamente null
 
   @Column({ type: 'text', nullable: true })
   notas?: string;
+
+  @OneToMany(() => TurnoProducto, turnoProducto => turnoProducto.turno, { cascade: true })
+  productos: TurnoProducto[];
+  
 }
