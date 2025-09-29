@@ -7,10 +7,10 @@ import { TurnoProducto } from './turno-producto.entity';
 import { Cliente } from '../clientes/cliente.entity';
 import { Servicio } from '../servicios/servicio.entity';
 import { Producto } from '../producto/producto.entity';
-
+import { Usuario } from '../usuarios/usuario.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Turno, TurnoProducto, Cliente, Servicio, Producto]),
+    TypeOrmModule.forFeature([Turno, TurnoProducto, Cliente, Servicio, Producto, Usuario]),
   ],
   controllers: [TurnosController],
   providers: [TurnosService],

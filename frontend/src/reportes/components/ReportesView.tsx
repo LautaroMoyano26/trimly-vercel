@@ -123,7 +123,7 @@ export const ReportesView: React.FC = () => {
     }).format(amount);
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes?: number) => {
     if (!minutes) return '30m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
