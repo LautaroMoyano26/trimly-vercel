@@ -1,0 +1,103 @@
+.servicios-report-container {
+  margin-top: 1.5rem;
+}
+
+.servicios-report-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #e0e0e0;
+}
+
+.servicios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.servicio-item,
+.servicios-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2a2a2e;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+}
+
+.servicio-left,
+.servicios-total-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.servicio-icon,
+.servicios-total-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+.servicio-info h4,
+.servicios-total-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.servicio-info p,
+.servicios-total-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a0a0a0;
+}
+
+.servicio-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.servicio-ingresos {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: right;
+}
+
+.servicio-tendencia {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+}
+
+/* Fila de totales */
+.servicios-total {
+  background-color: #1a3a3a; /* Verde oscuro */
+  border: 1px solid #00e6e6;
+  margin-top: 1rem;
+}
+
+.servicios-total-right {
+  text-align: right;
+}
+
+.servicios-total-amount {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #00e6e6;
+}
+
+.servicios-total-label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a0a0a0;
+}

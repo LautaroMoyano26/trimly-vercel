@@ -48,6 +48,9 @@ interface ItemFactura {
   cantidad: number;
   precioUnitario: number;
   stockDisponible: number;
+  esTurnoServicio?: boolean;
+  esTurnoProducto?: boolean;
+  productoOriginalId?: number;
 }
 
 const FacturacionTab: React.FC = () => {
