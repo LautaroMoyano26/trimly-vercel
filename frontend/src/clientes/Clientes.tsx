@@ -12,7 +12,7 @@ import {
   FaEnvelope,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { FaEdit, FaTrash, FaHistory } from "react-icons/fa";
+import { FaEdit, FaTrash, FaClipboardList } from "react-icons/fa";
 
 interface Cliente {
   id: number;
@@ -208,7 +208,7 @@ export default function Clientes() {
           onClick={() => abrirHistorial(c)}
           title="Ver historial"
         >
-          <FaHistory />
+          <FaClipboardList />
         </button>
       </>
     ),

@@ -168,3 +168,173 @@
 .form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
   filter: invert(60%); 
 }
+
+/* Estilos para el dropdown/popup del time picker con scroll */
+.form-group input[type="time"] {
+  scrollbar-width: thin;
+  scrollbar-color: #a259ff #18181B;
+}
+
+/* Estilos específicos para el dropdown que aparece al hacer clic */
+.form-group input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0%); 
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
+  filter: invert(60%); 
+}
+
+/* Mejoras para el scroll del popup de selección de tiempo */
+.form-group input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #a259ff #232329;
+}
+
+/* Para navegadores webkit - mejora el scroll del dropdown */
+.form-group input[type="time"]::-webkit-list-button {
+  scrollbar-width: thin;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+/* Estilos para el contenedor del time picker en móviles y desktop */
+input[type="time"]::-webkit-datetime-edit {
+  overflow: visible;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  overflow: visible;
+}
+
+/* Estilos para el selector de hora personalizado */
+.custom-time-selector {
+  position: relative;
+  width: 100%;
+}
+
+.time-input-display {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: #18181B;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.time-input-display:hover {
+  background: #232329;
+}
+
+.time-input-display span {
+  color: #fff;
+}
+
+.time-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #27272A;
+  border: 1px solid #333;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  padding: 16px;
+  margin-top: 4px;
+}
+
+.time-columns {
+  display: flex;
+  gap: 16px;
+}
+
+.time-column {
+  flex: 1;
+}
+
+.time-column h4 {
+  text-align: center;
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.time-list {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #18181B;
+  
+  /* Estilo del scrollbar personalizado */
+  scrollbar-width: thin;
+  scrollbar-color: #a259ff #18181B;
+}
+
+.time-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.time-list::-webkit-scrollbar-track {
+  background: #18181B;
+  border-radius: 4px;
+}
+
+.time-list::-webkit-scrollbar-thumb {
+  background: #a259ff;
+  border-radius: 4px;
+}
+
+.time-list::-webkit-scrollbar-thumb:hover {
+  background: #8633d6;
+}
+
+.time-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  transition: background 0.2s;
+  border-bottom: 1px solid #333;
+}
+
+.time-option:last-child {
+  border-bottom: none;
+}
+
+.time-option:hover {
+  background: #333;
+}
+
+.time-option:active {
+  background: #a259ff;
+}
+
+.time-actions {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.time-close-btn {
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.time-close-btn:hover {
+  background: #18181B;
+}

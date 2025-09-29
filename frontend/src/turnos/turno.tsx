@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "./calendar-dark.css";
 import { FaPlus, FaClock, FaUser, FaEdit, FaTrash, FaCut } from "react-icons/fa"; // 👈 Importamos FaCut (tijeras)
@@ -312,7 +312,7 @@ export default function Turnos() {
           const res = await fetch("http://localhost:3000/turnos");
           const data = await res.json();
           setTurnos(Array.isArray(data) ? data : []);
-          setShowModal(false);
+          // Ya no cerramos el modal aquí, se cierra desde el SuccessModal
         }}
         clientes={clientes}
         servicios={servicios}

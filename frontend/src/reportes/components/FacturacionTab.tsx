@@ -666,7 +666,7 @@ const FacturacionTab: React.FC = () => {
           {/* Panel de servicios (ahora a la izquierda) */}
           <div className="panel">
             <h3>Servicios Disponibles</h3>
-            <div>
+            <div className="panel-content-scroll">
               {servicios.length === 0 ? (
                 <div className="vacio">No hay servicios disponibles</div>
               ) : (
@@ -695,7 +695,7 @@ const FacturacionTab: React.FC = () => {
           {/* Panel de productos (ahora a la derecha) */}
           <div className="panel">
             <h3>Productos Disponibles</h3>
-            <div>
+            <div className="panel-content-scroll">
               {productos.length === 0 ? (
                 <div className="vacio">No hay productos disponibles</div>
               ) : (
@@ -714,11 +714,9 @@ const FacturacionTab: React.FC = () => {
                         }`}
                       >
                         Stock: {calcularStockDisponible(producto.id)}
-                        {calcularStockDisponible(producto.id) !==
-                          producto.stock && (
+                        {calcularStockDisponible(producto.id) !== producto.stock && (
                           <span className="stock-original">
-                            {" "}
-                            (de {producto.stock})
+                            {" "} (de {producto.stock})
                           </span>
                         )}
                       </div>
@@ -750,10 +748,9 @@ const FacturacionTab: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Panel de factura (sin cambios) */}
-      <div className="panel">
+        {/* Panel de factura (sin cambios) */}
+        <div className="panel">
         <div className="panel-header">
           <h3>Detalle de Factura</h3>
 
@@ -963,6 +960,7 @@ const FacturacionTab: React.FC = () => {
             </div>
           </>
         )}
+        </div>
         </div>
       </div>
     </div>
