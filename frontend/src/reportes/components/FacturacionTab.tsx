@@ -36,7 +36,7 @@ interface Turno {
   id: number;
   clienteId: number;
   servicioId: number;
-  cliente: { nombre: string };
+  cliente: { nombre: string,apellido: string };
   servicio: { servicio: string; precio: number };
   fecha: string;
   estado: string;
@@ -643,7 +643,7 @@ const FacturacionTab: React.FC = () => {
                     onClick={() => agregarTurno(turno)}
                   >
                     <div>
-                      <div className="nombre-item"> {turno.cliente?.nombre || "Cliente desconocido"}</div>
+                     <div className="nombre-item">{clientes.find(c => c.id === turno.clienteId)?.nombre + " " + clientes.find(c => c.id === turno.clienteId)?.apellido || "Cliente desconocido"}</div>
                       <div className="precio-item">
                         {turno.servicio?.servicio || "Servicio no disponible"}
                       </div>

@@ -132,3 +132,35 @@
   background-color: rgba(255, 0, 0, 0.1);
   color: #ff4f4f;
 }
+.tabla-productos-wrapper {
+  max-height: 400px; /* Ajusta según la altura que quieras */
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding-right: 8px; /* Para que el scrollbar no tape contenido */
+}
+
+/* Scrollbar moderno */
+.tabla-productos-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tabla-productos-wrapper::-webkit-scrollbar-track {
+  background: #18181B;
+  border-radius: 4px;
+}
+
+.tabla-productos-wrapper::-webkit-scrollbar-thumb {
+  background: #888888;;
+  border-radius: 4px;
+}
+
+.tabla-productos-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Firefox */
+.tabla-productos-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color:  #888888 #18181B;
+}

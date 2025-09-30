@@ -74,114 +74,115 @@ export default function ProductosDashboard() {
   );
 
   return (
-    <div className="productos-dashboard-container">
-      {/* ✅ AGREGAR SUCCESS MODAL */}
-      <SuccessModal
-        show={successModal.show}
-        message={successModal.message}
-        onClose={() => setSuccessModal({show: false, message: ""})}
-      />
+   <div className="productos-dashboard-container">
+  {/* ✅ AGREGAR SUCCESS MODAL */}
+  <SuccessModal
+    show={successModal.show}
+    message={successModal.message}
+    onClose={() => setSuccessModal({show: false, message: ""})}
+  />
 
-      <div className="dashboard-header">
-        <h1>Gestión de Stock</h1>
-        <div className="dashboard-actions">
-          <button 
-            className="nuevo-producto-btn"
-            onClick={() => setShowModal(true)}
-          >
-            + Nuevo producto
-          </button>
-        </div>
-      </div>
-
-      <input
-        type="text"
-        placeholder="Buscar productos..."
-        className="busqueda-input"
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
-      />
-
-      <table className="productos-table">
-        <thead>
-          <tr>
-            <th><FaBoxOpen className="icono-producto" /> Producto</th>
-            <th>Categoría</th>
-            <th>Marca</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productosFiltrados.map((p) => (
-            <tr key={p.id}>
-              <td>{p.nombre}</td>
-              <td>
-                <span className="categoria-badge">{p.categoria}</span>
-              </td>
-              <td>{p.marca}</td>
-              <td>${p.precio}</td>
-              <td>{p.stock}</td>
-              <td>
-                <span
-                  className={`estado-badge ${
-                    p.estado === "Alto"
-                      ? "estado-alto"
-                      : p.estado === "Medio"
-                      ? "estado-medio"
-                      : "estado-bajo"
-                  }`}
-                >
-                  {p.estado}
-                </span>
-              </td>
-              <td>
-                <button
-                  className="btn-accion editar"
-                  onClick={() => {
-                    setProductoAEditar(p);
-                    setShowEditarModal(true);
-                  }}
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  className="btn-accion eliminar"
-                  onClick={() => {
-                    setProductoAEliminar(p);
-                    setShowEliminarModal(true);
-                  }}
-                >
-                  <FaTrash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* ✅ ACTUALIZAR MODALES PARA USAR LAS NUEVAS FUNCIONES */}
-      <NuevoProductoModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onProductoCreado={handleProductoCreado}
-      />
-
-      <EditarProductoModal
-        show={showEditarModal}
-        onClose={() => setShowEditarModal(false)}
-        producto={productoAEditar}
-        onProductoEditado={handleProductoEditado}
-      />
-
-      <EliminarProductoModal
-        show={showEliminarModal}
-        onClose={() => setShowEliminarModal(false)}
-        producto={productoAEliminar}
-        onProductoEliminado={handleProductoEliminado}
-      />
+  <div className="dashboard-header">
+    <h1>Gestión de Stock</h1>
+    <div className="dashboard-actions">
+      <button 
+        className="nuevo-producto-btn"
+        onClick={() => setShowModal(true)}
+      >
+        + Nuevo producto
+      </button>
     </div>
+  </div>
+
+  <input
+    type="text"
+    placeholder="Buscar productos..."
+    className="busqueda-input"
+    value={busqueda}
+    onChange={(e) => setBusqueda(e.target.value)}
+  />
+
+  {/* Contenedor con scroll moderno pegado a la derecha */}
+  <div className="tabla-productos-wrapper">
+    <table className="productos-table">
+      <thead>
+        <tr>
+          <th><FaBoxOpen className="icono-producto" /> Producto</th>
+          <th>Categoría</th>
+          <th>Marca</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {productosFiltrados.map((p) => (
+          <tr key={p.id}>
+            <td>{p.nombre}</td>
+            <td><span className="categoria-badge">{p.categoria}</span></td>
+            <td>{p.marca}</td>
+            <td>${p.precio}</td>
+            <td>{p.stock}</td>
+            <td>
+              <span
+                className={`estado-badge ${
+                  p.estado === "Alto"
+                    ? "estado-alto"
+                    : p.estado === "Medio"
+                    ? "estado-medio"
+                    : "estado-bajo"
+                }`}
+              >
+                {p.estado}
+              </span>
+            </td>
+            <td>
+              <button
+                className="btn-accion editar"
+                onClick={() => {
+                  setProductoAEditar(p);
+                  setShowEditarModal(true);
+                }}
+              >
+                <FaEdit />
+              </button>
+              <button
+                className="btn-accion eliminar"
+                onClick={() => {
+                  setProductoAEliminar(p);
+                  setShowEliminarModal(true);
+                }}
+              >
+                <FaTrash />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* ✅ ACTUALIZAR MODALES PARA USAR LAS NUEVAS FUNCIONES */}
+  <NuevoProductoModal
+    show={showModal}
+    onClose={() => setShowModal(false)}
+    onProductoCreado={handleProductoCreado}
+  />
+
+  <EditarProductoModal
+    show={showEditarModal}
+    onClose={() => setShowEditarModal(false)}
+    producto={productoAEditar}
+    onProductoEditado={handleProductoEditado}
+  />
+
+  <EliminarProductoModal
+    show={showEliminarModal}
+    onClose={() => setShowEliminarModal(false)}
+    producto={productoAEliminar}
+    onProductoEliminado={handleProductoEliminado}
+  />
+</div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "./calendar-dark.css";
-import { FaPlus, FaClock, FaUser, FaEdit, FaTrash, FaCut } from "react-icons/fa"; // 👈 Importamos FaCut (tijeras)
+import { FaPlus, FaClock, FaUser, FaEdit, FaTrash, FaCut } from "react-icons/fa"; 
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
@@ -176,7 +176,7 @@ export default function Turnos() {
 
   // --- Helper para obtener el nombre del usuario ---
   const getNombreUsuario = (turno: any) => {
-    if (turno.usuario?.nombre) return turno.usuario.nombre;
+    if (turno.usuario?.nombre && turno.usuario?.apellido) return `${turno.usuario.nombre} ${ turno.usuario.apellido}`;
     if (turno.usuarioId) {
       const u = usuarios.find((us) => us.id === turno.usuarioId);
       return u ? u.nombre : "Sin profesional";
