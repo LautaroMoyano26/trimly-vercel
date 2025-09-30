@@ -33,7 +33,7 @@
 }
 
 .usuarios-busqueda {
-  background-color: #27272a; /* Fondo del input */
+  background-color: #232329 !important; /* Fondo del input */
   border: 1px solid #3f3f46; /* Borde sutil */
   color: #fff;
   border-radius: 12px;

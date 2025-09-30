@@ -39,21 +39,21 @@
 }
 
 .table-dark {
-  --bs-table-bg: #232329;
-  --bs-table-striped-bg: #232329;
-  --bs-table-hover-bg: #232329;
-  color: #fff;
+  --bs-table-bg: #232329 !important;
+  --bs-table-striped-bg: #232329 !important;
+  --bs-table-hover-bg: #232329 !important;
 }
+
 
 .table thead th {
   color: #b3b3b3;
   font-weight: bold;
   font-size: 1.05rem;
-  border-bottom: 1px solid #28282f !important;
+  border-bottom: 1px solid #232329 !important;
 }
 
 .table tbody tr {
-  border-bottom: 1px solid #28282f !important;
+  border-bottom: 1px solid #232329 !important;
   font-size: 1.05rem;
   transition: background 0.2s;
 }

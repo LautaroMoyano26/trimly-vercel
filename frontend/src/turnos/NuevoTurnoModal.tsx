@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./NuevoTurnoModal.css";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaClock } from "react-icons/fa";
+import SuccessModal from "../components/SuccessModal";
 
 interface Cliente {
   id: number;
@@ -47,6 +48,26 @@ export default function NuevoTurnoModal({
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
   const [errores, setErrores] = useState<{[key:string]: string}>({});
+  const [showTimeSelector, setShowTimeSelector] = useState(false);
+  const timeSelectorRef = useRef<HTMLDivElement>(null);
+  const [successModal, setSuccessModal] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
+
+  // Cerrar el selector cuando se hace clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timeSelectorRef.current && !timeSelectorRef.current.contains(event.target as Node)) {
+        setShowTimeSelector(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const resetForm = () => {
     setCliente("");
@@ -55,6 +76,13 @@ export default function NuevoTurnoModal({
     setFecha("");
     setHora("");
     setNotas("");
+    setShowTimeSelector(false);
+  };
+
+  const handleSuccessModalClose = () => {
+    setSuccessModal({ show: false, message: "" });
+    resetForm();
+    onClose(); // Cerrar el modal principal
   };
 
   if (!show) return null;
@@ -87,9 +115,11 @@ export default function NuevoTurnoModal({
       });
 
       if (response.ok) {
-        await onTurnoCreado(); 
-        resetForm();
-        onClose();
+        await onTurnoCreado(); // Recargar los datos
+        setSuccessModal({
+          show: true,
+          message: "Turno creado correctamente"
+        });
       } else {
         alert("Error al guardar el turno");
       }
@@ -168,7 +198,67 @@ export default function NuevoTurnoModal({
             </div>
             <div className="form-group">
               <label>Hora</label>
-              <input type="time" value={hora} onChange={e => setHora(e.target.value)} />
+              <div className="custom-time-selector" ref={timeSelectorRef}>
+                <div 
+                  className="time-input-display" 
+                  onClick={() => setShowTimeSelector(!showTimeSelector)}
+                >
+                  <span>{hora || "Seleccionar hora"}</span>
+                  <FaClock />
+                </div>
+                {showTimeSelector && (
+                  <div className="time-picker-dropdown">
+                    <div className="time-columns">
+                      <div className="time-column">
+                        <h4>Hora</h4>
+                        <div className="time-list">
+                          {Array.from({length: 24}, (_, i) => (
+                            <div 
+                              key={i} 
+                              className="time-option"
+                              onClick={() => {
+                                const minutes = hora.split(':')[1] || '00';
+                                const newTime = `${i.toString().padStart(2, '0')}:${minutes}`;
+                                setHora(newTime);
+                              }}
+                            >
+                              {i.toString().padStart(2, '0')}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="time-column">
+                        <h4>Minutos</h4>
+                        <div className="time-list">
+                          {Array.from({length: 12}, (_, i) => (
+                            <div 
+                              key={i} 
+                              className="time-option"
+                              onClick={() => {
+                                const hours = hora.split(':')[0] || '00';
+                                const minutes = (i * 5).toString().padStart(2, '0');
+                                const newTime = `${hours}:${minutes}`;
+                                setHora(newTime);
+                              }}
+                            >
+                              {(i * 5).toString().padStart(2, '0')}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="time-actions">
+                      <button 
+                        type="button"
+                        className="time-close-btn" 
+                        onClick={() => setShowTimeSelector(false)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
               {errores.hora && <p className="error">{errores.hora}</p>}
             </div>
           </div>
@@ -190,6 +280,12 @@ export default function NuevoTurnoModal({
         </div>
 
       </div>
+      
+      <SuccessModal 
+        show={successModal.show} 
+        message={successModal.message} 
+        onClose={handleSuccessModalClose} 
+      />
     </div>
   );
 }
