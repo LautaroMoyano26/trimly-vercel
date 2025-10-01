@@ -1,14 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, MoreThan } from 'typeorm';
 import { Producto } from './producto.entity';
 
 @Injectable()
-export class ProductoService {
+export class ProductoService implements OnModuleInit {
   constructor(
     @InjectRepository(Producto)
     private productoRepository: Repository<Producto>,
   ) {}
+
+  async onModuleInit() {
+    await this.setAutoIncrementStart();
+  }
+
+  private async setAutoIncrementStart(): Promise<void> {
+    try {
+      // Verificar si ya existe algún producto con ID >= 10000
+      const existingProducto = await this.productoRepository
+        .createQueryBuilder('producto')
+        .where('producto.id >= :startId', { startId: 10000 })
+        .getOne();
+
+      // Solo configurar el AUTO_INCREMENT si no hay productos con ID >= 10000
+      if (!existingProducto) {
+        await this.productoRepository.query(
+          'ALTER TABLE producto AUTO_INCREMENT = 10000'
+        );
+        console.log('AUTO_INCREMENT configurado para iniciar desde 10000');
+      }
+    } catch (error) {
+      console.error('Error configurando AUTO_INCREMENT:', error);
+    }
+  }
 
   async findAll(): Promise<Producto[]> {
     return this.productoRepository.find();
