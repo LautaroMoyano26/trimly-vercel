@@ -1,11 +1,13 @@
 -- Script de seed para MySQL. Ajusta nombres de tablas y columnas si difieren.
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE turno;
+TRUNCATE TABLE turno_producto;
 TRUNCATE TABLE producto;
 TRUNCATE TABLE servicio;
 TRUNCATE TABLE usuario;
 TRUNCATE TABLE cliente;
 SET FOREIGN_KEY_CHECKS = 1;
+ALTER TABLE producto AUTO_INCREMENT = 10000;
 
 -- 10 Clientes
 INSERT INTO cliente (nombre, apellido, telefono, email, dni, fechaNacimiento, activo) VALUES
