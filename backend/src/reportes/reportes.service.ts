@@ -49,11 +49,11 @@ export class ReportesService {
     try {
       // Usar consulta SQL directa con los nombres reales de las tablas
       const query = `
-        SELECT 
+        SELECT
           COUNT(DISTINCT f.id) as total_turnos,
           COALESCE(SUM(fd.subtotal), 0) as ingresos_totales,
-          COALESCE(SUM(CASE WHEN fd.tipo_item = 'servicio' THEN fd.cantidad ELSE 0 END), 0) as total_servicios,
-          COALESCE(SUM(CASE WHEN fd.tipo_item = 'producto' THEN fd.cantidad ELSE 0 END), 0) as total_productos
+          COALESCE(SUM(CASE WHEN fd.tipo_item = 'Servicio' THEN fd.cantidad ELSE 0 END), 0) as total_servicios,
+          COALESCE(SUM(CASE WHEN fd.tipo_item = 'Producto' THEN fd.cantidad ELSE 0 END), 0) as total_productos
         FROM factura f
         LEFT JOIN factura_detalle fd ON f.id = fd.facturaId
         WHERE DATE(f.createdAt) BETWEEN ? AND ?
@@ -76,7 +76,7 @@ export class ReportesService {
   async obtenerEstadisticasServicios(fechaInicio?: string, fechaFin?: string) {
     try {
       let query = `
-        SELECT 
+        SELECT
           s.id,
           s.servicio as nombre,
           s.precio,
@@ -88,16 +88,16 @@ export class ReportesService {
       `;
 
       const params: any[] = [];
-      
+
       if (fechaInicio && fechaFin) {
-        query += ` WHERE DATE(f.createdAt) BETWEEN ? AND ?`;
+        query += ` WHERE f.id IS NULL OR DATE(f.createdAt) BETWEEN ? AND ?`;
         params.push(fechaInicio, fechaFin);
       }
-      
+
       query += ` GROUP BY s.id, s.servicio, s.precio ORDER BY cantidad DESC`;
 
       const result = await this.servicioRepository.query(query, params);
-      
+
       return result.map((item: any) => ({
         id: Number(item.id),
         nombre: item.nombre,
@@ -114,29 +114,29 @@ export class ReportesService {
 async obtenerEstadisticasProductos(fechaInicio?: string, fechaFin?: string) {
   try {
     let query = `
-      SELECT 
+      SELECT
         p.id,
         p.nombre,
         p.precio,
         p.stock,
-        COALESCE(SUM(CASE WHEN fd.tipo_item = 'producto' THEN fd.cantidad ELSE 0 END), 0) as cantidad,
-        COALESCE(SUM(CASE WHEN fd.tipo_item = 'producto' THEN fd.subtotal ELSE 0 END), 0) as ingresos
+        COALESCE(SUM(fd.cantidad), 0) as cantidad,
+        COALESCE(SUM(fd.subtotal), 0) as ingresos
       FROM producto p
       LEFT JOIN factura_detalle fd ON p.id = fd.itemId AND fd.tipo_item = 'producto'
       LEFT JOIN factura f ON fd.facturaId = f.id
     `;
 
     const params: any[] = [];
-    
+
     if (fechaInicio && fechaFin) {
-      query += ` WHERE DATE(f.createdAt) BETWEEN ? AND ?`;
+      query += ` WHERE f.id IS NULL OR DATE(f.createdAt) BETWEEN ? AND ?`;
       params.push(fechaInicio, fechaFin);
     }
-    
+
     query += ` GROUP BY p.id, p.nombre, p.precio, p.stock ORDER BY cantidad DESC`;
 
     const result = await this.productoRepository.query(query, params);
-    
+
     return result.map((item: any) => ({
       id: Number(item.id),
       nombre: item.nombre,

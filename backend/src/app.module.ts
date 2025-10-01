@@ -10,6 +10,7 @@ import { ProductoModule } from './producto/producto.module';
 import { TurnosModule } from './turnos/turnos.module';
 import { FacturacionModule } from './facturacion/facturacion.module';
 import { ReportesModule } from './reportes/reportes.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ReportesModule } from './reportes/reportes.module';
     TurnosModule,
     FacturacionModule,
     ReportesModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

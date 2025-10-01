@@ -12,12 +12,12 @@ import {
 import "./Navbar.css";
 
 const navItems = [
-  { icon: FaHome, label: "Inicio", path: "/" },
+  { icon: FaHome, label: "Inicio", path: "/dashboard" },
   { icon: FaCut, label: "Servicios", path: "/servicios" },
   { icon: FaCalendarAlt, label: "Turnos", path: "/turnos" },
   { icon: FaUserFriends, label: "Clientes", path: "/clientes" },
   { icon: FaBoxOpen, label: "Productos", path: "/stock" },
-  { icon: FaClipboardList, label: "Reportes y facturación", path: "/reportes" }, // ✅ CAMBIO AQUÍ
+  { icon: FaClipboardList, label: "Reportes y facturación", path: "/reportes" },
   { icon: FaUserCog, label: "Usuarios", path: "/usuarios" },
   { icon: FaCog, label: "Configuración", path: "/configuracion" },
 ];
