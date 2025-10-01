@@ -43,3 +43,21 @@ export interface TurnoFacturacion {
   servicios: string;
   productos: string;
 }
+
+export interface ReporteServicio {
+  id: string | number;
+  nombre: string;
+  cantidadServicios: number;
+  duracion: number;
+  ingresos: number;
+  tendencia: number;
+}
+
+export interface ReporteProducto {
+  id: string | number;
+  nombre: string;
+  unidadesVendidas: number;
+  ingresos: number;
+  stock: number;
+  tendencia: number;
+}
