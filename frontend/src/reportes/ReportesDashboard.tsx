@@ -1,16 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./ReportesDashboard.css";
-import { FaFileAlt, FaFileInvoiceDollar, FaFilePdf } from "react-icons/fa";
+import { FaFileAlt, FaFileInvoiceDollar, FaFilePdf, FaQuestionCircle } from "react-icons/fa";
 import FacturacionTab from "./components/FacturacionTab";
 import { ReportesView } from "./components/ReportesView";
-import { exportarReporteGeneral } from "../utils/pdfGenerator";
+import type { ReportesViewHandle } from "./components/ReportesView";
+import { OrganizacionPDFs } from "../components/OrganizacionPDFs";
+import { exportarReporteGeneral, exportarReporteCompleto } from "../utils/pdfGenerator";
 
 const ReportesDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"reportes" | "facturacion">("facturacion");
+  const [showOrganizacionModal, setShowOrganizacionModal] = useState(false);
+  const reportesViewRef = useRef<ReportesViewHandle>(null);
 
   const handleExportarPDF = async () => {
     try {
-      await exportarReporteGeneral();
+      if (activeTab === "reportes" && reportesViewRef.current) {
+        // Intentar obtener los datos del componente ReportesView
+        const datosReporte = reportesViewRef.current.exportarDatos();
+        
+        if (datosReporte && datosReporte.resumen.ingresosTotales > 0) {
+          // Si hay datos específicos, generar reporte completo
+          exportarReporteCompleto(datosReporte);
+        } else {
+          // Si no hay datos específicos, generar reporte general
+          await exportarReporteGeneral();
+        }
+      } else {
+        // Para la pestaña de facturación o cuando no hay datos específicos
+        await exportarReporteGeneral();
+      }
     } catch (error) {
       console.error("Error al exportar PDF:", error);
       alert("Error al generar el PDF del reporte");
@@ -27,9 +45,20 @@ const ReportesDashboard: React.FC = () => {
             Analiza datos y gestiona la facturación
           </p>
         </div>
-        <button className="exportar-pdf-btn" onClick={handleExportarPDF}>
-          <FaFilePdf /> Exportar PDF
-        </button>
+        <div className="header-buttons">
+          <button 
+            className="help-btn" 
+            onClick={() => setShowOrganizacionModal(true)}
+            title="Organización de PDFs"
+          >
+            <FaQuestionCircle /> Organizar PDFs
+          </button>
+          {activeTab === "reportes" && (
+            <button className="exportar-pdf-btn" onClick={handleExportarPDF}>
+              <FaFilePdf /> Exportar PDF
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tabs */}
@@ -52,7 +81,7 @@ const ReportesDashboard: React.FC = () => {
       <div className="tab-content">
         {activeTab === "reportes" && (
           <div className="tab-panel">
-            <ReportesView />
+            <ReportesView ref={reportesViewRef} />
           </div>
         )}
         {activeTab === "facturacion" && (
@@ -61,6 +90,11 @@ const ReportesDashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Organización de PDFs */}
+      {showOrganizacionModal && (
+        <OrganizacionPDFs onClose={() => setShowOrganizacionModal(false)} />
+      )}
     </div>
   );
 };

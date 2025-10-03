@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Calendar, Package, Scissors, ShoppingCart, TrendingUp, BarChart3, Search } from 'lucide-react';
 import type { DatosReporte } from '../types/reportes.types';
 import './ReportesView.css';
@@ -50,7 +50,39 @@ interface ProductoCompleto {
   ingresos?: number;
 }
 
-export const ReportesView: React.FC = () => {
+// Interface para los datos exportables
+interface DatosReporteParaPDF {
+  servicios: Array<{
+    id: number;
+    nombre: string;
+    cantidad: number;
+    ingresos: number;
+    duracion?: number;
+  }>;
+  productos: Array<{
+    id: number;
+    nombre: string;
+    cantidad: number;
+    ingresos: number;
+    stock?: number;
+    categoria?: string;
+  }>;
+  periodo: string;
+  resumen: {
+    totalServicios: number;
+    totalProductos: number;
+    ingresosServicios: number;
+    ingresosProductos: number;
+    ingresosTotales: number;
+  };
+}
+
+// Interface para las funciones expuestas del componente
+export interface ReportesViewHandle {
+  exportarDatos: () => DatosReporteParaPDF | null;
+}
+
+export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
   const [datos, setDatos] = useState<DatosReporte>({
     resumen: {
       total_turnos: 0,
@@ -196,6 +228,46 @@ export const ReportesView: React.FC = () => {
       producto.marca?.toLowerCase().includes(searchProductos.toLowerCase())
     );
   };
+
+  // Exponer función para exportar datos
+  useImperativeHandle(ref, () => ({
+    exportarDatos: () => {
+      if (!periodoSeleccionado) return null;
+      
+      const serviciosCompletos = getServiciosCompletos();
+      const productosCompletos = getProductosCompletos();
+      const totalServiciosRealizados = serviciosCompletos.reduce((acc, s) => acc + (s.cantidad || 0), 0);
+      const totalIngresosServicios = serviciosCompletos.reduce((acc, s) => acc + (s.ingresos || 0), 0);
+      const totalProductosVendidos = productosCompletos.reduce((acc, p) => acc + (p.cantidad || 0), 0);
+      const totalIngresosProductos = productosCompletos.reduce((acc, p) => acc + (p.ingresos || 0), 0);
+      
+      return {
+        servicios: serviciosCompletos.map(s => ({
+          id: s.id,
+          nombre: getNombreServicio(s),
+          cantidad: s.cantidad || 0,
+          ingresos: s.ingresos || 0,
+          duracion: s.duracion
+        })),
+        productos: productosCompletos.map(p => ({
+          id: p.id,
+          nombre: p.nombre,
+          cantidad: p.cantidad || 0,
+          ingresos: p.ingresos || 0,
+          stock: p.stock,
+          categoria: p.categoria
+        })),
+        periodo: periodoSeleccionado,
+        resumen: {
+          totalServicios: totalServiciosRealizados,
+          totalProductos: totalProductosVendidos,
+          ingresosServicios: totalIngresosServicios,
+          ingresosProductos: totalIngresosProductos,
+          ingresosTotales: totalIngresosServicios + totalIngresosProductos
+        }
+      };
+    }
+  }));
 
   useEffect(() => {
     const hoy = new Date();
@@ -438,4 +510,6 @@ export const ReportesView: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+
+ReportesView.displayName = 'ReportesView';

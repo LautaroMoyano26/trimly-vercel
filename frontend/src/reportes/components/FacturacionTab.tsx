@@ -203,20 +203,37 @@ const FacturacionTab: React.FC = () => {
     setMostrarDropdownClientes(false);
     setClienteBloqueado(false);
   };
-  // Agregar un turno a la factura
-  const agregarTurno = (turno: Turno) => {
+  // Agregar/quitar un turno de la factura (toggle)
+  const toggleTurno = (turno: Turno) => {
     const itemExistente = itemsFactura.find(
       (item) => item.productoId === turno.id
     );
 
     if (itemExistente) {
+      // Si ya está agregado, lo quitamos (deseleccionar)
+      setItemsFactura((items) =>
+        items.filter((item) => item.productoId !== turno.id)
+      );
+
+      // Si no quedan más turnos, desbloquear cliente
+      const turnosRestantes = itemsFactura.filter(
+        (item) => item.productoId !== turno.id && 
+        turnosPendientes.some((t) => t.id === item.productoId)
+      );
+
+      if (turnosRestantes.length === 0) {
+        setClienteBloqueado(false);
+      }
+
       mostrarMensaje(
-        `${turno.cliente.nombre} - ${turno.servicio.servicio} ya está agregado.`,
-        "error"
+        `${turno.cliente.nombre} - ${turno.servicio.servicio} removido de la factura`,
+        "exito"
       );
       return;
     }
 
+    // Si no está agregado, lo agregamos (seleccionar)
+    
     // Cargar automáticamente el cliente del turno
     const clienteDelTurno = clientes.find((c) => c.id === turno.clienteId);
     if (clienteDelTurno && !clienteSeleccionado) {
@@ -606,6 +623,13 @@ const FacturacionTab: React.FC = () => {
     }
   };
 
+  // Función para obtener turnos seleccionados
+  const getTurnosSeleccionados = () => {
+    return itemsFactura
+      .map(item => turnosPendientes.find(t => t.id === item.productoId))
+      .filter(turno => turno !== undefined);
+  };
+
   return (
     <div className="facturacion-container">
       {mensaje && (
@@ -619,6 +643,32 @@ const FacturacionTab: React.FC = () => {
       )}
 
       <h2>Sistema de Facturación</h2>
+
+      {/* Barra de turno seleccionado */}
+      {getTurnosSeleccionados().length > 0 && (
+        <div className="turno-seleccionado-bar">
+          {getTurnosSeleccionados().map((turno) => {
+            const cliente = clientes.find(c => c.id === turno!.clienteId);
+            const fechaFormateada = new Date(turno!.fecha).toLocaleDateString('es-ES');
+            const horaFormateada = new Date(turno!.fecha + 'T' + (turno as any).hora || '00:00').toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            
+            return (
+              <div key={turno!.id} className="turno-info">
+                <span className="turno-texto">
+                  Turno seleccionado: {cliente?.nombre} {cliente?.apellido} - {fechaFormateada} {horaFormateada}
+                </span>
+                <button 
+                  className="remover-turno-btn"
+                  onClick={() => eliminarProducto(turno!.id)}
+                  title="Remover turno de la factura"
+                >
+                  ×
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="paneles">
         {/* Panel de turnos pendientes (ahora ocupará toda la anchura) */}
@@ -640,7 +690,7 @@ const FacturacionTab: React.FC = () => {
                         ? "seleccionado"
                         : ""
                     }`}
-                    onClick={() => agregarTurno(turno)}
+                    onClick={() => toggleTurno(turno)}
                   >
                     <div>
                      <div className="nombre-item">{clientes.find(c => c.id === turno.clienteId)?.nombre + " " + clientes.find(c => c.id === turno.clienteId)?.apellido || "Cliente desconocido"}</div>

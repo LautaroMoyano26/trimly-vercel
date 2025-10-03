@@ -37,6 +37,35 @@
   font-size: 1rem;
 }
 
+.header-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.help-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #b3b3b3;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.help-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 .exportar-pdf-btn {
   background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
   color: #fff;
@@ -138,8 +167,16 @@
     gap: 16px;
   }
 
-  .exportar-pdf-btn {
+  .header-buttons {
     align-self: flex-end;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .help-btn,
+  .exportar-pdf-btn {
+    font-size: 0.85rem;
+    padding: 8px 16px;
   }
 
   .reportes-title {

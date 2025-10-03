@@ -33,6 +33,52 @@
   background-color: rgba(0, 128, 0, 0.8);
 }
 
+/* Barra de turno seleccionado */
+.turno-seleccionado-bar {
+  background: linear-gradient(135deg, #2a4d3a, #1e3d2f);
+  border: 1px solid #4a7c59;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.turno-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.turno-texto {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.remover-turno-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.remover-turno-btn:hover {
+  background: rgba(255, 59, 48, 0.2);
+  border-color: rgba(255, 59, 48, 0.4);
+  color: #ff3b30;
+}
+
 .paneles {
   display: flex;
   flex-direction: column;
@@ -126,6 +172,25 @@
 .card-item:hover {
   transform: translateY(-2px);
   background: #333;
+}
+
+/* Estilo para turnos seleccionados */
+.card-item.seleccionado {
+  background: linear-gradient(135deg, #2a4d3a, #1e3d2f);
+  border: 2px solid #4a7c59;
+  box-shadow: 0 0 12px rgba(74, 124, 89, 0.4);
+  transform: translateY(-2px);
+}
+
+.card-item.seleccionado:hover {
+  background: linear-gradient(135deg, #2f5640, #234035);
+  border-color: #5a8c69;
+  box-shadow: 0 0 16px rgba(74, 124, 89, 0.6);
+}
+
+/* Cursor pointer para turnos clickeables */
+.panel-turnos .card-item {
+  cursor: pointer;
 }
 
 .panel {
