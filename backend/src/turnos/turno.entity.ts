@@ -51,6 +51,7 @@ usuario: Usuario | null; // debe incluir explícitamente null
   @OneToMany(() => TurnoProducto, turnoProducto => turnoProducto.turno, { cascade: true })
   productos: TurnoProducto[];
 
-  @OneToOne(() => Factura, (factura) => factura.turno, { eager: true }) // aquí sí lo dejamos
-  factura: Factura;
+ @OneToOne(() => Factura, (factura) => factura.turno)
+@JoinColumn() 
+factura: Factura;
 }
