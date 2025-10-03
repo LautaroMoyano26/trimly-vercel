@@ -59,14 +59,14 @@ export class TurnosService {
 
   async findAll(): Promise<Turno[]> {
     return await this.turnoRepository.find({
-      relations: ['cliente', 'servicio', 'usuario'], // Incluye usuario en las relaciones
+      relations: ['cliente', 'servicio', 'usuario','factura'], // Incluye usuario en las relaciones
     });
   }
 
   async findOne(id: number): Promise<Turno> {
     const turno = await this.turnoRepository.findOne({
       where: { id },
-      relations: ['cliente', 'servicio', 'usuario'], // Incluye usuario en las relaciones
+      relations: ['cliente', 'servicio', 'usuario','factura'], // Incluye usuario en las relaciones
     });
     if (!turno) {
       throw new NotFoundException(`Turno con id ${id} no encontrado`);

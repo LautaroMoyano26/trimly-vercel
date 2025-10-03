@@ -4,11 +4,14 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Cliente } from '../clientes/cliente.entity';
 import { FacturaDetalle } from './factura-detalle.entity';
+import { Turno } from '../turnos/turno.entity';
 
 @Entity()
 export class Factura {
@@ -39,4 +42,6 @@ export class Factura {
 
   @UpdateDateColumn()
   updatedAt: Date;
+  @OneToOne(() => Turno, (turno) => turno.factura) 
+  turno: Turno;
 }

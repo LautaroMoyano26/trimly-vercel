@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaClock } from "react-icons/fa";
 import "./HistorialTurno.css";
 
@@ -7,42 +7,77 @@ interface Props {
   onClose: () => void;
 }
 
-const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
-  if (!show) return null;
+interface Cliente {
+  nombre: string;
+  apellido: string;
+}
 
-  // 🔹 Datos de ejemplo SOLO para frontend
-  const turnos = [
-    {
-      id: 1,
-      cliente: "Juan Luna",
-      servicio: "Corte de cabello",
-      fecha: "2025-06-02",
-      hora: "16:00",
-      encargado: "Jesus Martínez",
-      precio: 8000,
-      estado: "Pagado",
-    },
-    {
-      id: 2,
-      cliente: "Roberto Silva",
-      servicio: "Barba",
-      fecha: "2025-06-02",
-      hora: "14:30",
-      encargado: "Carlos Rodríguez",
-      precio: 4000,
-      estado: "Pagado",
-    },
-    {
-      id: 3,
-      cliente: "Carmen Vega",
-      servicio: "Peinado para evento",
-      fecha: "2025-06-01",
-      hora: "18:00",
-      encargado: "Sofía López",
-      precio: 5000,
-      estado: "Pendiente",
-    },
-  ];
+interface Servicio {
+  servicio: string;
+  precio: number;
+}
+
+interface Usuario {
+  nombre: string;
+  apellido: string;
+}
+
+interface Factura {
+  estado: 'pendiente' | 'cobrada' | 'cancelada';
+  createdAt: string;
+  
+}
+
+interface Turno {
+  id: number;
+  cliente: Cliente | null;
+  servicio: Servicio | null;
+  fecha: string;
+  hora: string; // "HH:MM:SS"
+  usuario: Usuario | null;
+  factura?: Factura | null;
+}
+
+const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
+  const [turnos, setTurnos] = useState<Turno[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!show) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetch("http://localhost:3000/turnos")
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const hoy = new Date().toISOString().split("T")[0];
+          const turnosHoy = data.filter((t: Turno) => t.fecha === hoy);
+
+          // Ordenar por hora descendente
+          turnosHoy.sort((a: Turno, b: Turno) =>
+            (b.hora ?? "").localeCompare(a.hora ?? "")
+          );
+
+          setTurnos(turnosHoy);
+        } else {
+          console.error("Respuesta inesperada:", data);
+          setTurnos([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error cargando turnos:", err);
+        setError("No se pudieron cargar los turnos.");
+      })
+      .finally(() => setLoading(false));
+  }, [show]);
+
+  if (!show) return null;
 
   return (
     <div className="historial-overlay">
@@ -53,32 +88,58 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
         </div>
 
         <div className="historial-list">
-          {turnos.length === 0 ? (
-            <p className="historial-empty">No hay turnos el día de hoy</p>
-          ) : (
-            turnos.map((turno) => (
-              <div key={turno.id} className="historial-card">
-                <div className="historial-icon">
-                  <FaClock />
-                </div>
-                <div className="historial-info">
-                  <h3>{turno.cliente}</h3>
-                  <p>{turno.servicio}</p>
-                  <span>
-                    {turno.fecha} - {turno.hora} • Por: {turno.encargado}
-                  </span>
-                </div>
-                <div className="historial-status">
-                  <strong>${turno.precio}</strong>
-                  {turno.estado === "Pagado" ? (
-                    <span className="pagado"> Pagado</span>
-                  ) : (
-                    <span className="pendiente">Pendiente</span>
-                  )}
-                </div>
-              </div>
-            ))
+          {loading && <p className="historial-empty">Cargando turnos...</p>}
+          {error && <p className="historial-empty">{error}</p>}
+          {!loading && !error && turnos.length === 0 && (
+            <p className="historial-empty">No hay turnos registrados para hoy</p>
           )}
+
+          {!loading &&
+            !error &&
+            turnos.map((turno) => {
+              const estado = turno.factura?.estado === "cobrada" ? "Pagado" : "Pendiente";
+              const fechaFactura = turno.factura?.createdAt?.split("T")[0] ?? null;
+              const horaMostrar = turno.hora?.slice(0, 5) ?? "-";
+
+              return (
+                <div key={turno.id} className="historial-card">
+                  <div className="historial-icon">
+                    <FaClock />
+                  </div>
+
+                  <div className="historial-info">
+                    <h3>
+                      {turno.cliente
+                        ? `${turno.cliente.nombre} ${turno.cliente.apellido}`
+                        : "Sin cliente"}
+                    </h3>
+
+                    <p>{turno.servicio?.servicio ?? "Sin servicio"}</p>
+                    <span>
+                      {turno.fecha ?? "-"} - {horaMostrar} • Por:{" "}
+                      {turno.usuario
+                        ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
+                        : "Sin asignar"}
+                    </span>
+
+                    {estado === "Pagado" && fechaFactura && (
+                      <p className="facturado">
+                        Facturado el: <strong>{fechaFactura}</strong>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="historial-status">
+                    <strong>${turno.servicio?.precio ?? 0}</strong>
+                    {estado === "Pagado" ? (
+                      <span className="pagado"> Pagado</span>
+                    ) : (
+                      <span className="pendiente">Pendiente</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
 
         <div className="historial-footer">
