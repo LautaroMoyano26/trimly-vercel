@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, Package, Scissors, ShoppingCart, TrendingUp, BarChart3 } from 'lucide-react';
+import { Calendar, Package, Scissors, ShoppingCart, TrendingUp, BarChart3, Search } from 'lucide-react';
 import type { DatosReporte } from '../types/reportes.types';
 import './ReportesView.css';
 
@@ -70,6 +70,8 @@ export const ReportesView: React.FC = () => {
   const [fechaFin, setFechaFin] = useState('');
   const [periodoSeleccionado, setPeriodoSeleccionado] = useState('');
   const [activeTab, setActiveTab] = useState<'servicios' | 'productos'>('servicios');
+  const [searchServicios, setSearchServicios] = useState('');
+  const [searchProductos, setSearchProductos] = useState('');
 
   const cargarTodosLosItems = async () => {
     try {
@@ -173,6 +175,28 @@ export const ReportesView: React.FC = () => {
     });
   };
 
+  // Funciones de filtrado
+  const getServiciosFiltrados = () => {
+    const servicios = getServiciosCompletos();
+    if (!searchServicios.trim()) return servicios;
+    
+    return servicios.filter(servicio => 
+      getNombreServicio(servicio).toLowerCase().includes(searchServicios.toLowerCase()) ||
+      servicio.descripcion?.toLowerCase().includes(searchServicios.toLowerCase())
+    );
+  };
+
+  const getProductosFiltrados = () => {
+    const productos = getProductosCompletos();
+    if (!searchProductos.trim()) return productos;
+    
+    return productos.filter(producto =>
+      producto.nombre.toLowerCase().includes(searchProductos.toLowerCase()) ||
+      producto.categoria?.toLowerCase().includes(searchProductos.toLowerCase()) ||
+      producto.marca?.toLowerCase().includes(searchProductos.toLowerCase())
+    );
+  };
+
   useEffect(() => {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
@@ -203,10 +227,12 @@ export const ReportesView: React.FC = () => {
 
   const serviciosCompletos = getServiciosCompletos();
   const productosCompletos = getProductosCompletos();
-  const totalServiciosRealizados = serviciosCompletos.reduce((acc, s) => acc + (s.cantidad || 0), 0);
-  const totalIngresosServicios = serviciosCompletos.reduce((acc, s) => acc + (s.ingresos || 0), 0);
-  const totalProductosVendidos = productosCompletos.reduce((acc, p) => acc + (p.cantidad || 0), 0);
-  const totalIngresosProductos = productosCompletos.reduce((acc, p) => acc + (p.ingresos || 0), 0);
+  const serviciosFiltrados = getServiciosFiltrados();
+  const productosFiltrados = getProductosFiltrados();
+  const totalServiciosRealizados = serviciosFiltrados.reduce((acc, s) => acc + (s.cantidad || 0), 0);
+  const totalIngresosServicios = serviciosFiltrados.reduce((acc, s) => acc + (s.ingresos || 0), 0);
+  const totalProductosVendidos = productosFiltrados.reduce((acc, p) => acc + (p.cantidad || 0), 0);
+  const totalIngresosProductos = productosFiltrados.reduce((acc, p) => acc + (p.ingresos || 0), 0);
 
   return (
     <div className="reportes-view">
@@ -277,13 +303,25 @@ export const ReportesView: React.FC = () => {
       <div className="tab-content">
         {activeTab === 'servicios' && (
           <div className="services-content">
-            <h2 className="content-title">
-              Análisis de Servicios - {periodoSeleccionado || 'Selecciona un período'}
-            </h2>
+            <div className="content-header">
+              <h2 className="content-title">
+                Análisis de Servicios - {periodoSeleccionado || 'Selecciona un período'}
+              </h2>
+              <div className="search-bar-container">
+                <Search size={18} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Buscar servicios..."
+                  value={searchServicios}
+                  onChange={(e) => setSearchServicios(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
             
             <div className="items-list">
-              {serviciosCompletos.length > 0 ? (
-                serviciosCompletos.map((servicio) => (
+              {serviciosFiltrados.length > 0 ? (
+                serviciosFiltrados.map((servicio) => (
                   <div key={servicio.id} className={`item-card ${servicio.cantidad > 0 ? 'has-sales' : ''}`}>
                     <div className="item-left">
                       <div className="icon-circle servicios">
@@ -304,12 +342,12 @@ export const ReportesView: React.FC = () => {
               ) : (
                 <div className="empty-state">
                   <Scissors size={48} className="text-purple-400/50" />
-                  <p>No se pudieron cargar los servicios</p>
-                  <p className="text-sm">Verifica que el backend esté ejecutándose</p>
+                  <p>{searchServicios ? 'No se encontraron servicios con ese criterio' : 'No se pudieron cargar los servicios'}</p>
+                  <p className="text-sm">{searchServicios ? 'Intenta con otro término de búsqueda' : 'Verifica que el backend esté ejecutándose'}</p>
                 </div>
               )}
 
-              {serviciosCompletos.length > 0 && (
+              {serviciosFiltrados.length > 0 && (
                 <div className="total-row servicios">
                   <div className="total-left">
                     <div className="total-icon servicios">
@@ -332,13 +370,25 @@ export const ReportesView: React.FC = () => {
 
         {activeTab === 'productos' && (
           <div className="products-content">
-            <h2 className="content-title">
-              Análisis de Productos - {periodoSeleccionado || 'Selecciona un período'}
-            </h2>
+            <div className="content-header">
+              <h2 className="content-title">
+                Análisis de Productos - {periodoSeleccionado || 'Selecciona un período'}
+              </h2>
+              <div className="search-bar-container">
+                <Search size={18} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  value={searchProductos}
+                  onChange={(e) => setSearchProductos(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
             
             <div className="items-list">
-              {productosCompletos.length > 0 ? (
-                productosCompletos.map((producto) => (
+              {productosFiltrados.length > 0 ? (
+                productosFiltrados.map((producto) => (
                   <div key={producto.id} className={`item-card ${producto.cantidad > 0 ? 'has-sales' : ''}`}>
                     <div className="item-left">
                       <div className="icon-circle productos">
@@ -360,12 +410,12 @@ export const ReportesView: React.FC = () => {
               ) : (
                 <div className="empty-state">
                   <Package size={48} className="text-cyan-400/50" />
-                  <p>No se pudieron cargar los productos</p>
-                  <p className="text-sm">Verifica que el backend esté ejecutándose</p>
+                  <p>{searchProductos ? 'No se encontraron productos con ese criterio' : 'No se pudieron cargar los productos'}</p>
+                  <p className="text-sm">{searchProductos ? 'Intenta con otro término de búsqueda' : 'Verifica que el backend esté ejecutándose'}</p>
                 </div>
               )}
 
-              {productosCompletos.length > 0 && (
+              {productosFiltrados.length > 0 && (
                 <div className="total-row productos">
                   <div className="total-left">
                     <div className="total-icon productos">

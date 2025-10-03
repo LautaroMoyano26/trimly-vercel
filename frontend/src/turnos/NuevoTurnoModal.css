@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #19191d; 
+  background: #19191d;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,21 +12,20 @@
 }
 
 .modal-content {
-  background: #27272A;         
-  color: #fff;                 
+  background: #27272a;
+  color: #fff;
   padding: 32px 24px;
-  border-radius: 32px;         
+  border-radius: 32px;
   min-width: calc(100vw - 150px);
   max-width: calc(100vw - 150px);
   min-height: 100vh;
   margin-left: 150px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25); 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   gap: 18px;
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
-
 
 .modal-header {
   display: flex;
@@ -57,7 +56,6 @@
   color: #b3b3b3;
   margin-top: 4px;
 }
-
 
 .form-container {
   background: #1f1f23;
@@ -93,7 +91,7 @@
   padding: 12px 14px;
   border-radius: 12px;
   border: none;
-  background: #18181B;
+  background: #18181b;
   color: #fff;
   font-size: 1rem;
   outline: none;
@@ -137,7 +135,7 @@
 }
 
 .cancel-btn:hover {
-  background: #18181B;
+  background: #18181b;
 }
 
 .save-btn {
@@ -158,32 +156,31 @@
 
 .form-group input[type="date"]::-webkit-calendar-picker-indicator,
 .form-group input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(0%); 
+  filter: invert(0%);
   cursor: pointer;
   transition: filter 0.2s ease;
 }
 
-
 .form-group input[type="date"]:hover::-webkit-calendar-picker-indicator,
 .form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
-  filter: invert(60%); 
+  filter: invert(60%);
 }
 
 /* Estilos para el dropdown/popup del time picker con scroll */
 .form-group input[type="time"] {
   scrollbar-width: thin;
-  scrollbar-color: #a259ff #18181B;
+  scrollbar-color: #a259ff #18181b;
 }
 
 /* Estilos específicos para el dropdown que aparece al hacer clic */
 .form-group input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(0%); 
+  filter: invert(0%);
   cursor: pointer;
   transition: filter 0.2s ease;
 }
 
 .form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
-  filter: invert(60%); 
+  filter: invert(60%);
 }
 
 /* Mejoras para el scroll del popup de selección de tiempo */
@@ -218,7 +215,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   padding: 12px 14px;
   border-radius: 12px;
   border: none;
-  background: #18181B;
+  background: #18181b;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
@@ -243,7 +240,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   top: 100%;
   left: 0;
   right: 0;
-  background: #27272A;
+  background: #27272a;
   border: 1px solid #333;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -273,11 +270,11 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   overflow-y: auto;
   border: 1px solid #333;
   border-radius: 8px;
-  background: #18181B;
-  
+  background: #18181b;
+
   /* Estilo del scrollbar personalizado */
   scrollbar-width: thin;
-  scrollbar-color: #a259ff #18181B;
+  scrollbar-color: #a259ff #18181b;
 }
 
 .time-list::-webkit-scrollbar {
@@ -285,7 +282,7 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .time-list::-webkit-scrollbar-track {
-  background: #18181B;
+  background: #18181b;
   border-radius: 4px;
 }
 
@@ -336,5 +333,48 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .time-close-btn:hover {
-  background: #18181B;
+  background: #18181b;
+}
+
+/* Estilos para botones "+" inline */
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.input-with-button select {
+  flex: 1;
+}
+
+.add-button-inline {
+  background: #a259ff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  padding: 0 12px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.add-button-inline:hover {
+  background: #8633d6;
+  transform: scale(1.05);
+}
+
+.add-button-inline:active {
+  transform: scale(0.95);
+}
+
+/* Estilos para mensajes de error */
+.error {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  font-weight: 500;
 }

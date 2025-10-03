@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import "./NuevoTurnoModal.css";
-import { FaArrowLeft, FaClock } from "react-icons/fa";
+import { FaArrowLeft, FaClock, FaPlus } from "react-icons/fa";
 import SuccessModal from "../components/SuccessModal";
+import NuevoClienteModal from "../clientes/NuevoClienteModal";
+import NuevoServicioModal from "../servicios/NuevoServicioModal";
+import NuevoUsuarioModal from "../usuarios/NuevoUsuarioModal";
 
 interface Cliente {
   id: number;
@@ -54,6 +57,27 @@ export default function NuevoTurnoModal({
     show: boolean;
     message: string;
   }>({ show: false, message: "" });
+
+  // Estados para modales de creación
+  const [showNuevoClienteModal, setShowNuevoClienteModal] = useState(false);
+  const [showNuevoServicioModal, setShowNuevoServicioModal] = useState(false);
+  const [showNuevoUsuarioModal, setShowNuevoUsuarioModal] = useState(false);
+
+  // Funciones para recargar datos después de crear entidades
+  const handleClienteCreado = async () => {
+    await onTurnoCreado(); // Esto recarga todos los datos incluidos los clientes
+    setShowNuevoClienteModal(false);
+  };
+
+  const handleServicioCreado = async () => {
+    await onTurnoCreado(); // Esto recarga todos los datos incluidos los servicios
+    setShowNuevoServicioModal(false);
+  };
+
+  const handleUsuarioCreado = async () => {
+    await onTurnoCreado(); // Esto recarga todos los datos incluidos los usuarios
+    setShowNuevoUsuarioModal(false);
+  };
 
   // Cerrar el selector cuando se hace clic fuera
   useEffect(() => {
@@ -146,46 +170,76 @@ export default function NuevoTurnoModal({
           <div className="form-row">
             <div className="form-group">
               <label>Cliente</label>
-              <select value={cliente} onChange={e => setCliente(e.target.value)}>
-                <option value="">Seleccionar cliente</option>
-                {(clientes || [])
-                  .filter(c => c.activo)
-                  .map(c => (
-                    <option key={c.id} value={c.id}>
-                      {c.nombre} {c.apellido}
-                    </option>
-                ))}
-              </select>
+              <div className="input-with-button">
+                <select value={cliente} onChange={e => setCliente(e.target.value)}>
+                  <option value="">Seleccionar cliente</option>
+                  {(clientes || [])
+                    .filter(c => c.activo)
+                    .map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.nombre} {c.apellido}
+                      </option>
+                  ))}
+                </select>
+                <button 
+                  type="button" 
+                  className="add-button-inline" 
+                  onClick={() => setShowNuevoClienteModal(true)}
+                  title="Agregar nuevo cliente"
+                >
+                  <FaPlus />
+                </button>
+              </div>
               {errores.cliente && <p className="error">{errores.cliente}</p>}
             </div>
 
             <div className="form-group">
               <label>Servicio</label>
-              <select value={servicio} onChange={e => setServicio(e.target.value)}>
-                <option value="">Seleccionar servicio</option>
-                {(servicios || [])
-                  .filter(s => s.estado)
-                  .map(s => (
-                    <option key={s.id} value={s.id}>
-                      {s.servicio}
-                    </option>
-                ))}
-              </select>
+              <div className="input-with-button">
+                <select value={servicio} onChange={e => setServicio(e.target.value)}>
+                  <option value="">Seleccionar servicio</option>
+                  {(servicios || [])
+                    .filter(s => s.estado)
+                    .map(s => (
+                      <option key={s.id} value={s.id}>
+                        {s.servicio}
+                      </option>
+                  ))}
+                </select>
+                <button 
+                  type="button" 
+                  className="add-button-inline" 
+                  onClick={() => setShowNuevoServicioModal(true)}
+                  title="Agregar nuevo servicio"
+                >
+                  <FaPlus />
+                </button>
+              </div>
               {errores.servicio && <p className="error">{errores.servicio}</p>}
             </div>
 
             <div className="form-group">
               <label>Profesional asignado</label>
-              <select value={usuario} onChange={e => setUsuario(e.target.value)}>
-                <option value="">Seleccionar profesional</option>
-                {(usuarios || [])
-                  .filter(u => u.activo && (u.rol === "empleado" || u.rol === "admin")) // <-- Filtrar correctamente
-                  .map(u => (
-                    <option key={u.id} value={u.id}>
-                      {u.nombre} {u.apellido} ({u.rol === "admin" ? "Administrador" : "Empleado"})
-                    </option>
-                ))}
-              </select>
+              <div className="input-with-button">
+                <select value={usuario} onChange={e => setUsuario(e.target.value)}>
+                  <option value="">Seleccionar profesional</option>
+                  {(usuarios || [])
+                    .filter(u => u.activo && (u.rol === "empleado" || u.rol === "admin")) // <-- Filtrar correctamente
+                    .map(u => (
+                      <option key={u.id} value={u.id}>
+                        {u.nombre} {u.apellido} ({u.rol === "admin" ? "Administrador" : "Empleado"})
+                      </option>
+                  ))}
+                </select>
+                <button 
+                  type="button" 
+                  className="add-button-inline" 
+                  onClick={() => setShowNuevoUsuarioModal(true)}
+                  title="Agregar nuevo profesional"
+                >
+                  <FaPlus />
+                </button>
+              </div>
               {errores.usuario && <p className="error">{errores.usuario}</p>}
             </div>
           </div>
@@ -285,6 +339,25 @@ export default function NuevoTurnoModal({
         show={successModal.show} 
         message={successModal.message} 
         onClose={handleSuccessModalClose} 
+      />
+
+      {/* Modales de creación */}
+      <NuevoClienteModal 
+        show={showNuevoClienteModal}
+        onClose={() => setShowNuevoClienteModal(false)}
+        onClienteCreado={handleClienteCreado}
+      />
+
+      <NuevoServicioModal
+        show={showNuevoServicioModal}
+        onClose={() => setShowNuevoServicioModal(false)}
+        onServicioCreado={handleServicioCreado}
+      />
+
+      <NuevoUsuarioModal
+        show={showNuevoUsuarioModal}
+        onClose={() => setShowNuevoUsuarioModal(false)}
+        onUsuarioCreado={handleUsuarioCreado}
       />
     </div>
   );

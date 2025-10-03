@@ -6,9 +6,10 @@ import { Turno } from '../turnos/turno.entity';
 import { Cliente } from '../clientes/cliente.entity';
 import { Producto } from '../producto/producto.entity';
 import { Factura } from '../facturacion/factura.entity';
+import { FacturaDetalle } from '../facturacion/factura-detalle.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Turno, Cliente, Producto, Factura])],
+  imports: [TypeOrmModule.forFeature([Turno, Cliente, Producto, Factura, FacturaDetalle])],
   controllers: [DashboardController],
   providers: [DashboardService],
 })

@@ -4,9 +4,13 @@ export const useClock = () => {
   const [horaActual, setHoraActual] = useState(new Date());
 
   useEffect(() => {
+    // Actualizar inmediatamente al montar el componente
+    setHoraActual(new Date());
+    
+    // Actualizar cada segundo para mantener sincronizado
     const temporizador = setInterval(() => {
       setHoraActual(new Date());
-    }, 60000); // Actualizar cada 60 segundos
+    }, 1000); // Actualizar cada 1 segundo
 
     return () => clearInterval(temporizador);
   }, []);

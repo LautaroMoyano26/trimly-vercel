@@ -5,6 +5,7 @@ import { Turno } from '../turnos/turno.entity';
 import { Cliente } from '../clientes/cliente.entity';
 import { Producto } from '../producto/producto.entity';
 import { Factura } from '../facturacion/factura.entity';
+import { FacturaDetalle } from '../facturacion/factura-detalle.entity';
 
 @Injectable()
 export class DashboardService {
@@ -17,6 +18,8 @@ export class DashboardService {
     private productoRepository: Repository<Producto>,
     @InjectRepository(Factura)
     private facturaRepository: Repository<Factura>,
+    @InjectRepository(FacturaDetalle)
+    private facturaDetalleRepository: Repository<FacturaDetalle>,
   ) {}
 
   async obtenerMetricasDashboard() {
@@ -58,18 +61,43 @@ export class DashboardService {
       (t) => t.estado === 'pendiente',
     ).length;
 
-    // Ingresos de hoy (turnos cobrados)
-    // DESACTIVADO: Se implementará en el futuro
-    const ingresosHoy = 0;
+    // Ingresos de hoy basados en facturas cobradas
+    const facturasHoy = await this.facturaRepository.find({
+      where: {
+        estado: 'cobrada',
+        createdAt: Between(hoy, new Date(hoy.getTime() + 24 * 60 * 60 * 1000)),
+      },
+      relations: ['detalles'],
+    });
+
+    const ingresosHoy = facturasHoy.reduce((total, factura) => {
+      const totalFactura = factura.detalles.reduce(
+        (sum, detalle) => sum + Number(detalle.subtotal),
+        0,
+      );
+      return total + totalFactura;
+    }, 0);
 
     // Objetivo diario (puede ser configurable)
     const objetivoDiario = 35000;
     const porcentajeCumplimiento = (ingresosHoy / objetivoDiario) * 100;
 
-    // Clientes atendidos hoy
-    // DESACTIVADO: Se implementará en el futuro
-    const clientesAtendidos = 0;
-    const clientesFacturados = 0;
+    // Clientes atendidos en la semana
+    const facturasSemana = await this.facturaRepository.find({
+      where: {
+        estado: 'cobrada',
+        createdAt: Between(inicioSemana, finSemana),
+      },
+    });
+
+    // Clientes únicos atendidos (facturados) en la semana
+    const clientesIdsAtendidos = [
+      ...new Set(facturasSemana.map((f) => f.clienteId)),
+    ];
+    const clientesAtendidos = clientesIdsAtendidos.length;
+
+    // Total de facturas en la semana
+    const clientesFacturados = facturasSemana.length;
 
     // Resumen semanal
     const turnosSemana = await this.turnoRepository.find({
@@ -79,10 +107,33 @@ export class DashboardService {
       relations: ['servicio'],
     });
 
-    // DESACTIVADO: Se implementará en el futuro
-    const ingresosSemana = 0;
-
     const totalTurnosSemana = turnosSemana.length;
+
+    // Ingresos semanales basados en facturas cobradas
+    const facturasSemanaCobradas = await this.facturaRepository.find({
+      where: {
+        estado: 'cobrada',
+        createdAt: Between(inicioSemana, finSemana),
+      },
+      relations: ['detalles'],
+    });
+
+    const ingresosSemana = facturasSemanaCobradas.reduce((total, factura) => {
+      const totalFactura = factura.detalles.reduce(
+        (sum, detalle) => sum + Number(detalle.subtotal),
+        0,
+      );
+      return total + totalFactura;
+    }, 0);
+
+    // Contar servicios y productos facturados en la semana
+    const detallesSemana = facturasSemanaCobradas.flatMap((f) => f.detalles);
+    const cantidadServicios = detallesSemana
+      .filter((d) => d.tipo_item === 'servicio')
+      .reduce((sum, d) => sum + d.cantidad, 0);
+    const cantidadProductos = detallesSemana
+      .filter((d) => d.tipo_item === 'producto')
+      .reduce((sum, d) => sum + d.cantidad, 0);
 
     // Calcular crecimiento semanal
     const turnosSemanaAnterior = await this.turnoRepository.find({
@@ -114,15 +165,15 @@ export class DashboardService {
         porcentaje: Math.round(porcentajeCumplimiento),
       },
       clientesHoy: {
-        total: 0,
+        total: clientesAtendidos,
         atendidos: clientesAtendidos,
         facturados: clientesFacturados,
       },
       resumenSemanal: {
         ingresos: ingresosSemana,
         turnos: totalTurnosSemana,
-        servicios: 0,
-        productos: 0,
+        servicios: cantidadServicios,
+        productos: cantidadProductos,
         crecimiento: Math.round(crecimientoSemanal),
       },
     };
@@ -133,16 +184,25 @@ export class DashboardService {
     const hoyStr = hoy.toISOString().split('T')[0];
     const horaActual = hoy.toTimeString().split(' ')[0].slice(0, 5);
 
+    // Calcular hora límite (1 hora antes)
+    const horaLimite = new Date(hoy);
+    horaLimite.setHours(horaLimite.getHours() - 1);
+    const horaLimiteStr = horaLimite.toTimeString().split(' ')[0].slice(0, 5);
+
     const turnosHoy = await this.turnoRepository.find({
       where: { fecha: hoyStr },
       relations: ['cliente', 'servicio'],
       order: { hora: 'ASC' },
     });
 
-    // Filtrar turnos que aún no han ocurrido
+    // Filtrar turnos no atendidos desde 1 hora antes
     const proximosTurnos = turnosHoy
-      .filter((t) => t.hora >= horaActual)
-      .slice(0, 3);
+      .filter((t) => {
+        const estadoValido = t.estado === 'pendiente' || t.estado !== 'cobrado';
+        const horaValida = t.hora >= horaLimiteStr;
+        return estadoValido && horaValida;
+      })
+      .slice(0, 5); // Mostrar hasta 5 turnos
 
     return proximosTurnos.map((turno) => ({
       id: turno.id,
