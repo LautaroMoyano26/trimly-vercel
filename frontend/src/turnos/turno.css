@@ -542,7 +542,6 @@
   margin-right: 30px;
 }
 
-/* En turno.css */
 .turno-btn.disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -551,4 +550,21 @@
 .turno-btn.disabled:hover {
   background-color: inherit;
   transform: none;
+}
+.historial-turno-btn {
+  background: #27272a;
+  border: none;
+  color: #ffffff;
+  padding: 10px 17px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+  margin-left: 535px;
+}
+.historial-turno-btn:hover {
+  background: #747477;
 }

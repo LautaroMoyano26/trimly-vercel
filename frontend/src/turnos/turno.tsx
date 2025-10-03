@@ -6,11 +6,12 @@ import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
 import EliminarTurnoModal from "./EliminarTurnoModal"; // Asegúrate de importar el modal
-
+import HistorialTurno from "./HistorialTurno";
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
+  const [showHistorialModal, setShowHistorialModal] = useState(false)
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
   const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // Faltaba este estado
@@ -191,6 +192,10 @@ export default function Turnos() {
           <h1 className="turnos-title">Turnos</h1>
           <p className="turnos-desc">Gestiona los turnos de tu peluquería</p>
         </div>
+         
+          <button className="historial-turno-btn" onClick={() => setShowHistorialModal(true)}>
+            <FaClock style={{ marginRight: 15 }} /> Historial de turnos
+          </button>
         <button className="nuevo-turno-btn" onClick={() => setShowModal(true)}>
           <FaPlus /> Nuevo turno
         </button>
@@ -305,6 +310,11 @@ export default function Turnos() {
           </div>
         </>
       )}
+      <HistorialTurno
+        show={showHistorialModal}
+        onClose={() => setShowHistorialModal(false)}
+      />
+
       <NuevoTurnoModal
         show={showModal}
         onClose={() => setShowModal(false)}
