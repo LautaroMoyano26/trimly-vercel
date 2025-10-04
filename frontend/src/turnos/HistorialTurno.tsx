@@ -5,47 +5,30 @@ import "./HistorialTurno.css";
 interface Props {
   show: boolean;
   onClose: () => void;
+  refreshTrigger?: number;
 }
 
-interface Cliente {
-  nombre: string;
-  apellido: string;
-}
-
-interface Servicio {
-  servicio: string;
-  precio: number;
-}
-
-interface Usuario {
-  nombre: string;
-  apellido: string;
-}
-
-interface Factura {
-  estado: 'pendiente' | 'cobrada' | 'cancelada';
-  createdAt: string;
-  
-}
-
+interface Cliente { nombre: string; apellido: string; }
+interface Servicio { servicio: string; precio: number; }
+interface Usuario { nombre: string; apellido: string; }
+interface Factura { estado: "pendiente" | "cobrada" | "cancelada"; createdAt: string; }
 interface Turno {
   id: number;
   cliente: Cliente | null;
   servicio: Servicio | null;
   fecha: string;
-  hora: string; // "HH:MM:SS"
+  hora: string;
   usuario: Usuario | null;
+  estado: "pendiente" | "cobrado" | "cancelado";
   factura?: Factura | null;
 }
 
-const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
+const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }) => {
   const [turnos, setTurnos] = useState<Turno[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!show) return;
-
+  const fetchTurnos = () => {
     setLoading(true);
     setError(null);
 
@@ -56,17 +39,12 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
       })
       .then((data) => {
         if (Array.isArray(data)) {
-          const hoy = new Date().toISOString().split("T")[0];
-          const turnosHoy = data.filter((t: Turno) => t.fecha === hoy);
-
-          // Ordenar por hora descendente
-          turnosHoy.sort((a: Turno, b: Turno) =>
-            (b.hora ?? "").localeCompare(a.hora ?? "")
+          data.sort(
+            (a: Turno, b: Turno) =>
+              b.fecha.localeCompare(a.fecha) || (b.hora ?? "").localeCompare(a.hora ?? "")
           );
-
-          setTurnos(turnosHoy);
+          setTurnos(data.slice(0, 20));
         } else {
-          console.error("Respuesta inesperada:", data);
           setTurnos([]);
         }
       })
@@ -75,73 +53,94 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose }) => {
         setError("No se pudieron cargar los turnos.");
       })
       .finally(() => setLoading(false));
-  }, [show]);
+  };
+
+  useEffect(() => {
+    if (!show) return;
+    fetchTurnos();
+  }, [show, refreshTrigger]);
 
   if (!show) return null;
 
   return (
     <div className="historial-overlay">
       <div className="historial-container">
+        {/* Header */}
         <div className="historial-header">
           <h2>Historial de Turnos</h2>
-          <p>Últimos turnos realizados y facturados</p>
+          <p>Últimos 20 turnos realizados y facturados</p>
         </div>
 
-        <div className="historial-list">
-          {loading && <p className="historial-empty">Cargando turnos...</p>}
-          {error && <p className="historial-empty">{error}</p>}
-          {!loading && !error && turnos.length === 0 && (
-            <p className="historial-empty">No hay turnos registrados para hoy</p>
-          )}
+        {/* Lista con scroll independiente */}
+        <div className="historial-list-wrapper">
+          <div className="historial-list">
+            {loading && <p className="historial-empty">Cargando turnos...</p>}
+            {error && <p className="historial-empty">{error}</p>}
+            {!loading && !error && turnos.length === 0 && (
+              <p className="historial-empty">No hay turnos registrados</p>
+            )}
 
-          {!loading &&
-            !error &&
-            turnos.map((turno) => {
-              const estado = turno.factura?.estado === "cobrada" ? "Pagado" : "Pendiente";
-              const fechaFactura = turno.factura?.createdAt?.split("T")[0] ?? null;
-              const horaMostrar = turno.hora?.slice(0, 5) ?? "-";
+            {!loading &&
+              !error &&
+              turnos.map((turno) => {
+                const estado =
+                  turno.estado === "cobrado"
+                    ? "Pagado"
+                    : turno.estado === "cancelado"
+                    ? "Cancelado"
+                    : "Pendiente";
 
-              return (
-                <div key={turno.id} className="historial-card">
-                  <div className="historial-icon">
-                    <FaClock />
+                const horaMostrar = turno.hora?.slice(0, 5) ?? "-";
+                const fechaFactura =
+                  turno.estado === "cobrado" && turno.factura
+                    ? new Date(turno.factura.createdAt).toLocaleDateString()
+                    : null;
+
+                return (
+                  <div key={turno.id} className="historial-card">
+                    <div className="historial-icon">
+                      <FaClock />
+                    </div>
+
+                    <div className="historial-info">
+                      <h3>
+                        {turno.cliente
+                          ? `${turno.cliente.nombre} ${turno.cliente.apellido}`
+                          : "Sin cliente"}
+                      </h3>
+
+                      <p>{turno.servicio?.servicio ?? "Sin servicio"}</p>
+                      <span>
+                        {turno.fecha ?? "-"} - {horaMostrar} • Por:{" "}
+                        {turno.usuario
+                          ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
+                          : "Sin asignar"}
+                      </span>
+
+                      {fechaFactura && (
+                        <p className="facturado">
+                          Facturado el: <strong>{fechaFactura}</strong>
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="historial-status">
+                      <strong>${turno.servicio?.precio ?? 0}</strong>
+                      {estado === "Pagado" ? (
+                        <span className="pagado"> Pagado</span>
+                      ) : estado === "Cancelado" ? (
+                        <span className="cancelado"> Cancelado</span>
+                      ) : (
+                        <span className="pendiente"> Pendiente</span>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="historial-info">
-                    <h3>
-                      {turno.cliente
-                        ? `${turno.cliente.nombre} ${turno.cliente.apellido}`
-                        : "Sin cliente"}
-                    </h3>
-
-                    <p>{turno.servicio?.servicio ?? "Sin servicio"}</p>
-                    <span>
-                      {turno.fecha ?? "-"} - {horaMostrar} • Por:{" "}
-                      {turno.usuario
-                        ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
-                        : "Sin asignar"}
-                    </span>
-
-                    {estado === "Pagado" && fechaFactura && (
-                      <p className="facturado">
-                        Facturado el: <strong>{fechaFactura}</strong>
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="historial-status">
-                    <strong>${turno.servicio?.precio ?? 0}</strong>
-                    {estado === "Pagado" ? (
-                      <span className="pagado"> Pagado</span>
-                    ) : (
-                      <span className="pendiente">Pendiente</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
 
+        {/* Footer */}
         <div className="historial-footer">
           <button onClick={onClose} className="cerrar-btn">
             Cerrar
