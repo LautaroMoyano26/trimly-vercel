@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaClock } from "react-icons/fa";
+import { FaClock, FaCheckCircle, FaTimesCircle, FaTimes } from "react-icons/fa";
 import "./HistorialTurno.css";
 
 interface Props {
@@ -8,10 +8,22 @@ interface Props {
   refreshTrigger?: number;
 }
 
-interface Cliente { nombre: string; apellido: string; }
-interface Servicio { servicio: string; precio: number; }
-interface Usuario { nombre: string; apellido: string; }
-interface Factura { estado: "pendiente" | "cobrada" | "cancelada"; createdAt: string; }
+interface Cliente {
+  nombre: string;
+  apellido: string;
+}
+interface Servicio {
+  servicio: string;
+  precio: number;
+}
+interface Usuario {
+  nombre: string;
+  apellido: string;
+}
+interface Factura {
+  estado: "pendiente" | "cobrada" | "cancelada";
+  createdAt: string;
+}
 interface Turno {
   id: number;
   cliente: Cliente | null;
@@ -23,7 +35,11 @@ interface Turno {
   factura?: Factura | null;
 }
 
-const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }) => {
+const HistorialTurnosModal: React.FC<Props> = ({
+  show,
+  onClose,
+  refreshTrigger,
+}) => {
   const [turnos, setTurnos] = useState<Turno[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +57,8 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }
         if (Array.isArray(data)) {
           data.sort(
             (a: Turno, b: Turno) =>
-              b.fecha.localeCompare(a.fecha) || (b.hora ?? "").localeCompare(a.hora ?? "")
+              b.fecha.localeCompare(a.fecha) ||
+              (b.hora ?? "").localeCompare(a.hora ?? "")
           );
           setTurnos(data.slice(0, 20));
         } else {
@@ -65,13 +82,20 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }
   return (
     <div className="historial-overlay">
       <div className="historial-container">
-        {/* Header */}
+  
+        <button className="cerrar-x" onClick={onClose}>
+          <FaTimes />
+        </button>
+
+    
         <div className="historial-header">
-          <h2>Historial de Turnos</h2>
+          <h2>
+            <FaClock /> Historial de Turnos
+          </h2>
           <p>Últimos 20 turnos realizados y facturados</p>
         </div>
 
-        {/* Lista con scroll independiente */}
+       
         <div className="historial-list-wrapper">
           <div className="historial-list">
             {loading && <p className="historial-empty">Cargando turnos...</p>}
@@ -92,7 +116,7 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }
 
                 const horaMostrar = turno.hora?.slice(0, 5) ?? "-";
                 const fechaFactura =
-                  turno.estado === "cobrado" && turno.factura
+                  turno.factura && turno.factura.createdAt
                     ? new Date(turno.factura.createdAt).toLocaleDateString()
                     : null;
 
@@ -116,22 +140,29 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }
                           ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
                           : "Sin asignar"}
                       </span>
-
-                      {fechaFactura && (
-                        <p className="facturado">
-                          Facturado el: <strong>{fechaFactura}</strong>
-                        </p>
-                      )}
                     </div>
 
                     <div className="historial-status">
                       <strong>${turno.servicio?.precio ?? 0}</strong>
                       {estado === "Pagado" ? (
-                        <span className="pagado"> Pagado</span>
+                        <>
+                          <span className="pagado">
+                            <FaCheckCircle /> Pagado
+                          </span>
+                          {fechaFactura && (
+                            <p className="fecha-factura">
+                              Facturado: {fechaFactura}
+                            </p>
+                          )}
+                        </>
                       ) : estado === "Cancelado" ? (
-                        <span className="cancelado"> Cancelado</span>
+                        <span className="cancelado">
+                          <FaTimesCircle /> Cancelado
+                        </span>
                       ) : (
-                        <span className="pendiente"> Pendiente</span>
+                        <span className="pendiente">
+                          <FaClock /> Pendiente
+                        </span>
                       )}
                     </div>
                   </div>
@@ -140,7 +171,7 @@ const HistorialTurnosModal: React.FC<Props> = ({ show, onClose, refreshTrigger }
           </div>
         </div>
 
-        {/* Footer */}
+       
         <div className="historial-footer">
           <button onClick={onClose} className="cerrar-btn">
             Cerrar
