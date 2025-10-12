@@ -551,6 +551,12 @@
   background-color: inherit;
   transform: none;
 }
+.turnos-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .historial-turno-btn {
   background: #27272a;
   border: none;
@@ -563,7 +569,6 @@
   display: flex;
   align-items: center;
   transition: background 0.2s;
-  margin-left: 535px;
 }
 .historial-turno-btn:hover {
   background: #747477;

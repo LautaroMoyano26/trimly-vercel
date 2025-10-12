@@ -1,31 +1,41 @@
-import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Calendar, Package, Scissors, ShoppingCart, TrendingUp, BarChart3, Search } from 'lucide-react';
-import type { DatosReporte } from '../types/reportes.types';
-import './ReportesView.css';
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import {
+  Calendar,
+  Package,
+  Scissors,
+  ShoppingCart,
+  TrendingUp,
+  BarChart3,
+  Search,
+} from "lucide-react";
+import type { DatosReporte } from "../types/reportes.types";
+import "./ReportesView.css";
 
 // Servicios definidos ANTES del componente
 const reportesService = {
   async getReportes(fechaInicio: string, fechaFin: string) {
-    const response = await fetch(`http://localhost:3000/reportes/completo?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-    if (!response.ok) throw new Error('Error al obtener reportes');
+    const response = await fetch(
+      `http://localhost:3000/reportes/completo?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
+    );
+    if (!response.ok) throw new Error("Error al obtener reportes");
     return await response.json();
-  }
+  },
 };
 
 const serviciosService = {
   async getServicios() {
-    const response = await fetch('http://localhost:3000/servicios');
-    if (!response.ok) throw new Error('Error al obtener servicios');
+    const response = await fetch("http://localhost:3000/servicios");
+    if (!response.ok) throw new Error("Error al obtener servicios");
     return await response.json();
-  }
+  },
 };
 
 const productosService = {
   async getProductos() {
-    const response = await fetch('http://localhost:3000/producto');
-    if (!response.ok) throw new Error('Error al obtener productos');
+    const response = await fetch("http://localhost:3000/producto");
+    if (!response.ok) throw new Error("Error al obtener productos");
     return await response.json();
-  }
+  },
 };
 
 interface ServicioCompleto {
@@ -92,34 +102,36 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
     },
     servicios: [],
     productos: [],
-    periodo: { fechaInicio: '', fechaFin: '' },
+    periodo: { fechaInicio: "", fechaFin: "" },
   });
   const [todosServicios, setTodosServicios] = useState<ServicioCompleto[]>([]);
   const [todosProductos, setTodosProductos] = useState<ProductoCompleto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [periodoSeleccionado, setPeriodoSeleccionado] = useState('');
-  const [activeTab, setActiveTab] = useState<'servicios' | 'productos'>('servicios');
-  const [searchServicios, setSearchServicios] = useState('');
-  const [searchProductos, setSearchProductos] = useState('');
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [periodoSeleccionado, setPeriodoSeleccionado] = useState("");
+  const [activeTab, setActiveTab] = useState<"servicios" | "productos">(
+    "servicios"
+  );
+  const [searchServicios, setSearchServicios] = useState("");
+  const [searchProductos, setSearchProductos] = useState("");
 
   const cargarTodosLosItems = async () => {
     try {
-      console.log('Cargando servicios y productos...');
+      console.log("Cargando servicios y productos...");
       const [servicios, productos] = await Promise.all([
         serviciosService.getServicios(),
-        productosService.getProductos()
+        productosService.getProductos(),
       ]);
-      
-      console.log('Servicios obtenidos:', servicios);
-      console.log('Productos obtenidos:', productos);
-      
+
+      console.log("Servicios obtenidos:", servicios);
+      console.log("Productos obtenidos:", productos);
+
       setTodosServicios(servicios || []);
       setTodosProductos(productos || []);
     } catch (error) {
-      console.error('Error cargando items:', error);
+      console.error("Error cargando items:", error);
       setTodosServicios([]);
       setTodosProductos([]);
     }
@@ -129,16 +141,23 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
     setLoading(true);
     setError(null);
     try {
-      console.log(`Cargando reporte para período: fechaInicio=${inicio}&fechaFin=${fin}`);
-      
+      console.log(
+        `Cargando reporte para período: fechaInicio=${inicio}&fechaFin=${fin}`
+      );
+
       const res = await reportesService.getReportes(inicio, fin);
-      console.log('Datos del reporte:', res);
-      
+      console.log("Datos del reporte:", res);
+
       setDatos(res);
-      setPeriodoSeleccionado(`${inicio.split('-').reverse().join('/')} al ${fin.split('-').reverse().join('/')}`);
+      setPeriodoSeleccionado(
+        `${inicio.split("-").reverse().join("/")} al ${fin
+          .split("-")
+          .reverse()
+          .join("/")}`
+      );
     } catch (e) {
-      console.error('Error cargando reporte:', e);
-      setError('Error al cargar los reportes');
+      console.error("Error cargando reporte:", e);
+      setError("Error al cargar los reportes");
     } finally {
       setLoading(false);
     }
@@ -150,25 +169,25 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatDuration = (minutes?: number) => {
-    if (!minutes) return '30m';
+    if (!minutes) return "30m";
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins > 0 ? `${mins}m` : ''}`.trim();
+      return `${hours}h ${mins > 0 ? `${mins}m` : ""}`.trim();
     }
     return `${mins}m`;
   };
 
   const getNombreServicio = (servicio: ServicioCompleto) => {
-    return servicio.servicio || servicio.nombre || 'Servicio sin nombre';
+    return servicio.servicio || servicio.nombre || "Servicio sin nombre";
   };
 
   const getServiciosCompletos = () => {
@@ -176,15 +195,15 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
       return [];
     }
 
-    return todosServicios.map(servicio => {
-      const reporteServicio = datos.servicios.find(s => 
-        s.id === servicio.id || s.nombre === getNombreServicio(servicio)
+    return todosServicios.map((servicio) => {
+      const reporteServicio = datos.servicios.find(
+        (s) => s.id === servicio.id || s.nombre === getNombreServicio(servicio)
       );
-      
+
       return {
         ...servicio,
         cantidad: reporteServicio?.cantidad || 0,
-        ingresos: reporteServicio?.ingresos || 0
+        ingresos: reporteServicio?.ingresos || 0,
       };
     });
   };
@@ -194,15 +213,15 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
       return [];
     }
 
-    return todosProductos.map(producto => {
-      const reporteProducto = datos.productos.find(p => 
-        p.id === producto.id || p.nombre === producto.nombre
+    return todosProductos.map((producto) => {
+      const reporteProducto = datos.productos.find(
+        (p) => p.id === producto.id || p.nombre === producto.nombre
       );
-      
+
       return {
         ...producto,
         cantidad: reporteProducto?.cantidad || 0,
-        ingresos: reporteProducto?.ingresos || 0
+        ingresos: reporteProducto?.ingresos || 0,
       };
     });
   };
@@ -211,21 +230,29 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
   const getServiciosFiltrados = () => {
     const servicios = getServiciosCompletos();
     if (!searchServicios.trim()) return servicios;
-    
-    return servicios.filter(servicio => 
-      getNombreServicio(servicio).toLowerCase().includes(searchServicios.toLowerCase()) ||
-      servicio.descripcion?.toLowerCase().includes(searchServicios.toLowerCase())
+
+    return servicios.filter(
+      (servicio) =>
+        getNombreServicio(servicio)
+          .toLowerCase()
+          .includes(searchServicios.toLowerCase()) ||
+        servicio.descripcion
+          ?.toLowerCase()
+          .includes(searchServicios.toLowerCase())
     );
   };
 
   const getProductosFiltrados = () => {
     const productos = getProductosCompletos();
     if (!searchProductos.trim()) return productos;
-    
-    return productos.filter(producto =>
-      producto.nombre.toLowerCase().includes(searchProductos.toLowerCase()) ||
-      producto.categoria?.toLowerCase().includes(searchProductos.toLowerCase()) ||
-      producto.marca?.toLowerCase().includes(searchProductos.toLowerCase())
+
+    return productos.filter(
+      (producto) =>
+        producto.nombre.toLowerCase().includes(searchProductos.toLowerCase()) ||
+        producto.categoria
+          ?.toLowerCase()
+          .includes(searchProductos.toLowerCase()) ||
+        producto.marca?.toLowerCase().includes(searchProductos.toLowerCase())
     );
   };
 
@@ -233,29 +260,41 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
   useImperativeHandle(ref, () => ({
     exportarDatos: () => {
       if (!periodoSeleccionado) return null;
-      
+
       const serviciosCompletos = getServiciosCompletos();
       const productosCompletos = getProductosCompletos();
-      const totalServiciosRealizados = serviciosCompletos.reduce((acc, s) => acc + (s.cantidad || 0), 0);
-      const totalIngresosServicios = serviciosCompletos.reduce((acc, s) => acc + (s.ingresos || 0), 0);
-      const totalProductosVendidos = productosCompletos.reduce((acc, p) => acc + (p.cantidad || 0), 0);
-      const totalIngresosProductos = productosCompletos.reduce((acc, p) => acc + (p.ingresos || 0), 0);
-      
+      const totalServiciosRealizados = serviciosCompletos.reduce(
+        (acc, s) => acc + (s.cantidad || 0),
+        0
+      );
+      const totalIngresosServicios = serviciosCompletos.reduce(
+        (acc, s) => acc + (s.ingresos || 0),
+        0
+      );
+      const totalProductosVendidos = productosCompletos.reduce(
+        (acc, p) => acc + (p.cantidad || 0),
+        0
+      );
+      const totalIngresosProductos = productosCompletos.reduce(
+        (acc, p) => acc + (p.ingresos || 0),
+        0
+      );
+
       return {
-        servicios: serviciosCompletos.map(s => ({
+        servicios: serviciosCompletos.map((s) => ({
           id: s.id,
           nombre: getNombreServicio(s),
           cantidad: s.cantidad || 0,
           ingresos: s.ingresos || 0,
-          duracion: s.duracion
+          duracion: s.duracion,
         })),
-        productos: productosCompletos.map(p => ({
+        productos: productosCompletos.map((p) => ({
           id: p.id,
           nombre: p.nombre,
           cantidad: p.cantidad || 0,
           ingresos: p.ingresos || 0,
           stock: p.stock,
-          categoria: p.categoria
+          categoria: p.categoria,
         })),
         periodo: periodoSeleccionado,
         resumen: {
@@ -263,48 +302,52 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
           totalProductos: totalProductosVendidos,
           ingresosServicios: totalIngresosServicios,
           ingresosProductos: totalIngresosProductos,
-          ingresosTotales: totalIngresosServicios + totalIngresosProductos
-        }
+          ingresosTotales: totalIngresosServicios + totalIngresosProductos,
+        },
       };
-    }
+    },
   }));
 
   useEffect(() => {
     const hoy = new Date();
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const fi = inicioMes.toISOString().split('T')[0];
-    const ff = hoy.toISOString().split('T')[0];
+    const fi = inicioMes.toISOString().split("T")[0];
+    const ff = hoy.toISOString().split("T")[0];
     setFechaInicio(fi);
     setFechaFin(ff);
-    
+
     cargarTodosLosItems();
     cargar(fi, ff);
   }, []);
 
   if (loading) {
-    return (
-      <div className="loading-message">
-        Generando reporte...
-      </div>
-    );
+    return <div className="loading-message">Generando reporte...</div>;
   }
 
   if (error) {
-    return (
-      <div className="error-message">
-        {error}
-      </div>
-    );
+    return <div className="error-message">{error}</div>;
   }
 
   const serviciosCompletos = getServiciosCompletos();
   const productosCompletos = getProductosCompletos();
   const serviciosFiltrados = getServiciosFiltrados();
   const productosFiltrados = getProductosFiltrados();
-  const totalServiciosRealizados = serviciosFiltrados.reduce((acc, s) => acc + (s.cantidad || 0), 0);
-  const totalIngresosServicios = serviciosFiltrados.reduce((acc, s) => acc + (s.ingresos || 0), 0);
-  const totalProductosVendidos = productosFiltrados.reduce((acc, p) => acc + (p.cantidad || 0), 0);
-  const totalIngresosProductos = productosFiltrados.reduce((acc, p) => acc + (p.ingresos || 0), 0);
+  const totalServiciosRealizados = serviciosFiltrados.reduce(
+    (acc, s) => acc + (s.cantidad || 0),
+    0
+  );
+  const totalIngresosServicios = serviciosFiltrados.reduce(
+    (acc, s) => acc + (s.ingresos || 0),
+    0
+  );
+  const totalProductosVendidos = productosFiltrados.reduce(
+    (acc, p) => acc + (p.cantidad || 0),
+    0
+  );
+  const totalIngresosProductos = productosFiltrados.reduce(
+    (acc, p) => acc + (p.ingresos || 0),
+    0
+  );
 
   return (
     <div className="reportes-view">
@@ -312,7 +355,9 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
       <div className="period-selector-card">
         <div className="period-selector-header">
           <Calendar size={20} className="text-cyan-400" />
-          <h3 className="period-selector-title">Seleccionar Período de Análisis</h3>
+          <h3 className="period-selector-title">
+            Seleccionar Período de Análisis
+          </h3>
         </div>
 
         <div className="period-selector-grid">
@@ -340,14 +385,15 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
             disabled={!fechaInicio || !fechaFin || loading}
           >
             <BarChart3 size={16} />
-            {loading ? 'Generando...' : 'Generar Reporte'}
+            {loading ? "Generando..." : "Generar Reporte"}
           </button>
         </div>
 
         {periodoSeleccionado && (
           <div className="period-indicator">
             <p className="period-indicator-text">
-              Período seleccionado: <span className="period-date">{periodoSeleccionado}</span>
+              Período seleccionado:{" "}
+              <span className="period-date">{periodoSeleccionado}</span>
             </p>
           </div>
         )}
@@ -356,15 +402,19 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
       {/* Sistema de Pestañas */}
       <div className="tabs-container">
         <button
-          className={`tab-button ${activeTab === 'servicios' ? 'tab-servicios-active' : 'tab-inactive'}`}
-          onClick={() => setActiveTab('servicios')}
+          className={`tab-button ${
+            activeTab === "servicios" ? "tab-servicios-active" : "tab-inactive"
+          }`}
+          onClick={() => setActiveTab("servicios")}
         >
           <Scissors size={16} />
           Servicios ({serviciosCompletos.length})
         </button>
         <button
-          className={`tab-button ${activeTab === 'productos' ? 'tab-productos-active' : 'tab-inactive'}`}
-          onClick={() => setActiveTab('productos')}
+          className={`tab-button ${
+            activeTab === "productos" ? "tab-productos-active" : "tab-inactive"
+          }`}
+          onClick={() => setActiveTab("productos")}
         >
           <Package size={16} />
           Productos ({productosCompletos.length})
@@ -373,11 +423,12 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
 
       {/* Contenido de Pestañas */}
       <div className="tab-content">
-        {activeTab === 'servicios' && (
+        {activeTab === "servicios" && (
           <div className="services-content">
             <div className="content-header">
               <h2 className="content-title">
-                Análisis de Servicios - {periodoSeleccionado || 'Selecciona un período'}
+                Análisis de Servicios -{" "}
+                {periodoSeleccionado || "Selecciona un período"}
               </h2>
               <div className="search-bar-container">
                 <Search size={18} className="search-icon" />
@@ -390,32 +441,50 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                 />
               </div>
             </div>
-            
+
             <div className="items-list">
               {serviciosFiltrados.length > 0 ? (
                 serviciosFiltrados.map((servicio) => (
-                  <div key={servicio.id} className={`item-card ${servicio.cantidad > 0 ? 'has-sales' : ''}`}>
+                  <div
+                    key={servicio.id}
+                    className={`item-card ${
+                      servicio.cantidad > 0 ? "has-sales" : ""
+                    }`}
+                  >
                     <div className="item-left">
                       <div className="icon-circle servicios">
                         <Scissors size={20} className="text-purple-400" />
                       </div>
                       <div className="item-info">
-                        <h4 className="item-name">{getNombreServicio(servicio)}</h4>
+                        <h4 className="item-name">
+                          {getNombreServicio(servicio)}
+                        </h4>
                         <p className="item-subtitle">
-                          {servicio.cantidad || 0} servicios realizados • {formatDuration(servicio.duracion)}
+                          {servicio.cantidad || 0} servicios realizados •{" "}
+                          {formatDuration(servicio.duracion)}
                         </p>
                       </div>
                     </div>
                     <div className="item-right">
-                      <div className="item-amount">{formatCurrency(servicio.ingresos || 0)}</div>
+                      <div className="item-amount">
+                        {formatCurrency(servicio.ingresos || 0)}
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="empty-state">
                   <Scissors size={48} className="text-purple-400/50" />
-                  <p>{searchServicios ? 'No se encontraron servicios con ese criterio' : 'No se pudieron cargar los servicios'}</p>
-                  <p className="text-sm">{searchServicios ? 'Intenta con otro término de búsqueda' : 'Verifica que el backend esté ejecutándose'}</p>
+                  <p>
+                    {searchServicios
+                      ? "No se encontraron servicios con ese criterio"
+                      : "No se pudieron cargar los servicios"}
+                  </p>
+                  <p className="text-sm">
+                    {searchServicios
+                      ? "Intenta con otro término de búsqueda"
+                      : "Verifica que el backend esté ejecutándose"}
+                  </p>
                 </div>
               )}
 
@@ -427,11 +496,15 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                     </div>
                     <div className="total-info">
                       <h4 className="total-title">Total Servicios</h4>
-                      <p className="total-subtitle">{totalServiciosRealizados} servicios totales</p>
+                      <p className="total-subtitle">
+                        {totalServiciosRealizados} servicios totales
+                      </p>
                     </div>
                   </div>
                   <div className="total-right">
-                    <div className="total-amount servicios">{formatCurrency(totalIngresosServicios)}</div>
+                    <div className="total-amount servicios">
+                      {formatCurrency(totalIngresosServicios)}
+                    </div>
                     <p className="total-label">Ingresos totales</p>
                   </div>
                 </div>
@@ -440,11 +513,12 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
           </div>
         )}
 
-        {activeTab === 'productos' && (
+        {activeTab === "productos" && (
           <div className="products-content">
             <div className="content-header">
               <h2 className="content-title">
-                Análisis de Productos - {periodoSeleccionado || 'Selecciona un período'}
+                Análisis de Productos -{" "}
+                {periodoSeleccionado || "Selecciona un período"}
               </h2>
               <div className="search-bar-container">
                 <Search size={18} className="search-icon" />
@@ -457,11 +531,16 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                 />
               </div>
             </div>
-            
+
             <div className="items-list">
               {productosFiltrados.length > 0 ? (
                 productosFiltrados.map((producto) => (
-                  <div key={producto.id} className={`item-card ${producto.cantidad > 0 ? 'has-sales' : ''}`}>
+                  <div
+                    key={producto.id}
+                    className={`item-card ${
+                      producto.cantidad > 0 ? "has-sales" : ""
+                    }`}
+                  >
                     <div className="item-left">
                       <div className="icon-circle productos">
                         <Package size={20} className="text-cyan-400" />
@@ -475,15 +554,25 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                       </div>
                     </div>
                     <div className="item-right">
-                      <div className="item-amount">{formatCurrency(producto.ingresos || 0)}</div>
+                      <div className="item-amount">
+                        {formatCurrency(producto.ingresos || 0)}
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="empty-state">
                   <Package size={48} className="text-cyan-400/50" />
-                  <p>{searchProductos ? 'No se encontraron productos con ese criterio' : 'No se pudieron cargar los productos'}</p>
-                  <p className="text-sm">{searchProductos ? 'Intenta con otro término de búsqueda' : 'Verifica que el backend esté ejecutándose'}</p>
+                  <p>
+                    {searchProductos
+                      ? "No se encontraron productos con ese criterio"
+                      : "No se pudieron cargar los productos"}
+                  </p>
+                  <p className="text-sm">
+                    {searchProductos
+                      ? "Intenta con otro término de búsqueda"
+                      : "Verifica que el backend esté ejecutándose"}
+                  </p>
                 </div>
               )}
 
@@ -495,11 +584,15 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                     </div>
                     <div className="total-info">
                       <h4 className="total-title">Total Productos</h4>
-                      <p className="total-subtitle">{totalProductosVendidos} productos vendidos</p>
+                      <p className="total-subtitle">
+                        {totalProductosVendidos} productos vendidos
+                      </p>
                     </div>
                   </div>
                   <div className="total-right">
-                    <div className="total-amount productos">{formatCurrency(totalIngresosProductos)}</div>
+                    <div className="total-amount productos">
+                      {formatCurrency(totalIngresosProductos)}
+                    </div>
                     <p className="total-label">Ingresos totales</p>
                   </div>
                 </div>
@@ -512,4 +605,4 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
   );
 });
 
-ReportesView.displayName = 'ReportesView';
+ReportesView.displayName = "ReportesView";

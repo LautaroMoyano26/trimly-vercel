@@ -1,14 +1,14 @@
 .clientes-container {
   background: #19191d;
-  min-height: 100vh;
   height: 100vh;
   width: 100%;
   color: #fff;
   box-sizing: border-box;
   margin: 0;
   padding: 32px 16px 32px 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden; /* Eliminar scroll de la página */
+  display: flex;
+  flex-direction: column;
 }
 
 .nuevo-cliente-btn {
@@ -62,6 +62,14 @@
   font-size: 0.95rem;
   font-weight: bold;
   display: inline-block;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ✅ Estilo para clientes sin visitas */
+.visitas-badge.sin-visitas {
+  background: #2a2a2a;
+  color: #888;
 }
 
 .estado-badge {
@@ -128,6 +136,108 @@
   border-radius: 16px;
   overflow: hidden;
   background: #232329;
+  position: relative;
+}
+
+/* Layout flexbox para controlar la distribución del espacio */
+.clientes-header {
+  flex-shrink: 0; /* No se reduce */
+  margin-bottom: 20px;
+}
+
+.clientes-busqueda-container {
+  flex-shrink: 0; /* No se reduce */
+  margin-bottom: 20px;
+}
+
+.clientes-tabla-container {
+  flex: 1; /* Ocupa el espacio restante */
+  min-height: 0; /* Importante para flexbox */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevenir scroll en el contenedor */
+}
+
+/* Ajustar la tabla para que use todo el espacio disponible */
+.table-responsive {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.table-responsive .table {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.table-responsive .table thead {
+  flex-shrink: 0;
+  display: block;
+}
+
+.table-responsive .table thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-responsive .table tbody {
+  flex: 1;
+  display: block;
+  overflow-y: auto;
+  max-height: calc(9 * 60px); /* Máximo 9 filas visibles */
+}
+
+.table-responsive .table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Scroll personalizado para tbody */
+.table-responsive .table tbody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-responsive .table tbody::-webkit-scrollbar-track {
+  background: #19191d;
+  border-radius: 4px;
+}
+
+.table-responsive .table tbody::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  border-radius: 4px;
+}
+
+.table-responsive .table tbody::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00b8cc 0%, #8a47d1 100%);
+}
+
+/* Smooth scroll para tbody */
+.table-responsive .table tbody {
+  scroll-behavior: smooth;
+}
+
+/* Asegurar que el header sea sticky */
+.table-responsive .table thead th {
+  position: sticky;
+  top: 0;
+  background: #232329 !important;
+  z-index: 10;
+}
+
+/* Mejora de la altura de las filas */
+.table tbody tr {
+  min-height: 60px;
+  height: 60px; /* Altura fija para cálculo correcto */
+}
+
+.table tbody td {
+  padding: 16px 12px;
+  vertical-align: middle;
 }
 .estado-badge-activo {
   background: #0e3e1a; /* Verde oscuro */
@@ -148,4 +258,76 @@
   font-size: 0.95rem;
   font-weight: bold;
   display: inline-block;
+}
+
+/* Botón para toggle de clientes inactivos */
+.toggle-inactivos-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #232329;
+  color: #a1a1aa;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.toggle-inactivos-btn:hover {
+  background: #2a2a30;
+  color: #e4e4e7;
+  border-color: #52525b;
+}
+
+.toggle-inactivos-btn.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.toggle-inactivos-btn.active:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  /* En móviles, la barra de búsqueda y el botón van uno debajo del otro */
+  .row.align-items-center .col-md-8,
+  .row.align-items-center .col-md-4 {
+    margin-bottom: 0.75rem;
+  }
+
+  .row.align-items-center .col-md-4.d-flex.justify-content-end {
+    justify-content: flex-start !important;
+  }
+
+  .toggle-inactivos-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Para tablets */
+@media (min-width: 768px) and (max-width: 991px) {
+  .clientes-busqueda {
+    max-width: 100%;
+  }
+
+  .toggle-inactivos-btn {
+    min-width: fit-content;
+  }
+}
+
+/* Para desktop */
+@media (min-width: 992px) {
+  .clientes-busqueda {
+    max-width: 100%;
+  }
 }

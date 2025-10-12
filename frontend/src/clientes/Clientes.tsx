@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./Clientes.css"; // Asegúrate de que este archivo CSS existe y lo tienes actualizado
+import "./Clientes.css";
 import Tabla from "../components/Tabla";
 import EditarClienteModal from "./EditarClienteModal";
 import EliminarClienteModal from "../components/EliminarClienteModal";
@@ -11,6 +11,8 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaCalendarAlt,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
 import { FaEdit, FaTrash, FaClipboardList } from "react-icons/fa";
 
@@ -22,7 +24,53 @@ interface Cliente {
   email: string;
   dni: string;
   fechaNacimiento: string;
-  activo: boolean; // Esta propiedad es CLAVE para el estado y el ordenamiento
+  activo: boolean;
+  visitas?: number; // ✅ Agregar campo para las visitas calculadas
+}
+
+// ✅ Interfaces para los datos del historial (igual que en HistorialClienteModal)
+interface TurnoHistorial {
+  id: number;
+  fecha: string;
+  hora: string;
+  servicio: {
+    id: number;
+    servicio: string;
+    precio: number;
+  };
+  usuario?: {
+    id: number;
+    nombre: string;
+    apellido: string;
+  };
+  notas?: string;
+  estado: string;
+}
+
+interface FacturaDetalle {
+  id: number;
+  tipo_item: "producto" | "servicio";
+  itemId: number;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+}
+
+interface FacturaHistorial {
+  id: number;
+  metodoPago: string;
+  estado: string;
+  createdAt: string;
+  detalles: FacturaDetalle[];
+}
+
+interface ServicioHistorial {
+  fecha: string;
+  servicio: string;
+  profesional: string;
+  productos: string[];
+  nota: string;
+  monto: number;
 }
 
 const columns = [
@@ -57,26 +105,114 @@ export default function Clientes() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Buscar...");
+  const [mostrarInactivos, setMostrarInactivos] = useState(false);
 
-  // Función para cargar clientes desde el backend
+  // ✅ Función para calcular visitas igual que en HistorialClienteModal
+  const calcularVisitasCliente = async (clienteId: number): Promise<number> => {
+    try {
+      // Cargar turnos del cliente
+      const turnosRes = await fetch(
+        `http://localhost:3000/clientes/${clienteId}/turnos`
+      );
+      let turnos: TurnoHistorial[] = [];
+      if (turnosRes.ok) {
+        turnos = await turnosRes.json();
+      }
+
+      // Cargar facturas del cliente
+      const facturasRes = await fetch(
+        `http://localhost:3000/clientes/${clienteId}/facturas`
+      );
+      let facturas: FacturaHistorial[] = [];
+      if (facturasRes.ok) {
+        facturas = await facturasRes.json();
+      }
+
+      // Formatear fecha igual que en HistorialClienteModal
+      const formatearFecha = (fechaStr: string) => {
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString("es-ES", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      };
+
+      const formatearPrecio = (precio: any) => {
+        const num = parseFloat(precio);
+        return isNaN(num) ? 0 : num;
+      };
+
+      // Combinar historial igual que en HistorialClienteModal
+      const historialCombinado: ServicioHistorial[] = [
+        // Convertir turnos
+        ...turnos.map((turno) => ({
+          fecha: formatearFecha(turno.fecha),
+          servicio: turno.servicio?.servicio || "Servicio no disponible",
+          profesional: turno.usuario
+            ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
+            : "No asignado",
+          productos: [],
+          nota: turno.notas || "Sin notas",
+          monto: formatearPrecio(turno.servicio?.precio),
+        })),
+        // Convertir servicios de facturas
+        ...facturas.flatMap((factura) =>
+          factura.detalles
+            .filter((detalle) => detalle.tipo_item === "servicio")
+            .map((detalle) => ({
+              fecha: formatearFecha(factura.createdAt),
+              servicio: `Servicio #${detalle.itemId}`,
+              profesional: "Profesional no especificado",
+              productos:
+                facturas
+                  .find((f) => f.id === factura.id)
+                  ?.detalles.filter((d) => d.tipo_item === "producto")
+                  .map((p) => `Producto #${p.itemId}`) || [],
+              nota: `Método de pago: ${factura.metodoPago}`,
+              monto: formatearPrecio(detalle.subtotal),
+            }))
+        ),
+      ];
+
+      // Retornar la cantidad igual que en HistorialClienteModal
+      return historialCombinado.length;
+    } catch (error) {
+      console.error(
+        `Error calculando visitas para cliente ${clienteId}:`,
+        error
+      );
+      return 0;
+    }
+  };
+
+  // ✅ Función para cargar clientes CON visitas calculadas
   const fetchClientes = async () => {
     try {
       const res = await fetch("http://localhost:3000/clientes");
       if (!res.ok) throw new Error("No se pudo obtener clientes");
       const data = await res.json();
-      setClientes(Array.isArray(data) ? data : []);
+      const clientesArray = Array.isArray(data) ? data : [];
+
+      // Calcular visitas para cada cliente
+      const clientesConVisitas = await Promise.all(
+        clientesArray.map(async (cliente: Cliente) => {
+          const visitas = await calcularVisitasCliente(cliente.id);
+          return { ...cliente, visitas };
+        })
+      );
+
+      setClientes(clientesConVisitas);
     } catch (error) {
-      setClientes([]); // Asegura que la lista quede vacía si hay un error
+      setClientes([]);
       console.error("Error al cargar clientes:", error);
     }
   };
 
-  // Cargar los clientes al iniciar el componente
   useEffect(() => {
     fetchClientes();
   }, []);
 
-  // Manejadores para abrir los modales
   const handleEditClick = (cliente: Cliente) => {
     setSelectedClient(cliente);
     setShowEditModal(true);
@@ -96,9 +232,8 @@ export default function Clientes() {
     setMostrarHistorial(true);
   };
 
-  // Callbacks para mostrar el modal de éxito
   const handleClienteCreado = async () => {
-    await fetchClientes();
+    await fetchClientes(); // ✅ Recalculará las visitas automáticamente
     setSuccessModal({
       show: true,
       message: "Cliente registrado correctamente",
@@ -107,14 +242,14 @@ export default function Clientes() {
   };
 
   const handleClienteEditado = async () => {
-    await fetchClientes();
+    await fetchClientes(); // ✅ Recalculará las visitas automáticamente
     setSuccessModal({ show: true, message: "Cliente editado correctamente" });
     setShowEditModal(false);
     setSelectedClient(undefined);
   };
 
   const handleClienteDesactivado = async () => {
-    await fetchClientes();
+    await fetchClientes(); // ✅ Recalculará las visitas automáticamente
     setSuccessModal({
       show: true,
       message: "Cliente desactivado correctamente",
@@ -124,9 +259,11 @@ export default function Clientes() {
   };
 
   // --- FILTRADO Y ORDENAMIENTO DE CLIENTES ---
+  const clientesPorEstado = mostrarInactivos
+    ? clientes.filter((c) => !c.activo)
+    : clientes.filter((c) => c.activo);
 
-  // 1. Filtrar clientes por término de búsqueda (nombre/apellido)
-  const filteredClientes = clientes.filter(
+  const filteredClientes = clientesPorEstado.filter(
     (c) =>
       (c.nombre || "")
         .toLowerCase()
@@ -134,23 +271,14 @@ export default function Clientes() {
       (c.apellido || "").toLowerCase().includes(searchTerm.trim().toLowerCase())
   );
 
-  // 2. Ordenar clientes: Activos primero, Inactivos al final.
-  // Si tienen el mismo estado (ambos activos o ambos inactivos), se ordenan por nombre.
   const sortedAndFilteredClientes = [...filteredClientes].sort((a, b) => {
-    // Si 'a' está activo y 'b' inactivo, 'a' va antes (-1)
-    if (a.activo && !b.activo) {
-      return -1;
-    }
-    // Si 'a' está inactivo y 'b' activo, 'a' va después (1)
-    if (!a.activo && b.activo) {
-      return 1;
-    }
-    // Si ambos tienen el mismo estado, ordenar alfabéticamente por nombre
     return a.nombre.localeCompare(b.nombre);
   });
 
-  // --- PREPARACIÓN DE DATOS PARA LA TABLA ---
+  const clientesActivos = clientes.filter((c) => c.activo).length;
+  const clientesInactivos = clientes.filter((c) => !c.activo).length;
 
+  // --- PREPARACIÓN DE DATOS PARA LA TABLA ---
   const data = sortedAndFilteredClientes.map((c) => ({
     cliente: (
       <span className="d-flex align-items-center gap-2">
@@ -178,7 +306,16 @@ export default function Clientes() {
     ) : (
       "-"
     ),
-    visitas: <span className="visitas-badge">-</span>,
+    // ✅ Mostrar visitas calculadas con la misma lógica del modal
+    visitas: (
+      <span
+        className={`visitas-badge ${
+          (c.visitas || 0) === 0 ? "sin-visitas" : ""
+        }`}
+      >
+        {c.visitas || 0}
+      </span>
+    ),
     estado: (
       <span
         className={c.activo ? "estado-badge-activo" : "estado-badge-inactivo"}
@@ -214,9 +351,8 @@ export default function Clientes() {
     ),
   }));
 
-  // Renderizado del componente
   return (
-    <div className="clientes-container container-fluid py-4 px-2 px-md-4">
+    <div className="clientes-container">
       {/* Modales */}
       <NuevoClienteModal
         show={showNewModal}
@@ -252,35 +388,98 @@ export default function Clientes() {
         cliente={clienteHistorial}
       />
 
-      {/* Encabezado y búsqueda */}
-      <div className="row align-items-center mb-3">
-        <div className="col">
-          <h1 className="fw-bold mb-0">Clientes</h1>
-          <p className="text-secondary mb-0">
-            Gestiona los clientes de tu peluquería
-          </p>
-        </div>
-        <div className="col-auto">
-          <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
-            + Nuevo cliente
-          </button>
-        </div>
-      </div>
-      <div className="row mb-3">
-        <div className="col">
-          <input
-            className="form-control clientes-busqueda"
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setSearchPlaceholder("")}
-            onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
-          />
+      {/* Encabezado */}
+      <div className="clientes-header">
+        <div className="row align-items-center mb-3">
+          <div className="col">
+            <h1 className="fw-bold mb-0">
+              {mostrarInactivos ? "Clientes Inactivos" : "Clientes"}
+            </h1>
+            <p className="text-secondary mb-0">
+              {mostrarInactivos
+                ? `Mostrando ${clientesInactivos} clientes inactivos`
+                : `Mostrando ${clientesActivos} clientes activos`}
+            </p>
+          </div>
+          {!mostrarInactivos && (
+            <div className="col-auto">
+              <button
+                className="nuevo-cliente-btn"
+                onClick={handleNewClientClick}
+              >
+                + Nuevo cliente
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Barra de búsqueda y botón toggle */}
+      <div className="clientes-busqueda-container">
+        <div className="row mb-3 align-items-center">
+          <div className="col-md-8 col-lg-6">
+            <input
+              className="form-control clientes-busqueda"
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => setSearchPlaceholder("")}
+              onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
+            />
+          </div>
+          <div className="col-md-4 col-lg-6 d-flex justify-content-end">
+            <button
+              className={`toggle-inactivos-btn ${
+                mostrarInactivos ? "active" : ""
+              }`}
+              onClick={() => setMostrarInactivos(!mostrarInactivos)}
+              title={
+                mostrarInactivos
+                  ? "Mostrar clientes activos"
+                  : "Mostrar clientes inactivos"
+              }
+            >
+              {mostrarInactivos ? (
+                <>
+                  <FaEye className="me-1" />
+                  Ver activos ({clientesActivos})
+                </>
+              ) : (
+                <>
+                  <FaEyeSlash className="me-1" />
+                  Ver inactivos ({clientesInactivos})
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mensaje cuando no hay resultados */}
+      {sortedAndFilteredClientes.length === 0 && (
+        <div className="text-center py-5">
+          <FaUserCircle size={64} className="text-muted mb-3" />
+          <h5 className="text-muted">
+            {mostrarInactivos
+              ? "No hay clientes inactivos"
+              : "No se encontraron clientes activos"}
+          </h5>
+          <p className="text-secondary">
+            {searchTerm
+              ? `No hay resultados para "${searchTerm}"`
+              : mostrarInactivos
+              ? "Todos los clientes están activos"
+              : "Comienza agregando tu primer cliente"}
+          </p>
+        </div>
+      )}
+
       {/* Tabla de clientes */}
-      <Tabla columns={columns} data={data} />
+      <div className="clientes-tabla-container">
+        {sortedAndFilteredClientes.length > 0 && (
+          <Tabla columns={columns} data={data} />
+        )}
+      </div>
     </div>
   );
 }
