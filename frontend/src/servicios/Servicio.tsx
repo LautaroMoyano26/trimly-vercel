@@ -4,9 +4,10 @@ import "./Servicio.css";
 import Tabla from "../components/Tabla";
 import NuevoServicioModal from "./NuevoServicioModal";
 import EditarServicioModal from "./EditarServicioModal";
-import EliminarServicioModal from "./EliminarServicioModal"; // ✅ NUEVA IMPORTACIÓN
+import EliminarServicioModal from "./EliminarServicioModal";
 import SuccessModal from "../components/SuccessModal";
 import { FaClock, FaEdit, FaTrash, FaCut } from "react-icons/fa";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface Servicio {
   id: number;
@@ -27,13 +28,16 @@ const columns = [
 ];
 
 export default function Servicios() {
+  // ✅ OBTENER PERMISOS DEL USUARIO
+  const { hasPermission } = usePermissions();
+  
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // ✅ NUEVO ESTADO
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [servicioEditar, setServicioEditar] = useState<Servicio | null>(null);
-  const [servicioEliminar, setServicioEliminar] = useState<Servicio | undefined>(undefined); // ✅ NUEVO ESTADO
-  const [busqueda, setBusqueda] = useState(""); // Estado para el buscador
+  const [servicioEliminar, setServicioEliminar] = useState<Servicio | undefined>(undefined);
+  const [busqueda, setBusqueda] = useState("");
   const [successModal, setSuccessModal] = useState<{show: boolean, message: string}>({show: false, message: ""});
 
   // Cargar servicios desde el backend
@@ -122,20 +126,27 @@ export default function Servicios() {
     ),
     acciones: (
       <>
-        <button 
-          className="btn-accion editar" 
-          title="Editar"
-          onClick={() => handleEditClick(s)}
-        >
-          <FaEdit />
-        </button>
-        <button 
-          className="btn-accion eliminar" 
-          title="Eliminar"
-          onClick={() => handleDeleteClick(s)} // ✅ NUEVA FUNCIÓN
-        >
-          <FaTrash />
-        </button>
+        {/* ✅ VERIFICAR PERMISO PARA EDITAR SERVICIOS */}
+        {hasPermission('servicios.edit') && (
+          <button 
+            className="btn-accion editar" 
+            title="Editar"
+            onClick={() => handleEditClick(s)}
+          >
+            <FaEdit />
+          </button>
+        )}
+        
+        {/* ✅ VERIFICAR PERMISO PARA ELIMINAR SERVICIOS */}
+        {hasPermission('servicios.delete') && (
+          <button 
+            className="btn-accion eliminar" 
+            title="Eliminar"
+            onClick={() => handleDeleteClick(s)}
+          >
+            <FaTrash />
+          </button>
+        )}
       </>
     ),
   }));
@@ -149,9 +160,12 @@ export default function Servicios() {
             <p className="text-secondary mb-0">Gestiona los Servicios de tu peluquería</p>
           </div>
           <div className="col-auto">
-            <button className="nuevo-servicio-btn" onClick={() => setShowModal(true)}>
-              + Nuevo Servicio
-            </button>
+            {/* ✅ VERIFICAR PERMISO PARA CREAR SERVICIOS */}
+            {hasPermission('servicios.create') && (
+              <button className="nuevo-servicio-btn" onClick={() => setShowModal(true)}>
+                + Nuevo Servicio
+              </button>
+            )}
           </div>
         </div>
       </div>

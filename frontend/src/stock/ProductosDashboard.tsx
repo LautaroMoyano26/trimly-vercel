@@ -4,7 +4,8 @@ import "./ProductosDashboard.css";
 import NuevoProductoModal from "./NuevoProductoModal"; 
 import EditarProductoModal from "./EditarProductoModal";
 import EliminarProductoModal from "./EliminarProductoModal";
-import SuccessModal from "../components/SuccessModal"; // ✅ AGREGAR IMPORTACIÓN
+import SuccessModal from "../components/SuccessModal";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface Producto {
   id: number;
@@ -17,6 +18,9 @@ interface Producto {
 }
 
 export default function ProductosDashboard() {
+  // ✅ OBTENER PERMISOS DEL USUARIO
+  const { hasPermission } = usePermissions();
+  
   const [productos, setProductos] = useState<Producto[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [showModal, setShowModal] = useState(false); 
@@ -85,12 +89,15 @@ export default function ProductosDashboard() {
   <div className="dashboard-header">
     <h1>Gestión de Stock</h1>
     <div className="dashboard-actions">
-      <button 
-        className="nuevo-producto-btn"
-        onClick={() => setShowModal(true)}
-      >
-        + Nuevo producto
-      </button>
+      {/* ✅ VERIFICAR PERMISO PARA CREAR PRODUCTOS */}
+      {hasPermission('productos.create') && (
+        <button 
+          className="nuevo-producto-btn"
+          onClick={() => setShowModal(true)}
+        >
+          + Nuevo producto
+        </button>
+      )}
     </div>
   </div>
 
@@ -138,24 +145,31 @@ export default function ProductosDashboard() {
               </span>
             </td>
             <td>
-              <button
-                className="btn-accion editar"
-                onClick={() => {
-                  setProductoAEditar(p);
-                  setShowEditarModal(true);
-                }}
-              >
-                <FaEdit />
-              </button>
-              <button
-                className="btn-accion eliminar"
-                onClick={() => {
-                  setProductoAEliminar(p);
-                  setShowEliminarModal(true);
-                }}
-              >
-                <FaTrash />
-              </button>
+              {/* ✅ VERIFICAR PERMISO PARA EDITAR PRODUCTOS */}
+              {hasPermission('productos.edit') && (
+                <button
+                  className="btn-accion editar"
+                  onClick={() => {
+                    setProductoAEditar(p);
+                    setShowEditarModal(true);
+                  }}
+                >
+                  <FaEdit />
+                </button>
+              )}
+              
+              {/* ✅ VERIFICAR PERMISO PARA ELIMINAR PRODUCTOS */}
+              {hasPermission('productos.delete') && (
+                <button
+                  className="btn-accion eliminar"
+                  onClick={() => {
+                    setProductoAEliminar(p);
+                    setShowEliminarModal(true);
+                  }}
+                >
+                  <FaTrash />
+                </button>
+              )}
             </td>
           </tr>
         ))}

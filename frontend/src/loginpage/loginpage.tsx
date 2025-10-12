@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
 import './loginpage.css';
 
 const LoginPage = () => {
@@ -12,12 +13,9 @@ const LoginPage = () => {
 
   // ✅ VERIFICAR SI ESTÁ LOGUEADO AL INICIAR LA APP
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const rememberSession = localStorage.getItem('rememberMe');
-    
-    // Solo auto-login si el usuario marcó "Recordar sesión"
-    if (isLoggedIn && rememberSession === 'true') {
-      navigate('/servicios');
+    // Usar el nuevo sistema de autenticación
+    if (authService.isAuthenticated()) {
+      navigate('/dashboard');
     }
   }, [navigate]);
 
@@ -46,10 +44,32 @@ const LoginPage = () => {
     }
 
     try {
-      // ✅ VALIDACIÓN SIMPLE CON USUARIOS PREDEFINIDOS
+      // ✅ VALIDACIÓN CON USUARIOS PREDEFINIDOS (temporal)
       const usuarios = [
-        { username: 'admin', password: 'admin', rol: 'admin', nombre: 'Administrador' },
-        { username: 'empleado', password: 'emp123', rol: 'empleado', nombre: 'Empleado' },
+        { 
+          username: 'admin', 
+          password: 'admin', 
+          user: {
+            id: 1,
+            nombre: 'Administrador',
+            apellido: 'Principal',
+            email: 'admin',
+            rol: 'admin' as const,
+            activo: true
+          }
+        },
+        { 
+          username: 'empleado', 
+          password: 'emp123', 
+          user: {
+            id: 2,
+            nombre: 'Empleado',
+            apellido: 'Ejemplo',
+            email: 'empleado',
+            rol: 'empleado' as const,
+            activo: true
+          }
+        },
       ];
 
       // ✅ VALIDACIÓN ESPECÍFICA DE USUARIO Y CONTRASEÑA
@@ -63,32 +83,25 @@ const LoginPage = () => {
         throw new Error('La contraseña es incorrecta');
       }
 
-      // Si llegamos aquí, el usuario es válido
-      const usuarioValido = usuarioExiste;
-
       // Simulación de delay de autenticación
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // ✅ GUARDAR DATOS DEL USUARIO
-      sessionStorage.setItem('isLoggedIn', 'true');;
-      localStorage.setItem('username', usuarioValido.username);
-      localStorage.setItem('userRole', usuarioValido.rol);
-      localStorage.setItem('userName', usuarioValido.nombre);
+      // ✅ USAR EL NUEVO SISTEMA DE AUTENTICACIÓN
+      const mockToken = `mock_token_${usuarioExiste.user.rol}_${Date.now()}`;
+      
+      // Guardar usando el authService
+      localStorage.setItem('trimly_token', mockToken);
+      localStorage.setItem('trimly_user', JSON.stringify(usuarioExiste.user));
 
-      // ✅ FUNCIONALIDAD RECORDAR SESIÓN
+      // ✅ FUNCIONALIDAD RECORDAR SESIÓN (opcional)
       if (rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('trimly_remember', 'true');
       } else {
-        // Si no marca "recordar", eliminar la configuración previa
-        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('trimly_remember');
       }
 
-      // Redirigir según el rol a rutas que existen
-      if (usuarioValido.rol === 'admin') {
-        navigate('/servicios');
-      } else {
-        navigate('/clientes');
-      }
+      // Redirigir al dashboard
+      navigate('/dashboard');
 
     } catch (error: any) {
       setError(error.message || 'Error al iniciar sesión');

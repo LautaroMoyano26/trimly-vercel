@@ -15,6 +15,7 @@ import {
   FaEyeSlash,
 } from "react-icons/fa";
 import { FaEdit, FaTrash, FaClipboardList } from "react-icons/fa";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface Cliente {
   id: number;
@@ -84,6 +85,9 @@ const columns = [
 ];
 
 export default function Clientes() {
+  // ✅ OBTENER PERMISOS DEL USUARIO
+  const { hasPermission } = usePermissions();
+  
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Cliente | undefined>(
@@ -325,28 +329,39 @@ export default function Clientes() {
     ),
     acciones: (
       <>
-        <button
-          className="btn-accion editar"
-          title="Editar"
-          onClick={() => handleEditClick(c)}
-        >
-          <FaEdit />
-        </button>
-        <button
-          className="btn-accion eliminar"
-          title="Desactivar"
-          onClick={() => handleDeleteClick(c)}
-          disabled={!c.activo}
-        >
-          <FaTrash />
-        </button>
-        <button
-          className="btn-accion historial"
-          onClick={() => abrirHistorial(c)}
-          title="Ver historial"
-        >
-          <FaClipboardList />
-        </button>
+        {/* ✅ VERIFICAR PERMISO PARA EDITAR CLIENTES */}
+        {hasPermission('clientes.edit') && (
+          <button
+            className="btn-accion editar"
+            title="Editar"
+            onClick={() => handleEditClick(c)}
+          >
+            <FaEdit />
+          </button>
+        )}
+        
+        {/* ✅ VERIFICAR PERMISO PARA DESACTIVAR CLIENTES */}
+        {hasPermission('clientes.delete') && (
+          <button
+            className="btn-accion eliminar"
+            title="Desactivar"
+            onClick={() => handleDeleteClick(c)}
+            disabled={!c.activo}
+          >
+            <FaTrash />
+          </button>
+        )}
+        
+        {/* ✅ HISTORIAL SIEMPRE DISPONIBLE SI PUEDE VER CLIENTES */}
+        {hasPermission('clientes.view') && (
+          <button
+            className="btn-accion historial"
+            onClick={() => abrirHistorial(c)}
+            title="Ver historial"
+          >
+            <FaClipboardList />
+          </button>
+        )}
       </>
     ),
   }));
@@ -403,12 +418,15 @@ export default function Clientes() {
           </div>
           {!mostrarInactivos && (
             <div className="col-auto">
-              <button
-                className="nuevo-cliente-btn"
-                onClick={handleNewClientClick}
-              >
-                + Nuevo cliente
-              </button>
+              {/* ✅ VERIFICAR PERMISO PARA CREAR CLIENTES */}
+              {hasPermission('clientes.create') && (
+                <button
+                  className="nuevo-cliente-btn"
+                  onClick={handleNewClientClick}
+                >
+                  + Nuevo cliente
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -8,11 +8,13 @@ import ProductosDashboard from "./stock/ProductosDashboard.tsx";
 import Usuarios from "./usuarios/Usuarios";
 import Turnos from "./turnos/turno";
 import ReportesDashboard from "./reportes/ReportesDashboard";
-import Dashboard from "./dashboard/Dashboard"; // ✅ AGREGAR IMPORT
+import Dashboard from "./dashboard/Dashboard";
+import FacturacionPage from "./facturacion/FacturacionPage";
+import authService from "./services/authService";
 
-// ✅ CAMBIAR A sessionStorage para que no persista
+// ✅ USAR EL NUEVO SISTEMA DE AUTENTICACIÓN
 const isAuthenticated = () => {
-  return sessionStorage.getItem("isLoggedIn") === "true";
+  return authService.isAuthenticated();
 };
 
 // Componente para proteger rutas que requieren autenticación
@@ -22,7 +24,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Componente para rutas que solo se ven sin autenticación (como login)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  return !isAuthenticated() ? <>{children}</> : <Navigate to="/clientes" replace />;
+  return !isAuthenticated() ? <>{children}</> : <Navigate to="/dashboard" replace />;
 };
 
 export default function App() {
@@ -177,7 +179,30 @@ export default function App() {
           }
         />
 
-        {/* ✅ NUEVA RUTA: Reportes y Facturación */}
+        {/* ✅ RUTA: Facturación */}
+        <Route
+          path="/facturacion"
+          element={
+            <ProtectedRoute>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100%",
+                  background: "#19191d",
+                  overflow: "hidden",
+                }}
+              >
+                <Navbar />
+                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
+                  <FacturacionPage />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ RUTA: Reportes */}
         <Route
           path="/reportes"
           element={

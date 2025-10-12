@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./NuevoProductoModal.css";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface Producto {
   id: number;
@@ -19,6 +20,9 @@ interface Props {
 }
 
 export default function EditarProductoModal({ show, onClose, producto, onProductoEditado }: Props) {
+  // ✅ OBTENER PERMISOS DEL USUARIO
+  const { hasPermission } = usePermissions();
+  
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
@@ -58,6 +62,12 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    // ✅ VERIFICAR PERMISOS ANTES DE CAMBIAR EL STOCK
+    if (name === 'stock' && !hasPermission('productos.edit.stock')) {
+      return; // No permitir cambios si no tiene permisos
+    }
+    
     setForm((prev) => ({
       ...prev,
       [name]: value,
@@ -87,15 +97,24 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
 
     // Enviar producto editado
     try {
+      // ✅ PREPARAR DATOS SEGÚN PERMISOS
+      const updateData: any = {
+        nombre: form.nombre,
+        categoria: form.categoria,
+        marca: form.marca,
+        precio: parseFloat(form.precio),
+      };
+      
+      // Solo incluir stock y estado si tiene permisos
+      if (hasPermission('productos.edit.stock')) {
+        updateData.stock = parseInt(form.stock);
+        updateData.estado = form.estado || "Alto";
+      }
+      
       const res = await fetch(`http://localhost:3000/producto/${producto?.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          precio: parseFloat(form.precio),
-          stock: parseInt(form.stock),
-          estado: form.estado || "Alto",
-        }),
+        body: JSON.stringify(updateData),
       });
       if (!res.ok) {
         alert("Error al editar el producto. Verifica los datos o el servidor.");
@@ -155,7 +174,17 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
                 value={form.stock}
                 onChange={handleChange}
                 required
+                disabled={!hasPermission('productos.edit.stock')} // ✅ DESHABILITAR SI NO TIENE PERMISO
+                style={{
+                  backgroundColor: !hasPermission('productos.edit.stock') ? '#f5f5f5' : '',
+                  cursor: !hasPermission('productos.edit.stock') ? 'not-allowed' : 'text'
+                }}
               />
+              {!hasPermission('productos.edit.stock') && (
+                <small style={{ color: '#888', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+                  ⚠️ No tienes permisos para modificar el stock
+                </small>
+              )}
               {form.estado && (
                 <small
                   style={{
