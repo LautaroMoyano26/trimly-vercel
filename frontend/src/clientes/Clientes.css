@@ -62,6 +62,14 @@
   font-size: 0.95rem;
   font-weight: bold;
   display: inline-block;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ✅ Estilo para clientes sin visitas */
+.visitas-badge.sin-visitas {
+  background: #2a2a2a;
+  color: #888;
 }
 
 .estado-badge {
@@ -250,4 +258,76 @@
   font-size: 0.95rem;
   font-weight: bold;
   display: inline-block;
+}
+
+/* Botón para toggle de clientes inactivos */
+.toggle-inactivos-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #232329;
+  color: #a1a1aa;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.toggle-inactivos-btn:hover {
+  background: #2a2a30;
+  color: #e4e4e7;
+  border-color: #52525b;
+}
+
+.toggle-inactivos-btn.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.toggle-inactivos-btn.active:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  /* En móviles, la barra de búsqueda y el botón van uno debajo del otro */
+  .row.align-items-center .col-md-8,
+  .row.align-items-center .col-md-4 {
+    margin-bottom: 0.75rem;
+  }
+
+  .row.align-items-center .col-md-4.d-flex.justify-content-end {
+    justify-content: flex-start !important;
+  }
+
+  .toggle-inactivos-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Para tablets */
+@media (min-width: 768px) and (max-width: 991px) {
+  .clientes-busqueda {
+    max-width: 100%;
+  }
+
+  .toggle-inactivos-btn {
+    min-width: fit-content;
+  }
+}
+
+/* Para desktop */
+@media (min-width: 992px) {
+  .clientes-busqueda {
+    max-width: 100%;
+  }
 }

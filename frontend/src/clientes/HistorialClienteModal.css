@@ -1,4 +1,4 @@
-/* Archivo: frontend/src/clientes/HistorialClienteModal.css */
+/* frontend/src/clientes/HistorialClienteModal.css */
 .historial-modal-overlay {
   position: fixed;
   top: 0;
@@ -17,13 +17,14 @@
   background: #27272a;
   border-radius: 16px;
   width: 90%;
-  max-width: 900px;
+  max-width: 1200px;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   color: #fff;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3f3f46;
 }
 
 .historial-modal-header {
@@ -31,9 +32,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 1px solid #323238;
-  background: linear-gradient(135deg, #27272a 0%, #323238 100%);
-  position: relative; /* ✅ Añadir posición relativa */
+  border-bottom: 1px solid #3f3f46;
+  background: #27272a;
+  position: relative;
 }
 
 .cliente-info-header {
@@ -45,146 +46,123 @@
 .cliente-avatar {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 8px 16px rgba(0, 230, 246, 0.3);
+  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
 }
 
 .cliente-nombre {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
   color: #fff;
-  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin-bottom: 4px;
 }
 
 .cliente-contacto {
   display: flex;
   gap: 16px;
-  margin-top: 4px;
+  align-items: center;
 }
 
 .cliente-contacto span {
-  font-size: 0.9rem;
-  color: #b3b3b3;
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  font-weight: 500;
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   background: none;
   border: none;
-  color: #b3b3b3;
+  color: #a1a1aa;
   cursor: pointer;
-  padding: 12px;
+  padding: 8px;
   border-radius: 8px;
   transition: all 0.2s;
   font-size: 1.2rem;
-  position: absolute; /* ✅ Añadir posición absoluta */
-  top: 16px; /* ✅ Posicionar desde arriba */
-  right: 16px; /* ✅ Posicionar desde la derecha */
-  z-index: 10; /* ✅ Asegurar que esté por encima */
+  z-index: 10;
 }
 
 .close-btn:hover {
-  background: #ff4444;
+  background: #3f3f46;
   color: #fff;
-  transform: scale(1.1);
 }
 
-.historial-tabs {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  background: #232329;
-  border-bottom: 1px solid #323238;
-}
-
+/* Botones dentro del contenido */
 .tabs-header {
   display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .tab-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 16px 24px;
-  background: none;
-  border: none;
-  color: #b3b3b3;
+  padding: 12px 24px;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  color: #a1a1aa;
   cursor: pointer;
-  font-size: 1rem;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-  font-weight: 500;
-  position: relative;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  white-space: nowrap;
 }
 
 .tab-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(139, 92, 246, 0.1);
+  color: #e4e4e7;
+  border-color: #8b5cf6;
 }
 
 .tab-btn.active {
-  color: #00e6f6;
-  border-bottom-color: #00e6f6;
-  background: rgba(0, 230, 246, 0.1);
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
-/* .tab-btn.active::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #00e6f6 0%, #a259ff 100%);
-} */
-
-.sort-controls {
-  padding: 16px 0;
+.tab-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
-.sort-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #323238;
-  color: #b3b3b3;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.sort-btn:hover {
-  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
-  color: white;
-  transform: translateY(-1px);
-}
-
+/* Contenido */
 .historial-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0;
-  background: #1a1a1d;
+  background: #18181b;
 }
 
 .tab-content {
+  padding: 24px;
   height: 100%;
-  min-height: 400px;
+  min-height: 500px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .loading-state {
@@ -192,7 +170,7 @@
   justify-content: center;
   align-items: center;
   height: 400px;
-  color: #b3b3b3;
+  color: #a1a1aa;
   font-size: 1.1rem;
 }
 
@@ -202,171 +180,358 @@
   align-items: center;
   justify-content: center;
   height: 400px;
-  color: #666;
+  color: #71717a;
   text-align: center;
 }
 
 .empty-state svg {
-  color: #444;
+  color: #52525b;
   margin-bottom: 16px;
   opacity: 0.6;
 }
 
-.empty-state h3 {
-  margin: 16px 0 8px 0;
-  color: #888;
-  font-size: 1.2rem;
-}
-
 .empty-state p {
-  color: #666;
-  font-size: 0.9rem;
+  color: #71717a;
+  font-size: 0.875rem;
 }
 
-.historial-list {
-  padding: 0;
-}
-
-.historial-item {
+/* Servicios Header */
+.servicios-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #323238;
-  transition: all 0.2s;
-  background: #27272a;
+  margin-bottom: 24px;
 }
 
-.historial-item:hover {
-  background: #2a2a2d;
-  border-left: 4px solid #00e6f6;
-  padding-left: 20px;
-}
-
-.historial-item:last-child {
-  border-bottom: none;
-}
-
-.historial-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 16px;
-  flex-shrink: 0;
-}
-
-.historial-icon.turnos {
-  background: linear-gradient(135deg, #00e6f6 0%, #0099cc 100%);
-  box-shadow: 0 4px 12px rgba(0, 230, 246, 0.3);
-}
-
-.historial-icon.servicios {
-  background: linear-gradient(135deg, #a259ff 0%, #7c3aed 100%);
-  box-shadow: 0 4px 12px rgba(162, 89, 255, 0.3);
-}
-
-.historial-icon.productos {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.historial-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.historial-title {
-  font-size: 1.1rem;
+.servicios-title {
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #fff;
-  margin-bottom: 8px;
+  color: #e4e4e7;
+  margin: 0;
 }
 
-.historial-meta {
+.sort-btn-v0 {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
   align-items: center;
-}
-
-.historial-meta span {
-  font-size: 0.85rem;
-  color: #b3b3b3;
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  gap: 8px;
+  background: #27272a;
+  color: #a1a1aa;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
-.historial-meta .fecha {
-  color: #00e6f6;
-  background: rgba(0, 230, 246, 0.1);
+.sort-btn-v0:hover {
+  background: #3f3f46;
+  color: #e4e4e7;
+  border-color: #8b5cf6;
 }
 
-.historial-meta .profesional {
-  color: #a259ff;
-  background: rgba(162, 89, 255, 0.1);
+/* Tabla de servicios */
+.servicios-table {
+  border-radius: 12px;
+  border: 1px solid #3f3f46;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.historial-meta .cantidad {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
+.historial-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.historial-meta .metodo-pago {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
+.historial-table thead {
+  background: linear-gradient(135deg, #27272a 0%, #1f1f23 100%);
 }
 
-.historial-meta .factura {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
+.historial-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  border-bottom: 1px solid #3f3f46;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.historial-table th:last-child {
+  text-align: right;
+}
+
+.historial-table tbody tr {
+  background: #18181b;
+  border-bottom: 1px solid #3f3f46;
+  transition: all 0.3s ease;
+}
+
+.historial-table tbody tr:hover {
+  background: #27272a;
+  transform: translateX(2px);
+}
+
+.historial-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.historial-table td {
+  padding: 16px;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.fecha-cell {
+  font-weight: 600;
+  color: #e4e4e7;
+  /* Usar la misma fuente que el resto de la aplicación */
+  font-size: 0.875rem;
+}
+
+.servicio-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.servicio-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);
+}
+
+.profesional-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profesional-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.productos-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.producto-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+}
+
+.producto-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+.sin-productos {
+  color: #71717a;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.nota-cell {
+  color: #a1a1aa;
+  max-width: 200px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.monto-cell {
+  text-align: right;
+  font-weight: 700;
+  color: #22c55e;
+  /* Usar la misma fuente que el resto de la aplicación */
+  font-size: 0.875rem;
+}
+
+/* Datos personales */
+.datos-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #e4e4e7;
+  margin: 0 0 24px 0;
+}
+
+.datos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  grid-template-rows: auto auto auto;
+}
+
+.datos-card {
+  background: linear-gradient(135deg, #27272a 0%, #1f1f23 100%);
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.datos-card:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.1);
+}
+
+.estadisticas-card {
+  grid-column: 1 / -1;
+}
+
+.datos-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.datos-field {
+  margin-bottom: 16px;
+}
+
+.datos-field:last-child {
+  margin-bottom: 0;
+}
+
+.datos-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: #71717a;
+  margin-bottom: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.datos-field span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e4e4e7;
+}
+
+/* Estadísticas */
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.estadistica {
+  text-align: center;
+  padding: 16px;
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.estadistica label {
+  display: block;
+  font-size: 0.75rem;
+  color: #71717a;
+  margin-bottom: 8px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.estadistica-numero {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  line-height: 1;
+}
+
+.estadistica span:not(.estadistica-numero) {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e4e4e7;
 }
 
 .estado-badge {
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.estado-completado,
-.estado-cobrado {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-}
-
-.estado-pendiente {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-
-.estado-cancelado {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-}
-
-.historial-notas {
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: #888;
-  font-style: italic;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  border-left: 3px solid #00e6f6;
-}
-
-.historial-value {
-  font-size: 1.2rem;
   font-weight: 700;
-  color: #00e6f6;
-  text-align: right;
-  flex-shrink: 0;
-  margin-left: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.estado-badge.activo {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.estado-badge.inactivo {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Footer */
+.historial-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #3f3f46;
+  background: #27272a;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-footer-btn {
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.close-footer-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.close-footer-btn:active {
+  transform: translateY(0);
 }
 
 /* Responsive */
@@ -390,66 +555,70 @@
   }
 
   .cliente-nombre {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 
   .cliente-contacto {
     flex-direction: column;
     gap: 4px;
-  }
-
-  .historial-tabs {
-    padding: 0 16px;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .tabs-header {
-    overflow-x: auto;
-  }
-
-  .tab-btn {
-    padding: 12px 16px;
-    white-space: nowrap;
-  }
-
-  .historial-item {
-    flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+  }
+
+  .tab-content {
     padding: 16px;
   }
 
-  .historial-icon {
-    align-self: flex-start;
-  }
-
-  .historial-value {
-    align-self: flex-end;
-    margin-left: 0;
-  }
-
-  .historial-meta {
+  .servicios-header {
     flex-direction: column;
+    gap: 16px;
     align-items: flex-start;
-    gap: 6px;
+  }
+
+  .servicios-table {
+    overflow-x: auto;
+  }
+
+  .historial-table {
+    min-width: 700px;
+  }
+
+  .datos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .historial-footer {
+    padding: 16px;
+  }
+
+  .tabs-header {
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    min-width: 120px;
+    padding: 12px 20px;
   }
 }
 
 /* Scrollbar personalizada */
 .historial-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .historial-content::-webkit-scrollbar-track {
-  background: #1a1a1d;
+  background: #18181b;
 }
 
 .historial-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
-  border-radius: 3px;
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+  border-radius: 4px;
 }
 
 .historial-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #a259ff 0%, #00e6f6 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
 }
