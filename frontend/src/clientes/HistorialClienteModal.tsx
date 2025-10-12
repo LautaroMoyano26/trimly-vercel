@@ -1,12 +1,15 @@
-// Archivo: frontend/src/clientes/HistorialClienteModal.tsx
+// frontend/src/clientes/HistorialClienteModal.tsx
 import React, { useState, useEffect } from "react";
 import {
   FaTimes,
-  FaCalendarAlt,
-  FaCut,
-  FaBoxOpen,
   FaUser,
   FaSort,
+  FaPhone,
+  FaEnvelope,
+  FaCut,
+  FaBox,
+  FaArrowUp,
+  FaArrowDown,
 } from "react-icons/fa";
 import "./HistorialClienteModal.css";
 
@@ -17,6 +20,10 @@ interface Cliente {
   telefono: string;
   email: string;
   dni: string;
+  fechaNacimiento?: string;
+  ultimaVisita?: string;
+  visitas?: number;
+  activo?: boolean;
 }
 
 interface TurnoHistorial {
@@ -54,6 +61,16 @@ interface FacturaHistorial {
   detalles: FacturaDetalle[];
 }
 
+// Estructura para el historial combinado como en v0
+interface ServicioHistorial {
+  fecha: string;
+  servicio: string;
+  profesional: string;
+  productos: string[];
+  nota: string;
+  monto: number;
+}
+
 interface Props {
   show: boolean;
   onClose: () => void;
@@ -61,13 +78,13 @@ interface Props {
 }
 
 const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
-  const [activeTab, setActiveTab] = useState<
-    "turnos" | "servicios" | "productos"
-  >("turnos");
+  const [activeTab, setActiveTab] = useState<"servicios" | "datos">(
+    "servicios"
+  );
   const [turnos, setTurnos] = useState<TurnoHistorial[]>([]);
   const [facturas, setFacturas] = useState<FacturaHistorial[]>([]);
   const [loading, setLoading] = useState(false);
-  const [sortAsc, setSortAsc] = useState(false);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     if (show && cliente) {
@@ -121,58 +138,54 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
     });
   };
 
-  const formatearFechaHora = (fechaStr: string) => {
-    const fecha = new Date(fechaStr);
-    return fecha.toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  // Función segura para formatear precios
   const formatearPrecio = (precio: any) => {
     const num = parseFloat(precio);
-    return isNaN(num) ? "0.00" : num.toFixed(2);
+    return isNaN(num) ? 0 : num;
   };
 
-  // Obtener servicios desde facturas
-  const serviciosFacturados = facturas.flatMap((factura) =>
-    factura.detalles
-      .filter((detalle) => detalle.tipo_item === "servicio")
-      .map((detalle) => ({
-        ...detalle,
-        fecha: factura.createdAt,
-        metodoPago: factura.metodoPago,
-        facturaId: factura.id,
-        nombre: `Servicio #${detalle.itemId}`, // Por ahora usamos el ID hasta tener el endpoint
-      }))
-  );
+  // Combinar turnos y facturas en un historial unificado como v0
+  const historialCombinado: ServicioHistorial[] = [
+    // Convertir turnos a formato de v0
+    ...turnos.map((turno) => ({
+      fecha: formatearFecha(turno.fecha),
+      servicio: turno.servicio?.servicio || "Servicio no disponible",
+      profesional: turno.usuario
+        ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
+        : "No asignado",
+      productos: [], // Los turnos no tienen productos asociados directamente
+      nota: turno.notas || "Sin notas",
+      monto: formatearPrecio(turno.servicio?.precio),
+    })),
+    // Convertir servicios de facturas a formato de v0
+    ...facturas.flatMap((factura) =>
+      factura.detalles
+        .filter((detalle) => detalle.tipo_item === "servicio")
+        .map((detalle) => ({
+          fecha: formatearFecha(factura.createdAt),
+          servicio: `Servicio #${detalle.itemId}`,
+          profesional: "Profesional no especificado",
+          productos:
+            facturas
+              .find((f) => f.id === factura.id)
+              ?.detalles.filter((d) => d.tipo_item === "producto")
+              .map((p) => `Producto #${p.itemId}`) || [],
+          nota: `Método de pago: ${factura.metodoPago}`,
+          monto: formatearPrecio(detalle.subtotal),
+        }))
+    ),
+  ];
 
-  // Obtener productos desde facturas
-  const productosFacturados = facturas.flatMap((factura) =>
-    factura.detalles
-      .filter((detalle) => detalle.tipo_item === "producto")
-      .map((detalle) => ({
-        ...detalle,
-        fecha: factura.createdAt,
-        metodoPago: factura.metodoPago,
-        facturaId: factura.id,
-        nombre: `Producto #${detalle.itemId}`, // Por ahora usamos el ID hasta tener el endpoint
-      }))
-  );
+  // Ordenar historial
+  const historialOrdenado = [...historialCombinado].sort((a, b) => {
+    const fechaA = new Date(a.fecha.split("/").reverse().join("-"));
+    const fechaB = new Date(b.fecha.split("/").reverse().join("-"));
+    return sortDirection === "asc"
+      ? fechaA.getTime() - fechaB.getTime()
+      : fechaB.getTime() - fechaA.getTime();
+  });
 
-  // Función de ordenamiento
-  const ordenarPorFecha = (items: any[]) => {
-    return [...items].sort((a, b) => {
-      const fechaA = new Date(a.fecha || a.createdAt);
-      const fechaB = new Date(b.fecha || b.createdAt);
-      return sortAsc
-        ? fechaA.getTime() - fechaB.getTime()
-        : fechaB.getTime() - fechaA.getTime();
-    });
+  const toggleSortDirection = () => {
+    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
   if (!show || !cliente) return null;
@@ -190,8 +203,14 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                 {cliente.nombre} {cliente.apellido}
               </h2>
               <div className="cliente-contacto">
-                <span>{cliente.telefono}</span>
-                <span>{cliente.email}</span>
+                <span>
+                  <FaPhone className="inline mr-1" />
+                  {cliente.telefono}
+                </span>
+                <span>
+                  <FaEnvelope className="inline mr-1" />
+                  {cliente.email}
+                </span>
               </div>
             </div>
           </div>
@@ -200,204 +219,193 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
           </button>
         </div>
 
-        <div className="historial-tabs">
-          <div className="tabs-header">
-            <button
-              className={`tab-btn ${activeTab === "turnos" ? "active" : ""}`}
-              onClick={() => setActiveTab("turnos")}
-            >
-              <FaCalendarAlt />
-              Turnos ({turnos.length})
-            </button>
-            <button
-              className={`tab-btn ${activeTab === "servicios" ? "active" : ""}`}
-              onClick={() => setActiveTab("servicios")}
-            >
-              <FaCut />
-              Servicios ({serviciosFacturados.length})
-            </button>
-            <button
-              className={`tab-btn ${activeTab === "productos" ? "active" : ""}`}
-              onClick={() => setActiveTab("productos")}
-            >
-              <FaBoxOpen />
-              Productos ({productosFacturados.length})
-            </button>
-          </div>
-
-          <div className="sort-controls">
-            <button
-              className="sort-btn"
-              onClick={() => setSortAsc(!sortAsc)}
-              title={`Ordenar ${
-                sortAsc ? "más recientes primero" : "más antiguos primero"
-              }`}
-            >
-              <FaSort />
-              {sortAsc ? "Más antiguos" : "Más recientes"}
-            </button>
-          </div>
-        </div>
-
         <div className="historial-content">
           {loading ? (
             <div className="loading-state">Cargando historial...</div>
           ) : (
-            <>
-              {/* Tab de Turnos */}
-              {activeTab === "turnos" && (
-                <div className="tab-content">
-                  {turnos.length === 0 ? (
-                    <div className="empty-state">
-                      <FaCalendarAlt size={48} />
-                      <p>No hay turnos registrados</p>
-                    </div>
-                  ) : (
-                    <div className="historial-list">
-                      {ordenarPorFecha(turnos).map((turno) => (
-                        <div key={turno.id} className="historial-item">
-                          <div className="historial-icon turnos">
-                            <FaCalendarAlt />
-                          </div>
-                          <div className="historial-info">
-                            <div className="historial-title">
-                              {turno.servicio?.servicio ||
-                                "Servicio no disponible"}
-                            </div>
-                            <div className="historial-meta">
-                              <span className="fecha">
-                                {formatearFecha(turno.fecha)} - {turno.hora}
-                              </span>
-                              {turno.usuario && (
-                                <span className="profesional">
-                                  Peluquero: {turno.usuario.nombre}{" "}
-                                  {turno.usuario.apellido}
-                                </span>
-                              )}
-                              <span className={`estado estado-${turno.estado}`}>
-                                {turno.estado.charAt(0).toUpperCase() +
-                                  turno.estado.slice(1)}
-                              </span>
-                            </div>
-                            {turno.notas && (
-                              <div className="historial-notas">
-                                {turno.notas}
-                              </div>
-                            )}
-                          </div>
-                          <div className="historial-value">
-                            ${formatearPrecio(turno.servicio?.precio)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+            <div className="tab-content">
+              {/* Botones de navegación dentro del contenido */}
+              <div className="tabs-header">
+                <button
+                  className={`tab-btn ${
+                    activeTab === "servicios" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("servicios")}
+                >
+                  <FaCut />
+                  Servicios
+                </button>
+                <button
+                  className={`tab-btn ${activeTab === "datos" ? "active" : ""}`}
+                  onClick={() => setActiveTab("datos")}
+                >
+                  <FaUser />
+                  Datos personales
+                </button>
+              </div>
 
-              {/* Tab de Servicios */}
+              {/* Contenido de las pestañas */}
               {activeTab === "servicios" && (
-                <div className="tab-content">
-                  {serviciosFacturados.length === 0 ? (
+                <>
+                  <div className="servicios-header">
+                    <h3 className="servicios-title">Historial de servicios</h3>
+                    <button
+                      className="sort-btn-v0"
+                      onClick={toggleSortDirection}
+                    >
+                      <FaSort />
+                      Ordenar{" "}
+                      {sortDirection === "asc" ? (
+                        <FaArrowUp />
+                      ) : (
+                        <FaArrowDown />
+                      )}
+                    </button>
+                  </div>
+
+                  {historialOrdenado.length === 0 ? (
                     <div className="empty-state">
                       <FaCut size={48} />
-                      <p>No hay servicios registrados</p>
+                      <p>No hay servicios registrados para este cliente</p>
                     </div>
                   ) : (
-                    <div className="historial-list">
-                      {ordenarPorFecha(serviciosFacturados).map(
-                        (servicio, index) => (
-                          <div
-                            key={`servicio-${index}`}
-                            className="historial-item"
-                          >
-                            <div className="historial-icon servicios">
-                              <FaCut />
-                            </div>
-                            <div className="historial-info">
-                              <div className="historial-title">
-                                {servicio.nombre}
-                              </div>
-                              <div className="historial-meta">
-                                <span className="fecha">
-                                  {formatearFechaHora(servicio.fecha)}
-                                </span>
-                                <span className="cantidad">
-                                  Cantidad: {servicio.cantidad}
-                                </span>
-                                <span className="metodo-pago">
-                                  Pago: {servicio.metodoPago}
-                                </span>
-                                <span className="factura">
-                                  Factura #{servicio.facturaId}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="historial-value">
-                              ${formatearPrecio(servicio.subtotal)}
-                            </div>
-                          </div>
-                        )
-                      )}
+                    <div className="servicios-table">
+                      <table className="historial-table">
+                        <thead>
+                          <tr>
+                            <th>Fecha</th>
+                            <th>Servicio</th>
+                            <th>Profesional</th>
+                            <th>Productos</th>
+                            <th>Nota</th>
+                            <th>Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {historialOrdenado.map((servicio, index) => (
+                            <tr key={index}>
+                              <td className="fecha-cell">{servicio.fecha}</td>
+                              <td>
+                                <div className="servicio-cell">
+                                  <div className="servicio-icon">
+                                    <FaCut />
+                                  </div>
+                                  <span>{servicio.servicio}</span>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="profesional-cell">
+                                  <div className="profesional-icon">
+                                    <FaUser />
+                                  </div>
+                                  <span>{servicio.profesional}</span>
+                                </div>
+                              </td>
+                              <td>
+                                {servicio.productos.length > 0 ? (
+                                  <div className="productos-cell">
+                                    {servicio.productos.map((producto, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="producto-badge"
+                                      >
+                                        <FaBox />
+                                        {producto}
+                                      </span>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <span className="sin-productos">
+                                    Sin productos
+                                  </span>
+                                )}
+                              </td>
+                              <td className="nota-cell">{servicio.nota}</td>
+                              <td className="monto-cell">
+                                ${servicio.monto.toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
-                </div>
+                </>
               )}
 
-              {/* Tab de Productos */}
-              {activeTab === "productos" && (
-                <div className="tab-content">
-                  {productosFacturados.length === 0 ? (
-                    <div className="empty-state">
-                      <FaBoxOpen size={48} />
-                      <p>No hay productos registrados</p>
+              {/* Pestaña de Datos Personales */}
+              {activeTab === "datos" && (
+                <>
+                  <h3 className="datos-title">Datos personales</h3>
+                  <div className="datos-grid">
+                    <div className="datos-card">
+                      <h4 className="datos-card-title">Información básica</h4>
+                      <div className="datos-field">
+                        <label>Nombre completo</label>
+                        <span>
+                          {cliente.nombre} {cliente.apellido}
+                        </span>
+                      </div>
+                      <div className="datos-field">
+                        <label>DNI</label>
+                        <span>{cliente.dni}</span>
+                      </div>
+                      <div className="datos-field">
+                        <label>Fecha de nacimiento</label>
+                        <span>
+                          {cliente.fechaNacimiento || "No especificado"}
+                        </span>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="historial-list">
-                      {ordenarPorFecha(productosFacturados).map(
-                        (producto, index) => (
-                          <div
-                            key={`producto-${index}`}
-                            className="historial-item"
+
+                    <div className="datos-card">
+                      <h4 className="datos-card-title">Contacto</h4>
+                      <div className="datos-field">
+                        <label>Teléfono</label>
+                        <span>{cliente.telefono}</span>
+                      </div>
+                      <div className="datos-field">
+                        <label>Email</label>
+                        <span>{cliente.email}</span>
+                      </div>
+                    </div>
+
+                    <div className="datos-card estadisticas-card">
+                      <h4 className="datos-card-title">Estadísticas</h4>
+                      <div className="estadisticas-grid">
+                        <div className="estadistica">
+                          <label>Total de visitas</label>
+                          <span className="estadistica-numero">
+                            {cliente.visitas || historialOrdenado.length}
+                          </span>
+                        </div>
+                        <div className="estadistica">
+                          <label>Última visita</label>
+                          <span>{cliente.ultimaVisita || "No registrada"}</span>
+                        </div>
+                        <div className="estadistica">
+                          <label>Estado</label>
+                          <span
+                            className={`estado-badge ${
+                              cliente.activo ? "activo" : "inactivo"
+                            }`}
                           >
-                            <div className="historial-icon productos">
-                              <FaBoxOpen />
-                            </div>
-                            <div className="historial-info">
-                              <div className="historial-title">
-                                {producto.nombre}
-                              </div>
-                              <div className="historial-meta">
-                                <span className="fecha">
-                                  {formatearFechaHora(producto.fecha)}
-                                </span>
-                                <span className="cantidad">
-                                  Cantidad: {producto.cantidad}
-                                </span>
-                                <span className="precio-unit">
-                                  Precio unit: $
-                                  {formatearPrecio(producto.precioUnitario)}
-                                </span>
-                                <span className="metodo-pago">
-                                  Pago: {producto.metodoPago}
-                                </span>
-                                <span className="factura">
-                                  Factura #{producto.facturaId}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="historial-value">
-                              ${formatearPrecio(producto.subtotal)}
-                            </div>
-                          </div>
-                        )
-                      )}
+                            {cliente.activo ? "Activo" : "Inactivo"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                </>
               )}
-            </>
+            </div>
           )}
+        </div>
+
+        <div className="historial-footer">
+          <button className="close-footer-btn" onClick={onClose}>
+            Cerrar
+          </button>
         </div>
       </div>
     </div>

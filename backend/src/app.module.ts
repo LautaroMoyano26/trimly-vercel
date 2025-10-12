@@ -19,7 +19,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'TRIMLY2025',
+      password: 'yarco7mysql',
       database: 'pruebas',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       synchronize: true,
