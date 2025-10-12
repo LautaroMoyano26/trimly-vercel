@@ -3,6 +3,7 @@ import React from "react";
 interface TablaProps {
   columns: { key: string; label: string }[];
   data: any[];
+  maxVisibleRows?: number;
 }
 
 const Tabla: React.FC<TablaProps> = ({ columns, data }) => {

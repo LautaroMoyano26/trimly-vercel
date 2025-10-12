@@ -216,7 +216,7 @@ export default function Clientes() {
 
   // Renderizado del componente
   return (
-    <div className="clientes-container container-fluid py-4 px-2 px-md-4">
+    <div className="clientes-container">
       {/* Modales */}
       <NuevoClienteModal
         show={showNewModal}
@@ -252,35 +252,43 @@ export default function Clientes() {
         cliente={clienteHistorial}
       />
 
-      {/* Encabezado y búsqueda */}
-      <div className="row align-items-center mb-3">
-        <div className="col">
-          <h1 className="fw-bold mb-0">Clientes</h1>
-          <p className="text-secondary mb-0">
-            Gestiona los clientes de tu peluquería
-          </p>
-        </div>
-        <div className="col-auto">
-          <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
-            + Nuevo cliente
-          </button>
+      {/* Encabezado */}
+      <div className="clientes-header">
+        <div className="row align-items-center mb-3">
+          <div className="col">
+            <h1 className="fw-bold mb-0">Clientes</h1>
+            <p className="text-secondary mb-0">
+              Gestiona los clientes de tu peluquería
+            </p>
+          </div>
+          <div className="col-auto">
+            <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
+              + Nuevo cliente
+            </button>
+          </div>
         </div>
       </div>
-      <div className="row mb-3">
-        <div className="col">
-          <input
-            className="form-control clientes-busqueda"
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setSearchPlaceholder("")}
-            onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
-          />
+
+      {/* Búsqueda */}
+      <div className="clientes-busqueda-container">
+        <div className="row mb-3">
+          <div className="col">
+            <input
+              className="form-control clientes-busqueda"
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => setSearchPlaceholder("")}
+              onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
+            />
+          </div>
         </div>
       </div>
 
       {/* Tabla de clientes */}
-      <Tabla columns={columns} data={data} />
+      <div className="clientes-tabla-container">
+        <Tabla columns={columns} data={data} />
+      </div>
     </div>
   );
 }
