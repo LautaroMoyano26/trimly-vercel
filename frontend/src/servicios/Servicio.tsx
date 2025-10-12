@@ -141,33 +141,38 @@ export default function Servicios() {
   }));
 
   return (
-    <div className="servicio-container container-fluid py-4 px-2 px-md-4">
-      <div className="row align-items-center mb-3">
-        <div className="col">
-          <h1 className="fw-bold mb-0">Servicios</h1>
-          <p className="text-secondary mb-0">Gestiona los Servicios de tu peluquería</p>
-        </div>
-        <div className="col-auto">
-          <button className="nuevo-servicio-btn" onClick={() => setShowModal(true)}>
-            + Nuevo Servicio
-          </button>
-        </div>
-      </div>
-
-     
-      <div className="row mb-3">
-        <div className="col">
-          <input
-            className="form-control clientes-busqueda"
-            type="text"
-            placeholder="Buscar servicio por nombre o descripción..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
+    <div className="servicio-container">
+      <div className="servicio-header">
+        <div className="row align-items-center mb-3">
+          <div className="col">
+            <h1 className="fw-bold mb-0">Servicios</h1>
+            <p className="text-secondary mb-0">Gestiona los Servicios de tu peluquería</p>
+          </div>
+          <div className="col-auto">
+            <button className="nuevo-servicio-btn" onClick={() => setShowModal(true)}>
+              + Nuevo Servicio
+            </button>
+          </div>
         </div>
       </div>
 
-      <Tabla columns={columns} data={data} />
+      <div className="servicio-busqueda">
+        <div className="row mb-3">
+          <div className="col">
+            <input
+              className="form-control clientes-busqueda"
+              type="text"
+              placeholder="Buscar servicio por nombre o descripción..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="servicio-tabla-container">
+        <Tabla columns={columns} data={data} />
+      </div>
 
       {/* Modal de Nuevo Servicio */}
       <NuevoServicioModal
