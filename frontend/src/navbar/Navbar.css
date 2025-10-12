@@ -91,19 +91,21 @@
   }
 }
 
-/* Información del usuario */
+/* Información del usuario mejorada */
 .navbar-user-info {
-  padding: 16px 8px;
-  margin-bottom: 20px;
+  padding: 12px 6px;
+  margin-bottom: 16px;
   border-bottom: 1px solid #3a3a40;
+  max-width: 90px;
+  box-sizing: border-box;
 }
 
 .navbar-user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   background: #a259ff;
   border-radius: 50%;
-  margin: 0 auto 8px;
+  margin: 0 auto 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,13 +113,14 @@
 
 .navbar-user-icon {
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .navbar-user-details {
   text-align: center;
   color: #b3b3b3;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
+  line-height: 1.2;
 }
 
 .navbar-user-name {
@@ -128,19 +131,24 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.65rem;
+  max-width: 78px;
 }
 
 .navbar-user-role {
   display: block;
   color: #a259ff;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Botón de logout mejorado */
 .navbar-logout {
-  padding: 20px 0;
+  padding: 16px 0;
   margin-top: auto;
   border-top: 1px solid #3a3a40;
   display: flex;
@@ -149,43 +157,41 @@
 }
 
 .navbar-logout-btn {
-  width: 48px !important;
-  height: 48px !important;
-  border: none !important;
-  border-radius: 16px !important;
-  background: #e74c3c !important;
-  color: #fff !important;
-  font-size: 1.5rem !important;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: #e74c3c;
+  color: #ffffff;
   cursor: pointer;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.25);
+  position: relative;
+  gap: 4px;
 }
 
 .navbar-logout-btn:hover {
-  background: #c0392b !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
+  background: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
 }
 
-/* Forzar el ícono del logout */
-.navbar-logout-btn svg,
+/* Ícono del logout */
 .navbar-logout-btn .logout-icon {
-  color: #fff !important;
-  font-size: 1.5rem !important;
-  width: 24px !important;
-  height: 24px !important;
-  display: block !important;
-  fill: currentColor !important;
+  color: #ffffff;
+  font-size: 16px;
+  display: block;
 }
 
-.logout-icon {
-  color: #fff !important;
-  font-size: 1.5rem !important;
-  width: 24px !important;
-  height: 24px !important;
+/* Texto de logout */
+.navbar-logout-btn .logout-text {
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  display: none;
 }
 
 /* Tooltips mejorados */

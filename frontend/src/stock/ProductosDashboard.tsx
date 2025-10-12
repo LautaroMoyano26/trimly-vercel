@@ -18,7 +18,7 @@ interface Producto {
 }
 
 export default function ProductosDashboard() {
-  // ✅ OBTENER PERMISOS DEL USUARIO
+  // Obtener permisos del usuario
   const { hasPermission } = usePermissions();
   
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -89,7 +89,7 @@ export default function ProductosDashboard() {
   <div className="dashboard-header">
     <h1>Gestión de Stock</h1>
     <div className="dashboard-actions">
-      {/* ✅ VERIFICAR PERMISO PARA CREAR PRODUCTOS */}
+      {/* Verificar permiso para crear productos */}
       {hasPermission('productos.create') && (
         <button 
           className="nuevo-producto-btn"
@@ -145,7 +145,7 @@ export default function ProductosDashboard() {
               </span>
             </td>
             <td>
-              {/* ✅ VERIFICAR PERMISO PARA EDITAR PRODUCTOS */}
+              {/* Verificar permiso para editar productos */}
               {hasPermission('productos.edit') && (
                 <button
                   className="btn-accion editar"
@@ -158,7 +158,7 @@ export default function ProductosDashboard() {
                 </button>
               )}
               
-              {/* ✅ VERIFICAR PERMISO PARA ELIMINAR PRODUCTOS */}
+              {/* Verificar permiso para eliminar productos */}
               {hasPermission('productos.delete') && (
                 <button
                   className="btn-accion eliminar"

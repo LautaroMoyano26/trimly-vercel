@@ -85,7 +85,7 @@ const columns = [
 ];
 
 export default function Clientes() {
-  // ✅ OBTENER PERMISOS DEL USUARIO
+  // Obtener permisos del usuario
   const { hasPermission } = usePermissions();
   
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -329,7 +329,7 @@ export default function Clientes() {
     ),
     acciones: (
       <>
-        {/* ✅ VERIFICAR PERMISO PARA EDITAR CLIENTES */}
+        {/* Verificar permiso para editar clientes */}
         {hasPermission('clientes.edit') && (
           <button
             className="btn-accion editar"
@@ -340,7 +340,7 @@ export default function Clientes() {
           </button>
         )}
         
-        {/* ✅ VERIFICAR PERMISO PARA DESACTIVAR CLIENTES */}
+        {/* Verificar permiso para desactivar clientes */}
         {hasPermission('clientes.delete') && (
           <button
             className="btn-accion eliminar"
@@ -352,7 +352,7 @@ export default function Clientes() {
           </button>
         )}
         
-        {/* ✅ HISTORIAL SIEMPRE DISPONIBLE SI PUEDE VER CLIENTES */}
+        {/* Historial disponible si puede ver clientes */}
         {hasPermission('clientes.view') && (
           <button
             className="btn-accion historial"
@@ -418,7 +418,7 @@ export default function Clientes() {
           </div>
           {!mostrarInactivos && (
             <div className="col-auto">
-              {/* ✅ VERIFICAR PERMISO PARA CREAR CLIENTES */}
+              {/* Verificar permiso para crear clientes */}
               {hasPermission('clientes.create') && (
                 <button
                   className="nuevo-cliente-btn"

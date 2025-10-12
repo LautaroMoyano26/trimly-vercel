@@ -12,7 +12,7 @@ import Dashboard from "./dashboard/Dashboard";
 import FacturacionPage from "./facturacion/FacturacionPage";
 import authService from "./services/authService";
 
-// ✅ USAR EL NUEVO SISTEMA DE AUTENTICACIÓN
+// Usar el nuevo sistema de autenticación
 const isAuthenticated = () => {
   return authService.isAuthenticated();
 };
@@ -179,7 +179,7 @@ export default function App() {
           }
         />
 
-        {/* ✅ RUTA: Facturación */}
+        {/* Ruta: Facturación */}
         <Route
           path="/facturacion"
           element={
@@ -202,7 +202,7 @@ export default function App() {
           }
         />
 
-        {/* ✅ RUTA: Reportes */}
+        {/* Ruta: Reportes */}
         <Route
           path="/reportes"
           element={

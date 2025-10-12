@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default function EditarProductoModal({ show, onClose, producto, onProductoEditado }: Props) {
-  // ✅ OBTENER PERMISOS DEL USUARIO
+  // Obtener permisos del usuario
   const { hasPermission } = usePermissions();
   
   const [form, setForm] = useState({
@@ -63,7 +63,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // ✅ VERIFICAR PERMISOS ANTES DE CAMBIAR EL STOCK
+    // Verificar permisos antes de cambiar el stock
     if (name === 'stock' && !hasPermission('productos.edit.stock')) {
       return; // No permitir cambios si no tiene permisos
     }
@@ -97,7 +97,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
 
     // Enviar producto editado
     try {
-      // ✅ PREPARAR DATOS SEGÚN PERMISOS
+      // Preparar datos según permisos
       const updateData: any = {
         nombre: form.nombre,
         categoria: form.categoria,
@@ -174,7 +174,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
                 value={form.stock}
                 onChange={handleChange}
                 required
-                disabled={!hasPermission('productos.edit.stock')} // ✅ DESHABILITAR SI NO TIENE PERMISO
+                disabled={!hasPermission('productos.edit.stock')}
                 style={{
                   backgroundColor: !hasPermission('productos.edit.stock') ? '#f5f5f5' : '',
                   cursor: !hasPermission('productos.edit.stock') ? 'not-allowed' : 'text'
@@ -182,7 +182,7 @@ export default function EditarProductoModal({ show, onClose, producto, onProduct
               />
               {!hasPermission('productos.edit.stock') && (
                 <small style={{ color: '#888', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
-                  ⚠️ No tienes permisos para modificar el stock
+                  No tienes permisos para modificar el stock
                 </small>
               )}
               {form.estado && (

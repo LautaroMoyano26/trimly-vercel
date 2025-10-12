@@ -106,15 +106,15 @@ class AuthService {
 
     // Empleado: definir accesos específicos
     const empleadoAccess: Record<string, boolean> = {
-      'dashboard': true,      // ✅ Con limitaciones
-      'servicios': true,      // ✅ CRUD completo
-      'turnos': true,         // ✅ CRUD completo
-      'clientes': true,       // ✅ CRUD completo
-      'productos': true,      // ✅ CRUD completo
-      'facturacion': true,    // ✅ Acceso a facturación
-      'reportes': false,      // ❌ Sin acceso
-      'usuarios': false,      // ❌ Sin acceso
-      'configuracion': false, // ❌ Sin acceso
+      'dashboard': true,
+      'servicios': true,
+      'turnos': true,
+      'clientes': true,
+      'productos': true,
+      'facturacion': true,
+      'reportes': false,
+      'usuarios': false,
+      'configuracion': false,
     };
 
     return empleadoAccess[section] || false;
@@ -132,38 +132,38 @@ class AuthService {
     const empleadoPermissions: Record<string, boolean> = {
       // Dashboard
       'dashboard.view': true,
-      'dashboard.financials': false,  // ❌ No ve datos financieros
+      'dashboard.financials': false,
 
       // Servicios
       'servicios.view': true,
       'servicios.create': true,
       'servicios.edit': true,
-      'servicios.delete': false,      // ❌ No puede eliminar
+      'servicios.delete': false,
 
       // Turnos
       'turnos.view': true,
       'turnos.create': true,
       'turnos.edit': true,
       'turnos.delete': true,
-      'turnos.assign': true,          // ✅ Puede asignar a cualquier profesional
+      'turnos.assign': true,
 
       // Clientes
       'clientes.view': true,
       'clientes.create': true,
       'clientes.edit': true,
-      'clientes.delete': false,       // ❌ No puede desactivar
+      'clientes.delete': false,
 
       // Productos
       'productos.view': true,
       'productos.create': true,
       'productos.edit': true,
-      'productos.edit.stock': false,  // ❌ No puede modificar stock
-      'productos.delete': false,      // ❌ No puede eliminar
+      'productos.edit.stock': false,
+      'productos.delete': false,
 
       // Facturación
       'facturacion.view': true,
       'facturacion.create': true,
-      'facturacion.reportes': false,  // ❌ Sin pestaña reportes
+      'facturacion.reportes': false,
 
       // Reportes
       'reportes.view': false,

@@ -28,7 +28,7 @@ const columns = [
 ];
 
 export default function Servicios() {
-  // ✅ OBTENER PERMISOS DEL USUARIO
+  // Obtener permisos del usuario
   const { hasPermission } = usePermissions();
   
   const [showModal, setShowModal] = useState(false);
@@ -126,7 +126,7 @@ export default function Servicios() {
     ),
     acciones: (
       <>
-        {/* ✅ VERIFICAR PERMISO PARA EDITAR SERVICIOS */}
+        {/* Verificar permiso para editar servicios */}
         {hasPermission('servicios.edit') && (
           <button 
             className="btn-accion editar" 
@@ -137,7 +137,7 @@ export default function Servicios() {
           </button>
         )}
         
-        {/* ✅ VERIFICAR PERMISO PARA ELIMINAR SERVICIOS */}
+        {/* Verificar permiso para eliminar servicios */}
         {hasPermission('servicios.delete') && (
           <button 
             className="btn-accion eliminar" 
@@ -160,7 +160,7 @@ export default function Servicios() {
             <p className="text-secondary mb-0">Gestiona los Servicios de tu peluquería</p>
           </div>
           <div className="col-auto">
-            {/* ✅ VERIFICAR PERMISO PARA CREAR SERVICIOS */}
+            {/* Verificar permiso para crear servicios */}
             {hasPermission('servicios.create') && (
               <button className="nuevo-servicio-btn" onClick={() => setShowModal(true)}>
                 + Nuevo Servicio

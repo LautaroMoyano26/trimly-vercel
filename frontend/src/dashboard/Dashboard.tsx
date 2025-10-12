@@ -17,12 +17,17 @@ import TurnoItem from './components/TurnoItem';
 import NotificationCard from './components/NotificationCard';
 import { useClock } from './hooks/useClock';
 import { useDashboardData } from './hooks/useDashboardData';
+import { usePermissions } from '../hooks/usePermissions';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { formatearHora, formatearFecha } = useClock();
   const { metricas, proximosTurnos, notificaciones, cargando, error } = useDashboardData();
+  const { hasPermission } = usePermissions();
+
+  // Verificar si puede ver información financiera
+  const canViewFinancials = hasPermission('dashboard.financials');
 
   if (cargando) {
     return (
@@ -78,14 +83,15 @@ const Dashboard: React.FC = () => {
           </div>
         </MetricCard>
 
-        {/* Ingresos de Hoy */}
-        <MetricCard
-          title="Ingresos de Hoy"
-          value={`$${(metricas?.ingresosHoy.monto || 0).toLocaleString('es-AR')}`}
-          icon={<FaDollarSign size={24} />}
-          iconBgColor="rgba(139, 71, 238, 0.15)"
-        />
-
+        {/* Ingresos de Hoy - Solo para usuarios con permisos financieros */}
+        {canViewFinancials && (
+          <MetricCard
+            title="Ingresos de Hoy"
+            value={`$${(metricas?.ingresosHoy.monto || 0).toLocaleString('es-AR')}`}
+            icon={<FaDollarSign size={24} />}
+            iconBgColor="rgba(139, 71, 238, 0.15)"
+          />
+        )}
 
         {/* Clientes Atendidos */}
         <MetricCard
@@ -97,25 +103,27 @@ const Dashboard: React.FC = () => {
           <div className="metric-card-secondary">
             <span>{metricas?.clientesHoy.atendidos || 0} Atendidos</span>
             <span className="metric-separator">•</span>
-            <span>{metricas?.clientesHoy.facturados || 0} Facturados</span>
+            <span>{canViewFinancials ? `${metricas?.clientesHoy.facturados || 0} Facturados` : 'N/A'}</span>
           </div>
         </MetricCard>
 
-        {/* Resumen Semanal */}
-        <MetricCard
-          title="Resumen Semanal"
-          value={`$${(metricas?.resumenSemanal.ingresos || 0).toLocaleString('es-AR')}`}
-          icon={<FaChartLine size={24} />}
-          iconBgColor="rgba(139, 71, 238, 0.15)"
-        >
-          <div className="metric-card-secondary">
-            <span>{metricas?.resumenSemanal.turnos || 0} Turnos</span>
-            <span className="metric-separator">•</span>
-            <span>{metricas?.resumenSemanal.servicios || 0} Servicios</span>
-            <span className="metric-separator">•</span>
-            <span>{metricas?.resumenSemanal.productos || 0} Productos</span>
-          </div>
-        </MetricCard>
+        {/* Resumen Semanal - Solo para usuarios con permisos financieros */}
+        {canViewFinancials && (
+          <MetricCard
+            title="Resumen Semanal"
+            value={`$${(metricas?.resumenSemanal.ingresos || 0).toLocaleString('es-AR')}`}
+            icon={<FaChartLine size={24} />}
+            iconBgColor="rgba(139, 71, 238, 0.15)"
+          >
+            <div className="metric-card-secondary">
+              <span>{metricas?.resumenSemanal.turnos || 0} Turnos</span>
+              <span className="metric-separator">•</span>
+              <span>{metricas?.resumenSemanal.servicios || 0} Servicios</span>
+              <span className="metric-separator">•</span>
+              <span>{metricas?.resumenSemanal.productos || 0} Productos</span>
+            </div>
+          </MetricCard>
+        )}
       </div>
 
       {/* Bottom Section */}
@@ -166,8 +174,8 @@ const Dashboard: React.FC = () => {
               />
             )}
 
-            {/* Servicios Sin Pagar */}
-            {notificaciones && notificaciones.serviciosSinPagar.cantidad > 0 && (
+            {/* Servicios Sin Pagar - Solo para usuarios con permisos financieros */}
+            {canViewFinancials && notificaciones && notificaciones.serviciosSinPagar.cantidad > 0 && (
               <NotificationCard
                 title="Servicios pendientes de pago"
                 message={`${notificaciones.serviciosSinPagar.cantidad} servicios realizados sin cobrar`}
@@ -182,7 +190,7 @@ const Dashboard: React.FC = () => {
 
             {notificaciones &&
               notificaciones.stockBajo.cantidad === 0 &&
-              notificaciones.serviciosSinPagar.cantidad === 0 && (
+              (!canViewFinancials || notificaciones.serviciosSinPagar.cantidad === 0) && (
                 <div className="dashboard-no-data">
                   No hay notificaciones pendientes
                 </div>

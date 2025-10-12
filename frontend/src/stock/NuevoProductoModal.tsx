@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function NuevoProductoModal({ show, onClose, onProductoCreado }: Props) {
-  // ✅ OBTENER PERMISOS DEL USUARIO
+  // Obtener permisos del usuario
   const { hasPermission } = usePermissions();
   
   const [form, setForm] = useState({
@@ -48,7 +48,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // ✅ VERIFICAR PERMISOS ANTES DE CAMBIAR EL STOCK
+    // Verificar permisos antes de cambiar el stock
     if (name === 'stock' && !hasPermission('productos.edit.stock')) {
       return; // No permitir cambios si no tiene permisos
     }
@@ -78,7 +78,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
     }
 
     try {
-      // ✅ PREPARAR DATOS SEGÚN PERMISOS
+      // Preparar datos según permisos
       const productData = {
         nombre: form.nombre,
         categoria: form.categoria,
@@ -153,7 +153,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
                 value={hasPermission('productos.edit.stock') ? form.stock : '0'}
                 onChange={handleChange}
                 required
-                disabled={!hasPermission('productos.edit.stock')} // ✅ DESHABILITAR SI NO TIENE PERMISO
+                disabled={!hasPermission('productos.edit.stock')}
                 style={{
                   backgroundColor: !hasPermission('productos.edit.stock') ? '#f5f5f5' : '',
                   cursor: !hasPermission('productos.edit.stock') ? 'not-allowed' : 'text'
@@ -161,7 +161,7 @@ export default function NuevoProductoModal({ show, onClose, onProductoCreado }: 
               />
               {!hasPermission('productos.edit.stock') && (
                 <small style={{ color: '#888', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
-                  ⚠️ No tienes permisos para establecer stock inicial (se asignará 0)
+                  No tienes permisos para establecer stock inicial (se asignará 0)
                 </small>
               )}
               {form.estado && (

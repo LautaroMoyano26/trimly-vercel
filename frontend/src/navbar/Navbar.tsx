@@ -18,29 +18,17 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   path: string;
-  section: string; // Para verificar permisos
+  section: string;
 }
-
-const allNavItems: NavItem[] = [
-  { icon: FaHome, label: "Inicio", path: "/dashboard", section: "dashboard" },
-  { icon: FaCut, label: "Servicios", path: "/servicios", section: "servicios" },
-  { icon: FaCalendarAlt, label: "Turnos", path: "/turnos", section: "turnos" },
-  { icon: FaUserFriends, label: "Clientes", path: "/clientes", section: "clientes" },
-  { icon: FaBoxOpen, label: "Productos", path: "/stock", section: "productos" },
-  { icon: FaClipboardList, label: "Facturación", path: "/facturacion", section: "facturacion" },
-  { icon: FaClipboardList, label: "Reportes", path: "/reportes", section: "reportes" },
-  { icon: FaUserCog, label: "Usuarios", path: "/usuarios", section: "usuarios" },
-  { icon: FaCog, label: "Configuración", path: "/configuracion", section: "configuracion" },
-];
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   
   // Usar try-catch para manejar errores del hook
   let user = null;
-  let canAccess = (_section: string) => true; // Por defecto, acceso a todo
+  let canAccess = (_section: string) => true;
   let logout = () => {};
-  let isAdmin = true; // Por defecto admin hasta que se implemente auth
+  let isAdmin = true;
   let isEmpleado = false;
   
   try {
@@ -54,12 +42,43 @@ const Navbar: React.FC = () => {
     console.log('Sistema de permisos no disponible, usando modo temporal');
   }
 
-  // Filtrar items según permisos del usuario
-  const visibleNavItems = allNavItems.filter((item) => {
+  // Crear items dinámicamente según el rol
+  const getNavItems = (): NavItem[] => {
+    const baseItems: NavItem[] = [
+      { icon: FaHome, label: "Inicio", path: "/dashboard", section: "dashboard" },
+      { icon: FaCut, label: "Servicios", path: "/servicios", section: "servicios" },
+      { icon: FaCalendarAlt, label: "Turnos", path: "/turnos", section: "turnos" },
+      { icon: FaUserFriends, label: "Clientes", path: "/clientes", section: "clientes" },
+      { icon: FaBoxOpen, label: "Productos", path: "/stock", section: "productos" },
+    ];
+
+    // Para empleados: agregar facturación
+    if (isEmpleado) {
+      baseItems.push({ icon: FaClipboardList, label: "Facturación", path: "/facturacion", section: "facturacion" });
+    }
+    
+    // Para admins: agregar reportes (además de facturación)
+    if (isAdmin) {
+      baseItems.push({ icon: FaClipboardList, label: "Reportes", path: "/reportes", section: "reportes" });
+    }
+
+    // Agregar usuarios y configuración solo para admins
+    if (isAdmin) {
+      baseItems.push(
+        { icon: FaUserCog, label: "Usuarios", path: "/usuarios", section: "usuarios" },
+        { icon: FaCog, label: "Configuración", path: "/configuracion", section: "configuracion" }
+      );
+    }
+
+    return baseItems;
+  };
+
+  // Obtener items visibles para este usuario
+  const visibleNavItems = getNavItems().filter((item) => {
     try {
       return canAccess(item.section);
     } catch {
-      return true; // Si hay error, mostrar todo
+      return true;
     }
   });
 
@@ -105,7 +124,7 @@ const Navbar: React.FC = () => {
         })}
       </ul>
 
-      {/* Botón de logout mejorado */}
+      {/* Botón de logout sin emoji */}
       <div className="navbar-logout">
         <button
           onClick={logout}
@@ -113,6 +132,7 @@ const Navbar: React.FC = () => {
           title="Cerrar sesión"
         >
           <FaSignOutAlt className="logout-icon" />
+          <span className="logout-text">Salir</span>
         </button>
         <span className="navbar-tooltip">Cerrar sesión</span>
       </div>
