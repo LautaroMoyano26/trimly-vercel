@@ -389,61 +389,35 @@ export default function Clientes() {
       />
 
       {/* Encabezado */}
-      <div className="row align-items-center mb-3">
-        <div className="col">
-          <h1 className="fw-bold mb-0">
-            {mostrarInactivos ? "Clientes Inactivos" : "Clientes"}
-          </h1>
-          <p className="text-secondary mb-0">
-            {mostrarInactivos
-              ? `Mostrando ${clientesInactivos} clientes inactivos`
-              : `Mostrando ${clientesActivos} clientes activos`}
-          </p>
-        </div>
-        {!mostrarInactivos && (
-          <div className="col-auto">
-            <button
-              className="nuevo-cliente-btn"
-              onClick={handleNewClientClick}
-            >
-              + Nuevo cliente
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Barra de búsqueda y botón toggle en la misma línea */}
-      <div className="row mb-3 align-items-center">
-        <div className="col-md-8 col-lg-6">
-          <input
-            className="form-control clientes-busqueda"
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setSearchPlaceholder("")}
-            onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
-          />
-      {/* Encabezado */}
       <div className="clientes-header">
         <div className="row align-items-center mb-3">
           <div className="col">
-            <h1 className="fw-bold mb-0">Clientes</h1>
+            <h1 className="fw-bold mb-0">
+              {mostrarInactivos ? "Clientes Inactivos" : "Clientes"}
+            </h1>
             <p className="text-secondary mb-0">
-              Gestiona los clientes de tu peluquería
+              {mostrarInactivos
+                ? `Mostrando ${clientesInactivos} clientes inactivos`
+                : `Mostrando ${clientesActivos} clientes activos`}
             </p>
           </div>
-          <div className="col-auto">
-            <button className="nuevo-cliente-btn" onClick={handleNewClientClick}>
-              + Nuevo cliente
-            </button>
-          </div>
+          {!mostrarInactivos && (
+            <div className="col-auto">
+              <button
+                className="nuevo-cliente-btn"
+                onClick={handleNewClientClick}
+              >
+                + Nuevo cliente
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Búsqueda */}
+      {/* Barra de búsqueda y botón toggle */}
       <div className="clientes-busqueda-container">
-        <div className="row mb-3">
-          <div className="col">
+        <div className="row mb-3 align-items-center">
+          <div className="col-md-8 col-lg-6">
             <input
               className="form-control clientes-busqueda"
               placeholder={searchPlaceholder}
@@ -453,31 +427,31 @@ export default function Clientes() {
               onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
             />
           </div>
-        </div>
-        <div className="col-md-4 col-lg-6 d-flex justify-content-end">
-          <button
-            className={`toggle-inactivos-btn ${
-              mostrarInactivos ? "active" : ""
-            }`}
-            onClick={() => setMostrarInactivos(!mostrarInactivos)}
-            title={
-              mostrarInactivos
-                ? "Mostrar clientes activos"
-                : "Mostrar clientes inactivos"
-            }
-          >
-            {mostrarInactivos ? (
-              <>
-                <FaEye className="me-1" />
-                Ver activos ({clientesActivos})
-              </>
-            ) : (
-              <>
-                <FaEyeSlash className="me-1" />
-                Ver inactivos ({clientesInactivos})
-              </>
-            )}
-          </button>
+          <div className="col-md-4 col-lg-6 d-flex justify-content-end">
+            <button
+              className={`toggle-inactivos-btn ${
+                mostrarInactivos ? "active" : ""
+              }`}
+              onClick={() => setMostrarInactivos(!mostrarInactivos)}
+              title={
+                mostrarInactivos
+                  ? "Mostrar clientes activos"
+                  : "Mostrar clientes inactivos"
+              }
+            >
+              {mostrarInactivos ? (
+                <>
+                  <FaEye className="me-1" />
+                  Ver activos ({clientesActivos})
+                </>
+              ) : (
+                <>
+                  <FaEyeSlash className="me-1" />
+                  Ver inactivos ({clientesInactivos})
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -503,9 +477,9 @@ export default function Clientes() {
       {/* Tabla de clientes */}
       <div className="clientes-tabla-container">
         {sortedAndFilteredClientes.length > 0 && (
-        <Tabla columns={columns} data={data} />
+          <Tabla columns={columns} data={data} />
+        )}
       </div>
-      )}
     </div>
   );
 }
