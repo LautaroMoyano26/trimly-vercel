@@ -78,14 +78,15 @@ export class FacturacionService {
       }
     }
 
-    // 3. Cambiar estado de turno a cobrado (CORRECCIÓN AQUÍ)
+    // 3. Cambiar estado de turno a cobrado y asociar factura
     for (const item of dto.detalles) {
       if (item.tipo_item === 'servicio' && item.turnoId) {
         const turno = await this.turnoRepo.findOne({
           where: { id: item.turnoId },
         });
         if (turno) {
-          turno.estado = 'cobrado'; // ✅ Usar 'estado' en lugar de 'cobrado'
+          turno.estado = 'cobrado';
+          turno.factura = factura; // ✅ Asociar la factura con el turno
           await this.turnoRepo.save(turno);
         }
       }

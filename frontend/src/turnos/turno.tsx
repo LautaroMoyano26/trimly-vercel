@@ -192,13 +192,14 @@ export default function Turnos() {
           <h1 className="turnos-title">Turnos</h1>
           <p className="turnos-desc">Gestiona los turnos de tu peluquería</p>
         </div>
-         
+        <div className="turnos-header-buttons">
           <button className="historial-turno-btn" onClick={() => setShowHistorialModal(true)}>
-            <FaClock style={{ marginRight: 15 }} /> Historial de turnos
+            <FaClock style={{ marginRight: 8 }} /> Historial de turnos
           </button>
-        <button className="nuevo-turno-btn" onClick={() => setShowModal(true)}>
-          <FaPlus /> Nuevo turno
-        </button>
+          <button className="nuevo-turno-btn" onClick={() => setShowModal(true)}>
+            <FaPlus /> Nuevo turno
+          </button>
+        </div>
       </div>
       <div className="turnos-tabs-row">
         <button className={`tab-btn${activeTab === "dia" ? " active" : ""}`} onClick={() => setActiveTab("dia")}>Día</button>
