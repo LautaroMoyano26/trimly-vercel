@@ -47,7 +47,11 @@ export default function EliminarTurnoModal({
   const isPastDate = (dateStr: string): boolean => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Resetear horas para comparar solo fechas
-    const checkDate = new Date(dateStr);
+    
+    // Dividir la fecha para evitar problemas de zona horaria
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const checkDate = new Date(year, month - 1, day); // month - 1 porque los meses en JS van de 0-11
+    
     return checkDate < today;
   };
 
@@ -55,7 +59,9 @@ export default function EliminarTurnoModal({
   const isTurnoPast = isPastDate(turnoToDelete.fecha);
 
   const formatFecha = (fechaStr: string): string => {
-    const fecha = new Date(fechaStr);
+    // Dividir la fecha para evitar problemas de zona horaria
+    const [year, month, day] = fechaStr.split('-').map(Number);
+    const fecha = new Date(year, month - 1, day); // month - 1 porque los meses en JS van de 0-11
     return fecha.toLocaleDateString("es-AR", {
       weekday: "long",
       year: "numeric",
