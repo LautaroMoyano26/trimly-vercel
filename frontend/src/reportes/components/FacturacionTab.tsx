@@ -141,6 +141,23 @@ const FacturacionTab: React.FC = () => {
       )
     );
   };
+
+  // Función para cambiar precio unitario manualmente
+  const cambiarPrecioUnitario = (productoId: number, nuevoPrecio: string) => {
+    // Validar que solo contenga números y punto decimal
+    if (!/^\d*\.?\d*$/.test(nuevoPrecio)) {
+      return; // No hacer nada si contiene caracteres no válidos
+    }
+
+    const precio = parseFloat(nuevoPrecio) || 0;
+    
+    // Actualizar el precio unitario
+    setItemsFactura((items) =>
+      items.map((item) =>
+        item.productoId === productoId ? { ...item, precioUnitario: precio } : item
+      )
+    );
+  };
   // Cargar clientes
   useEffect(() => {
     const cargarClientes = async () => {
@@ -578,6 +595,18 @@ const FacturacionTab: React.FC = () => {
       setBusquedaCliente("");
       setMostrarDropdownClientes(false);
       setClienteBloqueado(false); // ✅ IMPORTANTE: Desbloquear cliente
+      
+      // ✅ Recargar turnos pendientes para refrescar la vista
+      try {
+        const turnosRes = await fetch("http://localhost:3000/turnos");
+        if (turnosRes.ok) {
+          const turnosData = await turnosRes.json();
+          const pendientes = turnosData.filter((t: Turno) => t.estado === 'pendiente');
+          setTurnosPendientes(pendientes);
+        }
+      } catch (error) {
+        console.error("Error al recargar turnos:", error);
+      }
     } catch (error) {
       mostrarMensaje("Error al finalizar la factura", "error");
     }
@@ -920,7 +949,7 @@ const FacturacionTab: React.FC = () => {
                   <tr>
                     <th>Producto/Servicio</th>
                     <th>Cantidad</th>
-                    <th>Precio</th>
+                    <th>Precio Unitario</th>
                     <th>Subtotal</th>
                     <th></th>
                   </tr>
@@ -972,8 +1001,26 @@ const FacturacionTab: React.FC = () => {
                           )}
                       </small>
                     </td>
-                    <td>${item.precioUnitario}</td>
-                    <td>${item.cantidad * item.precioUnitario}</td>
+                    <td>
+                      <div className="precio-controls">
+                        <span className="precio-simbolo">$</span>
+                        <input
+                          type="text"
+                          value={item.precioUnitario}
+                          onChange={(e) =>
+                            cambiarPrecioUnitario(
+                              item.productoId,
+                              e.target.value
+                            )
+                          }
+                          className="precio-input"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <strong>${(item.cantidad * item.precioUnitario).toFixed(2)}</strong>
+                    </td>
                     <td>
                       <button onClick={() => eliminarProducto(item.productoId)}>
                         <FaTrash color="red" />
@@ -987,7 +1034,7 @@ const FacturacionTab: React.FC = () => {
 
             <div className="total-bar">
               <span>Total:</span>
-              <span className="total">${total}</span>
+              <span className="total">${total.toFixed(2)}</span>
             </div>
 
             <div className="botones-factura">

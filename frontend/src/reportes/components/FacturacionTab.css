@@ -482,6 +482,37 @@
   appearance: textfield;
 }
 
+.precio-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 90px;
+}
+
+.precio-input {
+  width: 60px;
+  height: 25px;
+  border: 1px solid #e0e6ed;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+  text-align: center;
+  color: #333;
+  background: white;
+}
+
+.precio-input:focus {
+  outline: none;
+  border-color: #00e6f6;
+  box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.3);
+}
+
+.precio-symbol {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+}
+
 .stock-info {
   display: block;
   font-size: 0.7rem;

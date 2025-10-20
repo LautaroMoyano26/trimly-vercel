@@ -29,25 +29,7 @@ interface Cliente {
   visitas?: number; // ✅ Agregar campo para las visitas calculadas
 }
 
-// ✅ Interfaces para los datos del historial (igual que en HistorialClienteModal)
-interface TurnoHistorial {
-  id: number;
-  fecha: string;
-  hora: string;
-  servicio: {
-    id: number;
-    servicio: string;
-    precio: number;
-  };
-  usuario?: {
-    id: number;
-    nombre: string;
-    apellido: string;
-  };
-  notas?: string;
-  estado: string;
-}
-
+// ✅ Interfaces para los datos del historial
 interface FacturaDetalle {
   id: number;
   tipo_item: "producto" | "servicio";
@@ -63,15 +45,6 @@ interface FacturaHistorial {
   estado: string;
   createdAt: string;
   detalles: FacturaDetalle[];
-}
-
-interface ServicioHistorial {
-  fecha: string;
-  servicio: string;
-  profesional: string;
-  productos: string[];
-  nota: string;
-  monto: number;
 }
 
 const columns = [
@@ -114,16 +87,7 @@ export default function Clientes() {
   // ✅ Función para calcular visitas igual que en HistorialClienteModal
   const calcularVisitasCliente = async (clienteId: number): Promise<number> => {
     try {
-      // Cargar turnos del cliente
-      const turnosRes = await fetch(
-        `http://localhost:3000/clientes/${clienteId}/turnos`
-      );
-      let turnos: TurnoHistorial[] = [];
-      if (turnosRes.ok) {
-        turnos = await turnosRes.json();
-      }
-
-      // Cargar facturas del cliente
+      // Solo cargar facturas del cliente (las visitas reales son las facturadas)
       const facturasRes = await fetch(
         `http://localhost:3000/clientes/${clienteId}/facturas`
       );
@@ -132,55 +96,8 @@ export default function Clientes() {
         facturas = await facturasRes.json();
       }
 
-      // Formatear fecha igual que en HistorialClienteModal
-      const formatearFecha = (fechaStr: string) => {
-        const fecha = new Date(fechaStr);
-        return fecha.toLocaleDateString("es-ES", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
-      };
-
-      const formatearPrecio = (precio: any) => {
-        const num = parseFloat(precio);
-        return isNaN(num) ? 0 : num;
-      };
-
-      // Combinar historial igual que en HistorialClienteModal
-      const historialCombinado: ServicioHistorial[] = [
-        // Convertir turnos
-        ...turnos.map((turno) => ({
-          fecha: formatearFecha(turno.fecha),
-          servicio: turno.servicio?.servicio || "Servicio no disponible",
-          profesional: turno.usuario
-            ? `${turno.usuario.nombre} ${turno.usuario.apellido}`
-            : "No asignado",
-          productos: [],
-          nota: turno.notas || "Sin notas",
-          monto: formatearPrecio(turno.servicio?.precio),
-        })),
-        // Convertir servicios de facturas
-        ...facturas.flatMap((factura) =>
-          factura.detalles
-            .filter((detalle) => detalle.tipo_item === "servicio")
-            .map((detalle) => ({
-              fecha: formatearFecha(factura.createdAt),
-              servicio: `Servicio #${detalle.itemId}`,
-              profesional: "Profesional no especificado",
-              productos:
-                facturas
-                  .find((f) => f.id === factura.id)
-                  ?.detalles.filter((d) => d.tipo_item === "producto")
-                  .map((p) => `Producto #${p.itemId}`) || [],
-              nota: `Método de pago: ${factura.metodoPago}`,
-              monto: formatearPrecio(detalle.subtotal),
-            }))
-        ),
-      ];
-
-      // Retornar la cantidad igual que en HistorialClienteModal
-      return historialCombinado.length;
+      // Retornar la cantidad de facturas (cada factura = 1 visita)
+      return facturas.length;
     } catch (error) {
       console.error(
         `Error calculando visitas para cliente ${clienteId}:`,

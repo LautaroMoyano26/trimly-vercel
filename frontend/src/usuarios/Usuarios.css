@@ -102,3 +102,40 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* Estilos para evitar superposición del email con el icono de rol */
+.email-cell {
+  max-width: 250px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.email-icon {
+  flex-shrink: 0;
+}
+
+.email-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+/* Estilos para la columna de rol */
+.rol-cell {
+  white-space: nowrap;
+}
+
+.rol-icon {
+  flex-shrink: 0;
+}
+
+.rol-text {
+  white-space: nowrap;
+}
+
+/* Asegurar que las celdas de la tabla no se desborden */
+.usuarios-container .table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

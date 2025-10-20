@@ -109,15 +109,15 @@ export default function Usuarios() {
       </span>
     ),
     email: (
-      <span className="d-flex align-items-center gap-2">
-        <FaEnvelope className="text-secondary" />
-        {u.email}
+      <span className="d-flex align-items-center gap-2 email-cell">
+        <FaEnvelope className="text-secondary email-icon" />
+        <span className="email-text">{u.email}</span>
       </span>
     ),
     rol: (
-      <span className="d-flex align-items-center gap-2">
-        <FaUserShield className="text-secondary" />
-        {u.rol === "admin" ? "Administrador" : "Empleado"}
+      <span className="d-flex align-items-center gap-2 rol-cell">
+        <FaUserShield className="text-secondary rol-icon" />
+        <span className="rol-text">{u.rol === "admin" ? "Administrador" : "Empleado"}</span>
       </span>
     ),
     fechaCreacion: u.fechaCreacion ? (

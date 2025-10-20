@@ -376,7 +376,7 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                         <div className="estadistica">
                           <label>Total de visitas</label>
                           <span className="estadistica-numero">
-                            {cliente.visitas || historialOrdenado.length}
+                            {cliente.visitas || facturas.length}
                           </span>
                         </div>
                         <div className="estadistica">
