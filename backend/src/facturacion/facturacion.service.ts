@@ -42,6 +42,7 @@ export class FacturacionService {
         cantidad: item.cantidad,
         precioUnitario: item.precioUnitario,
         subtotal: item.subtotal,
+        turnoId: item.turnoId, // ✅ Guardar turnoId en el detalle
       });
       const savedDetalle = await this.detalleRepo.save(detalle);
       detallesGuardados.push(savedDetalle);
