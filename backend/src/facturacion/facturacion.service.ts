@@ -87,6 +87,12 @@ export class FacturacionService {
         if (turno) {
           turno.estado = 'cobrado';
           turno.factura = factura; // ✅ Asociar la factura con el turno
+          
+          // ✅ Actualizar la nota del turno si viene en el payload
+          if (item.nota !== undefined) {
+            turno.notas = item.nota;
+          }
+          
           await this.turnoRepo.save(turno);
         }
       }
