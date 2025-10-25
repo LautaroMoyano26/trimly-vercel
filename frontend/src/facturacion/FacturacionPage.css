@@ -3,27 +3,31 @@
   height: 100%;
   background: #19191d;
   color: #fff;
-  padding: 20px;
+  padding: 32px 24px;
   overflow: auto;
 }
 
 .facturacion-header {
-  margin-bottom: 30px;
-  border-bottom: 1px solid #3a3a40;
-  padding-bottom: 20px;
+  margin-bottom: 32px;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .facturacion-header h1 {
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   font-size: 2rem;
-  font-weight: 600;
-  color: #a259ff;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .facturacion-header p {
   margin: 0;
-  color: #b3b3b3;
-  font-size: 1rem;
+  color: #71717a;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .facturacion-content {

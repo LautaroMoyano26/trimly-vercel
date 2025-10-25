@@ -14,7 +14,7 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
-import { FaEdit, FaTrash, FaClipboardList } from "react-icons/fa";
+import { FaEdit, FaTrash, FaFileInvoice } from "react-icons/fa";
 import { usePermissions } from "../hooks/usePermissions";
 
 interface Cliente {
@@ -189,7 +189,8 @@ export default function Clientes() {
       (c.nombre || "")
         .toLowerCase()
         .includes(searchTerm.trim().toLowerCase()) ||
-      (c.apellido || "").toLowerCase().includes(searchTerm.trim().toLowerCase())
+      (c.apellido || "").toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+      (c.dni || "").toString().includes(searchTerm.trim())
   );
 
   const sortedAndFilteredClientes = [...filteredClientes].sort((a, b) => {
@@ -234,7 +235,7 @@ export default function Clientes() {
           (c.visitas || 0) === 0 ? "sin-visitas" : ""
         }`}
       >
-        {c.visitas || 0}
+        {c.visitas || 0} {(c.visitas || 0) === 1 ? "visita" : "visitas"}
       </span>
     ),
     estado: (
@@ -276,7 +277,7 @@ export default function Clientes() {
             onClick={() => abrirHistorial(c)}
             title="Ver historial"
           >
-            <FaClipboardList />
+            <FaFileInvoice />
           </button>
         )}
       </>
@@ -359,7 +360,7 @@ export default function Clientes() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => setSearchPlaceholder("")}
-              onBlur={() => !searchTerm && setSearchPlaceholder("Buscar...")}
+              onBlur={() => !searchTerm && setSearchPlaceholder("Buscar por Nombre, Apellido o DNI")}
             />
           </div>
           <div className="col-md-4 col-lg-6 d-flex justify-content-end">

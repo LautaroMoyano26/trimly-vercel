@@ -72,10 +72,24 @@
   border-spacing: 0;
 }
 
+.productos-table thead th {
+  border-bottom: 1px solid #3a3a42 !important;
+}
+
+.productos-table tbody tr {
+  border-bottom: 1px solid #3a3a42 !important;
+  transition: background 0.2s ease;
+}
+
+.productos-table tbody tr:hover {
+  background: rgba(42, 42, 50, 0.3) !important;
+}
+
 .productos-table th,
 .productos-table td {
   padding: 14px 12px;
   text-align: left;
+  border-bottom: 1px solid #3a3a42 !important;
 }
 
 .icono-producto {
@@ -104,14 +118,17 @@
 .estado-alto {
   background: #0e3e1a;
   color: #1ed760;
+  box-shadow: 0 0 10px rgba(30, 215, 96, 0.5);
 }
 .estado-medio {
   background: #4a3a15;
   color: #ffd600;
+  box-shadow: 0 0 10px rgba(255, 214, 0, 0.5);
 }
 .estado-bajo {
   background: #4a1515;
   color: #ff4d4d;
+  box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
 }
 
 .btn-accion {
@@ -135,7 +152,6 @@
 .tabla-productos-wrapper {
   max-height: 400px; /* Ajusta según la altura que quieras */
   overflow-y: auto;
-  border: 1px solid #333;
   border-radius: 8px;
   padding-right: 8px; /* Para que el scrollbar no tape contenido */
 }
