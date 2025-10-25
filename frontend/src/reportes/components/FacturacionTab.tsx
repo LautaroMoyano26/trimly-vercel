@@ -3,6 +3,14 @@ import { FaPlus, FaMinus, FaTrash, FaFilePdf } from "react-icons/fa";
 import "./FacturacionTab.css";
 import { generarFacturaPDF } from "../../utils/pdfGenerator";
 
+// Función para formatear precios con punto de miles y coma para centavos
+const formatearPrecio = (precio: number): string => {
+  return precio.toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 interface Producto {
   id: number;
   nombre: string;
@@ -71,6 +79,7 @@ const FacturacionTab: React.FC = () => {
   const [tipoMensaje, setTipoMensaje] = useState<string>("");
   const [metodoPago, setMetodoPago] = useState<string>("Efectivo");
   const [notasTurnos, setNotasTurnos] = useState<{ [turnoId: number]: string }>({});
+  const [precioEditando, setPrecioEditando] = useState<number | null>(null);
 
   const mostrarMensaje = (texto: string, tipo: string) => {
     setMensaje(texto);
@@ -147,12 +156,15 @@ const FacturacionTab: React.FC = () => {
 
   // Función para cambiar precio unitario manualmente
   const cambiarPrecioUnitario = (productoId: number, nuevoPrecio: string) => {
-    // Validar que solo contenga números y punto decimal
-    if (!/^\d*\.?\d*$/.test(nuevoPrecio)) {
-      return; // No hacer nada si contiene caracteres no válidos
+    // Reemplazar coma por punto y eliminar puntos de miles
+    const precioLimpio = nuevoPrecio.replace(/\./g, '').replace(',', '.');
+    
+    // Validar que solo contenga números y un punto decimal
+    if (precioLimpio !== '' && !/^\d*\.?\d*$/.test(precioLimpio)) {
+      return;
     }
 
-    const precio = parseFloat(nuevoPrecio) || 0;
+    const precio = precioLimpio === '' ? 0 : parseFloat(precioLimpio);
     
     // Actualizar el precio unitario
     setItemsFactura((items) =>
@@ -426,9 +438,33 @@ const FacturacionTab: React.FC = () => {
 
   // Función para eliminar un producto/servicio de la factura
   const eliminarProducto = (productoId: number) => {
-    setItemsFactura((items) =>
-      items.filter((item) => item.productoId !== productoId)
-    );
+    setItemsFactura((items) => {
+      const nuevosItems = items.filter((item) => item.productoId !== productoId);
+      
+      // Verificar si el item eliminado era un turno
+      const esTurno = turnosPendientes.some((t) => t.id === productoId);
+      
+      if (esTurno) {
+        // Limpiar la nota del turno si existe
+        setNotasTurnos((prev) => {
+          const newNotas = { ...prev };
+          delete newNotas[productoId];
+          return newNotas;
+        });
+        
+        // Verificar si quedan más turnos en la factura
+        const quedanTurnos = nuevosItems.some((item) =>
+          turnosPendientes.some((t) => t.id === item.productoId)
+        );
+        
+        // Si no quedan turnos, desbloquear cliente
+        if (!quedanTurnos) {
+          setClienteBloqueado(false);
+        }
+      }
+      
+      return nuevosItems;
+    });
   };
 
   // Calcular el total de la factura
@@ -724,7 +760,7 @@ const FacturacionTab: React.FC = () => {
       <div className="paneles">
         {/* Panel de turnos pendientes (ahora ocupará toda la anchura) */}
         <div className="panel-turnos">
-          <h3>Turnos Pendientes de Cobro</h3>
+          <h3>Seleccione el Turno que Desea Facturar</h3>
           <div>
             {turnosPendientes.length === 0 ? (
               <div className="vacio">No hay turnos pendientes de cobro</div>
@@ -775,7 +811,7 @@ const FacturacionTab: React.FC = () => {
                   <div key={servicio.id} className="card-item">
                     <div>
                       <div className="nombre-item">{servicio.servicio}</div>
-                      <div className="precio-item">${servicio.precio}</div>
+                      <div className="precio-item">${formatearPrecio(servicio.precio)}</div>
                       <div className="servicio-info">
                         <small>Duración: {servicio.duracion} min</small>
                       </div>
@@ -805,7 +841,7 @@ const FacturacionTab: React.FC = () => {
                     <div>
                       <div className="nombre-item">{producto.nombre}</div>
                       <div className="precio-item">
-                        Precio: ${producto.precio}
+                        Precio: ${formatearPrecio(producto.precio)}
                       </div>
                       <div
                         className={`stock-item ${
@@ -1029,7 +1065,13 @@ const FacturacionTab: React.FC = () => {
                         <span className="precio-simbolo">$</span>
                         <input
                           type="text"
-                          value={item.precioUnitario}
+                          value={
+                            precioEditando === item.productoId
+                              ? item.precioUnitario.toString().replace('.', ',')
+                              : formatearPrecio(item.precioUnitario)
+                          }
+                          onFocus={() => setPrecioEditando(item.productoId)}
+                          onBlur={() => setPrecioEditando(null)}
                           onChange={(e) =>
                             cambiarPrecioUnitario(
                               item.productoId,
@@ -1037,12 +1079,12 @@ const FacturacionTab: React.FC = () => {
                             )
                           }
                           className="precio-input"
-                          placeholder="0.00"
+                          placeholder="0,00"
                         />
                       </div>
                     </td>
                     <td>
-                      <strong>${(item.cantidad * item.precioUnitario).toFixed(2)}</strong>
+                      <strong>${formatearPrecio(item.cantidad * item.precioUnitario)}</strong>
                     </td>
                     <td>
                       {item.turnoId ? (
@@ -1075,7 +1117,7 @@ const FacturacionTab: React.FC = () => {
 
             <div className="total-bar">
               <span>Total:</span>
-              <span className="total">${total.toFixed(2)}</span>
+              <span className="total">${formatearPrecio(total)}</span>
             </div>
 
             <div className="botones-factura">

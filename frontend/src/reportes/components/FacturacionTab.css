@@ -187,14 +187,12 @@
 .card-item.seleccionado {
   background: linear-gradient(135deg, rgba(0, 230, 246, 0.15), rgba(162, 89, 255, 0.15));
   border: 2px solid rgba(0, 230, 246, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 230, 246, 0.2);
   transform: translateY(-2px);
 }
 
 .card-item.seleccionado:hover {
   background: linear-gradient(135deg, rgba(0, 230, 246, 0.2), rgba(162, 89, 255, 0.2));
   border-color: rgba(0, 230, 246, 0.6);
-  box-shadow: 0 6px 20px rgba(0, 230, 246, 0.3);
 }
 
 /* Cursor pointer para turnos clickeables */
@@ -523,60 +521,72 @@
 .precio-controls {
   display: flex;
   align-items: center;
-  gap: 5px;
-  min-width: 90px;
+  gap: 8px;
+  min-width: 100px;
 }
 
 .precio-input {
-  width: 60px;
-  height: 25px;
-  border: 1px solid #e0e6ed;
-  border-radius: 3px;
-  padding: 2px 5px;
-  font-size: 0.8rem;
+  width: 80px;
+  height: 32px;
+  border: 1px solid #323238;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
   text-align: center;
-  color: #333;
-  background: white;
+  color: #e4e4e7;
+  background: #18181b;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .precio-input:focus {
   outline: none;
   border-color: #00e6f6;
-  box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.3);
+  box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.2);
+  background: #1f1f23;
+}
+
+.precio-input:hover {
+  border-color: #3f3f46;
 }
 
 .precio-symbol {
-  font-size: 0.8rem;
-  color: #666;
-  font-weight: 500;
+  font-size: 0.9rem;
+  color: #00e6f6;
+  font-weight: 600;
 }
 
 /* Estilos para el campo de nota del turno */
 .nota-input {
   width: 100%;
   min-width: 150px;
-  padding: 6px 10px;
-  border: 1px solid #e0e6ed;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  color: #333;
-  background: white;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 8px 12px;
+  border: 1px solid #323238;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #e4e4e7;
+  background: #18181b;
+  transition: all 0.2s ease;
 }
 
 .nota-input:focus {
   outline: none;
   border-color: #00e6f6;
   box-shadow: 0 0 0 2px rgba(0, 230, 246, 0.2);
+  background: #1f1f23;
+}
+
+.nota-input:hover {
+  border-color: #3f3f46;
 }
 
 .nota-input::placeholder {
-  color: #999;
+  color: #71717a;
   font-style: italic;
 }
 
 .sin-nota {
-  color: #999;
+  color: #71717a;
   font-style: italic;
 }
 
