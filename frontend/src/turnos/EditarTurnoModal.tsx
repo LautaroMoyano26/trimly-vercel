@@ -97,7 +97,11 @@ export default function EditarTurnoModal({
       setForm({
         clienteId: String(turnoToEdit.clienteId),
         servicioId: String(turnoToEdit.servicioId),
-        usuarioId: turnoToEdit.usuarioId ? String(turnoToEdit.usuarioId) : "", // Set usuarioId
+        usuarioId: turnoToEdit.usuarioId
+          ? String(turnoToEdit.usuarioId)
+          : turnoToEdit.usuario
+          ? String(turnoToEdit.usuario.id)
+          : "", // Set usuarioId (fallback a usuario.id si usuarioId no viene)
         fecha: turnoToEdit.fecha.split("T")[0],
         hora: turnoToEdit.hora,
         notas: turnoToEdit.notas || "",
@@ -202,7 +206,7 @@ export default function EditarTurnoModal({
               <select name="clienteId" value={form.clienteId} onChange={handleChange} required>
                 <option value="" disabled>Seleccionar cliente</option>
                 {clientes.filter(c => c.activo !== false).map(c => (
-                  <option key={c.id} value={c.id}>{c.nombre} {c.apellido}</option>
+                  <option key={c.id} value={String(c.id)}>{c.nombre} {c.apellido}</option>
                 ))}
               </select>
             </div>
@@ -211,7 +215,7 @@ export default function EditarTurnoModal({
               <select name="servicioId" value={form.servicioId} onChange={handleChange} required>
                 <option value="" disabled>Seleccionar servicio</option>
                 {servicios.map(s => (
-                  <option key={s.id} value={s.id}>{s.servicio}</option>
+                  <option key={s.id} value={String(s.id)}>{s.servicio}</option>
                 ))}
               </select>
             </div>
@@ -222,7 +226,7 @@ export default function EditarTurnoModal({
               <select name="usuarioId" value={form.usuarioId} onChange={handleChange} required>
                 <option value="" disabled>Seleccionar profesional</option>
                 {usuarios.filter(u => u.activo !== false).map(u => (
-                  <option key={u.id} value={u.id}>{u.nombre} {u.apellido}</option>
+                  <option key={u.id} value={String(u.id)}>{u.nombre} {u.apellido}</option>
                 ))}
               </select>
             </div>
