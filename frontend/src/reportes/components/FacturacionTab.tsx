@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaMinus, FaTrash, FaFilePdf } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./FacturacionTab.css";
 import { generarFacturaPDF } from "../../utils/pdfGenerator";
 
@@ -1120,24 +1120,13 @@ const FacturacionTab: React.FC = () => {
               <span className="total">${formatearPrecio(total)}</span>
             </div>
 
-            <div className="botones-factura">
-              <button
-                className="btn-generar-pdf"
-                onClick={generarSoloPDF}
-                disabled={!clienteSeleccionado || itemsFactura.length === 0}
-                title="Generar PDF sin finalizar la factura"
-              >
-                <FaFilePdf /> Generar PDF
-              </button>
-              
-              <button
-                className="btn-finalizar"
-                onClick={finalizarFactura}
-                disabled={!clienteSeleccionado || itemsFactura.length === 0}
-              >
-                Finalizar Factura
-              </button>
-            </div>
+            <button
+              className="btn-finalizar"
+              onClick={finalizarFactura}
+              disabled={!clienteSeleccionado || itemsFactura.length === 0}
+            >
+              Finalizar Factura
+            </button>
           </>
         )}
         </div>
