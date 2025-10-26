@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "./calendar-dark.css";
-import { FaPlus, FaClock, FaUser, FaEdit, FaTrash, FaCut } from "react-icons/fa"; 
+import {
+  FaPlus,
+  FaClock,
+  FaUser,
+  FaEdit,
+  FaTrash,
+  FaCut,
+} from "react-icons/fa";
 import "./turno.css";
 import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
@@ -11,7 +18,7 @@ export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // New state for delete modal
-  const [showHistorialModal, setShowHistorialModal] = useState(false)
+  const [showHistorialModal, setShowHistorialModal] = useState(false);
   const [turnos, setTurnos] = useState<any[]>([]);
   const [turnoToEdit, setTurnoToEdit] = useState<any>(null); // State for the turno being edited
   const [turnoToDelete, setTurnoToDelete] = useState<any>(null); // Faltaba este estado
@@ -21,7 +28,9 @@ export default function Turnos() {
     today.setHours(0, 0, 0, 0);
     return today;
   });
-  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(new Date());
+  const [selectedRange, setSelectedRange] = useState<Date | [Date, Date]>(
+    new Date()
+  );
   const [activeTab, setActiveTab] = useState<"dia" | "semana" | "mes">("dia");
   const [clientes, setClientes] = useState<any[]>([]); // Add state for clientes
   const [servicios, setServicios] = useState<any[]>([]); // Add state for servicios
@@ -31,7 +40,13 @@ export default function Turnos() {
     // --- Fetch turnos ---
     fetch("http://localhost:3000/turnos")
       .then((res) => res.json())
-      .then((data) => setTurnos(Array.isArray(data) ? data : []))
+      .then((data) => {
+        // ✅ FILTRAR SOLO TURNOS PENDIENTES
+        const turnosPendientes = Array.isArray(data)
+          ? data.filter((turno) => turno.estado === "pendiente")
+          : [];
+        setTurnos(turnosPendientes);
+      })
       .catch(() => setTurnos([]));
 
     // --- Fetch clientes ---
@@ -70,7 +85,11 @@ export default function Turnos() {
     try {
       const res = await fetch("http://localhost:3000/turnos");
       const data = await res.json();
-      setTurnos(Array.isArray(data) ? data : []);
+      // ✅ FILTRAR SOLO TURNOS PENDIENTES
+      const turnosPendientes = Array.isArray(data)
+        ? data.filter((turno) => turno.estado === "pendiente")
+        : [];
+      setTurnos(turnosPendientes);
       setShowEditModal(false);
       setTurnoToEdit(null);
     } catch (error) {
@@ -83,7 +102,11 @@ export default function Turnos() {
     try {
       const res = await fetch("http://localhost:3000/turnos");
       const data = await res.json();
-      setTurnos(Array.isArray(data) ? data : []);
+      // ✅ FILTRAR SOLO TURNOS PENDIENTES
+      const turnosPendientes = Array.isArray(data)
+        ? data.filter((turno) => turno.estado === "pendiente")
+        : [];
+      setTurnos(turnosPendientes);
       setShowDeleteModal(false);
       setTurnoToDelete(null);
     } catch (error) {
@@ -92,7 +115,10 @@ export default function Turnos() {
   };
 
   // --- DÍA ---
-  const isRange = Array.isArray(selectedRange) && selectedRange.length === 2 && selectedRange[1];
+  const isRange =
+    Array.isArray(selectedRange) &&
+    selectedRange.length === 2 &&
+    selectedRange[1];
   let rangeStart: Date, rangeEnd: Date;
   if (isRange) {
     rangeStart = new Date((selectedRange as [Date, Date])[0]);
@@ -116,12 +142,26 @@ export default function Turnos() {
   };
 
   const fechasSeleccionadas = getDatesInRange(rangeStart, rangeEnd);
-  const turnosDelRango = turnos.filter((t) => fechasSeleccionadas.includes(t.fecha));
+  const turnosDelRango = turnos.filter((t) =>
+    fechasSeleccionadas.includes(t.fecha)
+  );
   const turnosDelDia = turnosDelRango;
 
   const fechaFormateada = isRange
-    ? `${(selectedRange as [Date, Date])[0].toLocaleDateString("es-AR", { day: "numeric", month: "short" })} - ${(selectedRange as [Date, Date])[1].toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`
-    : selectedDate.toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    ? `${(selectedRange as [Date, Date])[0].toLocaleDateString("es-AR", {
+        day: "numeric",
+        month: "short",
+      })} - ${(selectedRange as [Date, Date])[1].toLocaleDateString("es-AR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })}`
+    : selectedDate.toLocaleDateString("es-AR", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
   // Calendar change handler (soporta rango)
   const onCalendarChange = (value: any) => {
@@ -177,7 +217,8 @@ export default function Turnos() {
 
   // --- Helper para obtener el nombre del usuario ---
   const getNombreUsuario = (turno: any) => {
-    if (turno.usuario?.nombre && turno.usuario?.apellido) return `${turno.usuario.nombre} ${ turno.usuario.apellido}`;
+    if (turno.usuario?.nombre && turno.usuario?.apellido)
+      return `${turno.usuario.nombre} ${turno.usuario.apellido}`;
     if (turno.usuarioId) {
       const u = usuarios.find((us) => us.id === turno.usuarioId);
       return u ? u.nombre : "Sin profesional";
@@ -193,21 +234,46 @@ export default function Turnos() {
           <p className="turnos-desc">Gestiona los turnos de tu peluquería</p>
         </div>
         <div className="turnos-header-buttons">
-          <button className="historial-turno-btn" onClick={() => setShowHistorialModal(true)}>
+          <button
+            className="historial-turno-btn"
+            onClick={() => setShowHistorialModal(true)}
+          >
             <FaClock style={{ marginRight: 8 }} /> Historial de turnos
           </button>
-          <button className="nuevo-turno-btn" onClick={() => setShowModal(true)}>
+          <button
+            className="nuevo-turno-btn"
+            onClick={() => setShowModal(true)}
+          >
             <FaPlus /> Nuevo turno
           </button>
         </div>
       </div>
       <div className="turnos-tabs-row">
-        <button className={`tab-btn${activeTab === "dia" ? " active" : ""}`} onClick={() => setActiveTab("dia")}>Día</button>
-        <button className={`tab-btn${activeTab === "semana" ? " active" : ""}`} onClick={() => setActiveTab("semana")}>Semana</button>
+        <button
+          className={`tab-btn${activeTab === "dia" ? " active" : ""}`}
+          onClick={() => setActiveTab("dia")}
+        >
+          Día
+        </button>
+        <button
+          className={`tab-btn${activeTab === "semana" ? " active" : ""}`}
+          onClick={() => setActiveTab("semana")}
+        >
+          Semana
+        </button>
       </div>
 
       {activeTab === "dia" && (
-        <div className="turnos-dia-calendar-section" style={{ display: "flex", gap: 32, alignItems: "flex-start", width: "100%", flexWrap: "wrap" }}>
+        <div
+          className="turnos-dia-calendar-section"
+          style={{
+            display: "flex",
+            gap: 32,
+            alignItems: "flex-start",
+            width: "100%",
+            flexWrap: "wrap",
+          }}
+        >
           <div style={{ minWidth: 280, maxWidth: 340, flex: "0 0 320px" }}>
             <Calendar
               onChange={onCalendarChange}
@@ -222,11 +288,16 @@ export default function Turnos() {
           </div>
           <div style={{ flex: 1, minWidth: 260 }}>
             <div className="turnos-date-row">
-              <span className="turnos-date-label">{fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1)}</span>
+              <span className="turnos-date-label">
+                {fechaFormateada.charAt(0).toUpperCase() +
+                  fechaFormateada.slice(1)}
+              </span>
             </div>
             <div className="turnos-list-section">
               {turnosDelDia.length === 0 ? (
-                <div className="no-turnos-msg">No hay turnos programados para este día</div>
+                <div className="no-turnos-msg">
+                  No hay turnos programados para este día
+                </div>
               ) : (
                 <ul className="turnos-list">
                   {turnosDelRango.map((turno) => (
@@ -236,33 +307,61 @@ export default function Turnos() {
                           <FaClock size={28} color="#23b3c7" />
                         </div>
                         <div className="turno-card-info">
-                          <div className="turno-card-servicio">{turno.servicio?.servicio || "EL servicio ya no esta disponible"}</div>
+                          <div className="turno-card-servicio">
+                            {turno.servicio?.servicio ||
+                              "EL servicio ya no esta disponible"}
+                          </div>
                           <div className="turno-card-meta">
                             <span className="turno-card-hora">
-                              <FaClock size={13} style={{ marginRight: 4, marginBottom: -2 }} />
-                              {turno.hora ? `${turno.hora.slice(0, 5)} (Estimado)` : "hh:mm (Estimado)"}
+                              <FaClock
+                                size={13}
+                                style={{ marginRight: 4, marginBottom: -2 }}
+                              />
+                              {turno.hora
+                                ? `${turno.hora.slice(0, 5)} (Estimado)`
+                                : "hh:mm (Estimado)"}
                             </span>
                             <span className="turno-card-cliente">
-                              <FaUser size={13} style={{ marginRight: 4, marginBottom: -2 }} />
+                              <FaUser
+                                size={13}
+                                style={{ marginRight: 4, marginBottom: -2 }}
+                              />
                               {turno.cliente?.nombre} {turno.cliente?.apellido}
                             </span>
                             <span className="turno-card-usuario">
-                              <FaCut size={13} style={{ marginRight: 4, marginBottom: -2 }} /> {/* Ícono de peluquero/a */}
+                              <FaCut
+                                size={13}
+                                style={{ marginRight: 4, marginBottom: -2 }}
+                              />{" "}
+                              {/* Ícono de peluquero/a */}
                               {getNombreUsuario(turno)}
                             </span>
                           </div>
                           {turno.notas && (
                             <div className="turno-card-notas">
-                              <span style={{ color: "#a1a1aa", fontSize: "0.97rem" }}>📝 {turno.notas}</span>
+                              <span
+                                style={{
+                                  color: "#a1a1aa",
+                                  fontSize: "0.97rem",
+                                }}
+                              >
+                                📝 {turno.notas}
+                              </span>
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="turno-card-actions">
-                        <button className="turno-btn editar" onClick={() => handleEditClick(turno)}>
+                        <button
+                          className="turno-btn editar"
+                          onClick={() => handleEditClick(turno)}
+                        >
                           <FaEdit style={{ marginRight: 4 }} /> Editar
                         </button>
-                        <button className="turno-btn cancelar" onClick={() => handleDeleteClick(turno)}>
+                        <button
+                          className="turno-btn cancelar"
+                          onClick={() => handleDeleteClick(turno)}
+                        >
                           <FaTrash style={{ marginRight: 4 }} /> Cancelar
                         </button>
                       </div>
@@ -278,16 +377,23 @@ export default function Turnos() {
       {activeTab === "semana" && (
         <>
           <div className="turnos-date-row">
-            <button className="date-nav-btn" onClick={() => cambiarSemana(-1)}>&lt;</button>
+            <button className="date-nav-btn" onClick={() => cambiarSemana(-1)}>
+              &lt;
+            </button>
             <span className="turnos-date-label">
-              Semana del {startOfWeek.toLocaleDateString("es-AR")} al {endOfWeek.toLocaleDateString("es-AR")}
+              Semana del {startOfWeek.toLocaleDateString("es-AR")} al{" "}
+              {endOfWeek.toLocaleDateString("es-AR")}
             </span>
-            <button className="date-nav-btn" onClick={() => cambiarSemana(1)}>&gt;</button>
+            <button className="date-nav-btn" onClick={() => cambiarSemana(1)}>
+              &gt;
+            </button>
           </div>
           <div className="turnos-semana-list-section">
             {diasSemana.map((dia, idx) => (
               <div className="turnos-semana-dia-card" key={dia.toISOString()}>
-                <div className="turnos-semana-dia-label">{diasCorto[dia.getDay()]}</div>
+                <div className="turnos-semana-dia-label">
+                  {diasCorto[dia.getDay()]}
+                </div>
                 <div className="turnos-semana-dia-num">{dia.getDate()}</div>
                 {turnosPorDiaSemana[idx].length === 0 ? (
                   <div className="turnos-semana-sin-turnos">Sin turnos</div>
@@ -295,11 +401,21 @@ export default function Turnos() {
                   <ul className="turnos-semana-turnos-list">
                     {turnosPorDiaSemana[idx].map((turno) => (
                       <li key={turno.id} className="turnos-semana-turno-item">
-                        <span className="turnos-semana-turno-servicio">{turno.servicio?.servicio || "-"}</span>
-                        <span className="turnos-semana-turno-hora">{turno.hora}</span>
-                        <span className="turnos-semana-turno-cliente">{turno.cliente?.nombre} {turno.cliente?.apellido}</span>
+                        <span className="turnos-semana-turno-servicio">
+                          {turno.servicio?.servicio || "-"}
+                        </span>
+                        <span className="turnos-semana-turno-hora">
+                          {turno.hora}
+                        </span>
+                        <span className="turnos-semana-turno-cliente">
+                          {turno.cliente?.nombre} {turno.cliente?.apellido}
+                        </span>
                         <span className="turnos-semana-turno-usuario">
-                          <FaCut size={13} style={{ marginRight: 4, marginBottom: -2 }} /> {/* Ícono de peluquero/a */}
+                          <FaCut
+                            size={13}
+                            style={{ marginRight: 4, marginBottom: -2 }}
+                          />{" "}
+                          {/* Ícono de peluquero/a */}
                           {getNombreUsuario(turno)}
                         </span>
                       </li>
@@ -322,12 +438,15 @@ export default function Turnos() {
         onTurnoCreado={async () => {
           const res = await fetch("http://localhost:3000/turnos");
           const data = await res.json();
-          setTurnos(Array.isArray(data) ? data : []);
-          // Ya no cerramos el modal aquí, se cierra desde el SuccessModal
+          // ✅ FILTRAR SOLO TURNOS PENDIENTES
+          const turnosPendientes = Array.isArray(data)
+            ? data.filter((turno) => turno.estado === "pendiente")
+            : [];
+          setTurnos(turnosPendientes);
         }}
         clientes={clientes}
         servicios={servicios}
-        usuarios={usuarios} 
+        usuarios={usuarios}
       />
 
       <EditarTurnoModal
@@ -340,7 +459,7 @@ export default function Turnos() {
         turnoToEdit={turnoToEdit}
         clientes={clientes}
         servicios={servicios}
-        usuarios={usuarios} 
+        usuarios={usuarios}
       />
 
       <EliminarTurnoModal
