@@ -1,4 +1,5 @@
 import React from 'react';
+import { API_URL } from "../config/api";
 import './EliminarProductoModal.css';
 
 interface Producto {
@@ -30,7 +31,7 @@ export default function EliminarProductoModal({
 
   const handleConfirmDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/producto/${producto.id}`, {
+      const res = await fetch(`${API_URL}/producto/${producto.id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       });
