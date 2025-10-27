@@ -52,11 +52,11 @@ export class ReportesService {
         SELECT
           COUNT(DISTINCT f.id) as total_turnos,
           COALESCE(SUM(fd.subtotal), 0) as ingresos_totales,
-          COALESCE(SUM(CASE WHEN fd.tipo_item = 'Servicio' THEN fd.cantidad ELSE 0 END), 0) as total_servicios,
-          COALESCE(SUM(CASE WHEN fd.tipo_item = 'Producto' THEN fd.cantidad ELSE 0 END), 0) as total_productos
+          COALESCE(SUM(CASE WHEN fd.tipo_item = 'servicio' THEN fd.cantidad ELSE 0 END), 0) as total_servicios,
+          COALESCE(SUM(CASE WHEN fd.tipo_item = 'producto' THEN fd.cantidad ELSE 0 END), 0) as total_productos
         FROM factura f
-        LEFT JOIN factura_detalle fd ON f.id = fd.facturaId
-        WHERE DATE(f.createdAt) BETWEEN ? AND ?
+        LEFT JOIN factura_detalle fd ON f.id = fd."facturaId"
+        WHERE DATE(f."createdAt") BETWEEN $1 AND $2
       `;
 
       const [result] = await this.facturaRepository.query(query, [fechaInicio, fechaFin]);
@@ -83,14 +83,14 @@ export class ReportesService {
           COALESCE(SUM(fd.cantidad), 0) as cantidad,
           COALESCE(SUM(fd.subtotal), 0) as ingresos
         FROM servicio s
-        LEFT JOIN factura_detalle fd ON s.id = fd.itemId AND fd.tipo_item = 'servicio'
-        LEFT JOIN factura f ON fd.facturaId = f.id
+        LEFT JOIN factura_detalle fd ON s.id = fd."itemId" AND fd.tipo_item = 'servicio'
+        LEFT JOIN factura f ON fd."facturaId" = f.id
       `;
 
       const params: any[] = [];
 
       if (fechaInicio && fechaFin) {
-        query += ` WHERE f.id IS NULL OR DATE(f.createdAt) BETWEEN ? AND ?`;
+        query += ` WHERE f.id IS NULL OR DATE(f."createdAt") BETWEEN $1 AND $2`;
         params.push(fechaInicio, fechaFin);
       }
 
@@ -122,14 +122,14 @@ async obtenerEstadisticasProductos(fechaInicio?: string, fechaFin?: string) {
         COALESCE(SUM(fd.cantidad), 0) as cantidad,
         COALESCE(SUM(fd.subtotal), 0) as ingresos
       FROM producto p
-      LEFT JOIN factura_detalle fd ON p.id = fd.itemId AND fd.tipo_item = 'producto'
-      LEFT JOIN factura f ON fd.facturaId = f.id
+      LEFT JOIN factura_detalle fd ON p.id = fd."itemId" AND fd.tipo_item = 'producto'
+      LEFT JOIN factura f ON fd."facturaId" = f.id
     `;
 
     const params: any[] = [];
 
     if (fechaInicio && fechaFin) {
-      query += ` WHERE f.id IS NULL OR DATE(f.createdAt) BETWEEN ? AND ?`;
+      query += ` WHERE f.id IS NULL OR DATE(f."createdAt") BETWEEN $1 AND $2`;
       params.push(fechaInicio, fechaFin);
     }
 
@@ -155,12 +155,12 @@ async obtenerEstadisticasProductos(fechaInicio?: string, fechaFin?: string) {
     try {
       const query = `
         SELECT 
-          DATE(f.createdAt) as fecha,
+          DATE(f."createdAt") as fecha,
           COALESCE(SUM(fd.subtotal), 0) as total
         FROM factura f
-        LEFT JOIN factura_detalle fd ON f.id = fd.facturaId
-        WHERE DATE(f.createdAt) BETWEEN ? AND ?
-        GROUP BY DATE(f.createdAt)
+        LEFT JOIN factura_detalle fd ON f.id = fd."facturaId"
+        WHERE DATE(f."createdAt") BETWEEN $1 AND $2
+        GROUP BY DATE(f."createdAt")
         ORDER BY fecha ASC
       `;
 

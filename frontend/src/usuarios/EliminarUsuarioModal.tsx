@@ -54,10 +54,10 @@ export default function EliminarUsuarioModal({
 
       setSuccessModal({
         show: true,
-        message: `Usuario "${usuarioToDeactivate.username}" desactivado con éxito.`,
+        message: `Usuario "${usuarioToDeactivate.username}" desactivado con Ã©xito.`,
       });
 
-      // No se ejecuta onClose aquí — se hace cuando se cierra el modal de éxito
+      // No se ejecuta onClose aquÃ­ â€“ se hace cuando se cierra el modal de Ã©xito
     } catch (error: any) {
       console.error("Error al desactivar usuario:", error);
       setSuccessModal({
@@ -72,15 +72,15 @@ export default function EliminarUsuarioModal({
       <div className="modal-bg">
         <div className="eliminar-usuario-modal-content">
           <button className="close-btn" onClick={onClose}>
-            ×
+            ï¿½
           </button>
           <h2 className="modal-title">Desactivar Usuario</h2>
           <p className="modal-subtitle">
-            ¿Estás seguro de que quieres desactivar al usuario{" "}
+            Â¿EstÃ¡s seguro de que quieres desactivar al usuario{" "}
             <span className="fw-bold">@{usuarioToDeactivate.username}</span>?
           </p>
           <p className="eliminar-warning">
-            El usuario ya no podrá iniciar sesión y aparecerá como inactivo en
+            El usuario ya no podrÃ¡ iniciar sesiÃ³n y aparecerÃ¡ como inactivo en
             la lista.
           </p>
           <div className="form-row buttons">

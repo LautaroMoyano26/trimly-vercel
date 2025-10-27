@@ -143,7 +143,7 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
     setError(null);
     try {
       console.log(
-        `Cargando reporte para per�odo: fechaInicio=${inicio}&fechaFin=${fin}`
+        `Cargando reporte para período: fechaInicio=${inicio}&fechaFin=${fin}`
       );
 
       const res = await reportesService.getReportes(inicio, fin);
@@ -257,7 +257,7 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
     );
   };
 
-  // Exponer funci�n para exportar datos
+  // Exponer función para exportar datos
   useImperativeHandle(ref, () => ({
     exportarDatos: () => {
       if (!periodoSeleccionado) return null;
@@ -352,12 +352,12 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
 
   return (
     <div className="reportes-view">
-      {/* Secci�n de Selecci�n de Per�odo */}
+      {/* Sección de Selección de Período */}
       <div className="period-selector-card">
         <div className="period-selector-header">
           <Calendar size={20} className="text-cyan-400" />
           <h3 className="period-selector-title">
-            Seleccionar Per�odo de An�lisis
+            Seleccionar Período de Análisis
           </h3>
         </div>
 
@@ -393,14 +393,14 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
         {periodoSeleccionado && (
           <div className="period-indicator">
             <p className="period-indicator-text">
-              Per�odo seleccionado:{" "}
+              Período seleccionado:{" "}
               <span className="period-date">{periodoSeleccionado}</span>
             </p>
           </div>
         )}
       </div>
 
-      {/* Sistema de Pesta�as */}
+      {/* Sistema de Pestañas */}
       <div className="tabs-container">
         <button
           className={`tab-button ${
@@ -422,14 +422,14 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
         </button>
       </div>
 
-      {/* Contenido de Pesta�as */}
+      {/* Contenido de Pestañas */}
       <div className="tab-content">
         {activeTab === "servicios" && (
           <div className="services-content">
             <div className="content-header">
               <h2 className="content-title">
-                An�lisis de Servicios -{" "}
-                {periodoSeleccionado || "Selecciona un per�odo"}
+                Análisis de Servicios -{" "}
+                {periodoSeleccionado || "Selecciona un período"}
               </h2>
               <div className="search-bar-container">
                 <Search size={18} className="search-icon" />
@@ -461,8 +461,7 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                           {getNombreServicio(servicio)}
                         </h4>
                         <p className="item-subtitle">
-                          {servicio.cantidad || 0} servicios realizados �{" "}
-                          {formatDuration(servicio.duracion)}
+                          {servicio.cantidad || 0} servicios realizados • {formatDuration(servicio.duracion)}
                         </p>
                       </div>
                     </div>
@@ -483,8 +482,8 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                   </p>
                   <p className="text-sm">
                     {searchServicios
-                      ? "Intenta con otro t�rmino de b�squeda"
-                      : "Verifica que el backend est� ejecut�ndose"}
+                      ? "Intenta con otro término de búsqueda"
+                      : "Verifica que el backend esté ejecutándose"}
                   </p>
                 </div>
               )}
@@ -518,8 +517,8 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
           <div className="products-content">
             <div className="content-header">
               <h2 className="content-title">
-                An�lisis de Productos -{" "}
-                {periodoSeleccionado || "Selecciona un per�odo"}
+                Análisis de Productos -{" "}
+                {periodoSeleccionado || "Selecciona un período"}
               </h2>
               <div className="search-bar-container">
                 <Search size={18} className="search-icon" />
@@ -550,7 +549,7 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                         <h4 className="item-name">{producto.nombre}</h4>
                         <p className="item-subtitle">
                           {producto.cantidad || 0} unidades vendidas
-                          {producto.categoria && ` � ${producto.categoria}`}
+                          {producto.categoria && ` • ${producto.categoria}`}
                         </p>
                       </div>
                     </div>
@@ -571,8 +570,8 @@ export const ReportesView = forwardRef<ReportesViewHandle>((_props, ref) => {
                   </p>
                   <p className="text-sm">
                     {searchProductos
-                      ? "Intenta con otro t�rmino de b�squeda"
-                      : "Verifica que el backend est� ejecut�ndose"}
+                      ? "Intenta con otro término de búsqueda"
+                      : "Verifica que el backend esté ejecutándose"}
                   </p>
                 </div>
               )}
