@@ -2,25 +2,31 @@
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 1000;
+  padding: 20px; /* ✅ Padding para que no toque los bordes */
 }
 
 .editar-turno-modal-content {
-  background: #27272a;
+  background: #1a1a1a;
   color: #fff;
-  padding: 32px 28px;
-  border-radius: 32px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 20px; /* ✅ Reducir padding de 30px a 20px */
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh; /* ✅ Reducir de altura automática a máximo 85% del viewport */
+  overflow-y: auto; /* ✅ Scroll si el contenido es muy largo */
+  border: 1px solid #323238;
   position: relative;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .editar-turno-close-btn {
@@ -62,7 +68,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 18px;
+  margin-bottom: 15px; /* ✅ Reducir de 20px a 15px */
 }
 
 .editar-turno-form-group label {
@@ -90,7 +96,7 @@
 
 .editar-turno-form-group textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 60px; /* ✅ Reducir altura mínima */
 }
 
 .editar-turno-form-group input:focus,
@@ -112,7 +118,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 20px; /* ✅ Reducir de 30px a 20px */
 }
 
 .editar-turno-cancel-btn,
@@ -147,22 +153,24 @@
 /* Estilos para el scroll del dropdown de tiempo en el modal de editar */
 .editar-turno-form-group input[type="time"] {
   scrollbar-width: thin;
-  scrollbar-color: #a259ff #18181B;
+  scrollbar-color: #a259ff #18181b;
 }
 
 /* Estilos específicos para el dropdown del time picker */
 .editar-turno-form-group input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(0%); 
+  filter: invert(0%);
   cursor: pointer;
   transition: filter 0.2s ease;
 }
 
-.editar-turno-form-group input[type="time"]:hover::-webkit-calendar-picker-indicator {
-  filter: invert(60%); 
+.editar-turno-form-group
+  input[type="time"]:hover::-webkit-calendar-picker-indicator {
+  filter: invert(60%);
 }
 
 /* Mejoras para el scroll del popup de selección de tiempo */
-.editar-turno-form-group input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+.editar-turno-form-group
+  input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #a259ff #232329;
 }
@@ -171,4 +179,477 @@
   scrollbar-width: thin;
   overflow-y: auto;
   max-height: 200px;
+}
+
+/* Agregar al final de: frontend/src/turnos/EditarTurnoModal.css */
+
+/* ✅ ESTILOS PARA LAS BARRAS DE BÚSQUEDA */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 85px 12px 40px; /* ✅ Más padding a la izquierda para el botón X */
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #00e6f6;
+  background: #232329;
+}
+
+.search-input::placeholder {
+  color: #8eb8b8;
+}
+
+.input-with-button {
+  position: relative;
+}
+
+.clear-btn {
+  position: absolute;
+  left: 8px; /* ✅ Mover a la izquierda */
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #8eb8b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%; /* ✅ Hacer circular */
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  z-index: 3;
+  width: 24px; /* ✅ Tamaño fijo */
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.add-button-inline {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.add-button-inline:hover {
+  opacity: 0.8;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* ✅ DROPDOWNS */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #2a2a2a;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #323238;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #3a3a3a;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.item-info-simple {
+  display: block;
+}
+
+.item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  display: block;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.item-meta {
+  display: block;
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+/* ✅ ITEMS SELECCIONADOS */
+.selected-item {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(0, 230, 246, 0.1);
+  border: 1px solid rgba(0, 230, 246, 0.3);
+  border-radius: 8px;
+}
+
+.selected-info-simple {
+  display: block;
+}
+
+.selected-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.selected-name {
+  display: block;
+  font-weight: 600;
+  color: #00e6f6;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.selected-meta {
+  display: block;
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+/* ✅ SCROLL PERSONALIZADO PARA DROPDOWNS */
+.search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+  background: #232329;
+  border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
+}
+
+/* ✅ RESPONSIVE */
+@media (max-width: 768px) {
+  .search-input {
+    padding: 12px 75px 12px 35px;
+    font-size: 16px;
+  }
+
+  .clear-btn {
+    left: 6px;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+  }
+
+  .add-button-inline {
+    right: 6px;
+    min-width: 30px;
+    min-height: 30px;
+  }
+}
+
+/* Solo en pantallas muy pequeñas, usar más espacio */
+@media (max-height: 600px) {
+  .editar-turno-modal-content {
+    max-height: 95vh; /* ✅ Usar más espacio en pantallas bajas */
+  }
+
+  .editar-turno-modal-content form {
+    padding: 15px;
+    padding-top: 50px;
+  }
+
+  .editar-turno-form-group {
+    margin-bottom: 12px;
+  }
+}
+
+/* ✅ ASEGURAR QUE NO INTERFIERA CON LOS ESTILOS EXISTENTES */
+.editar-turno-form-group .search-wrapper {
+  margin-bottom: 0;
+}
+
+.editar-turno-form-group .search-input {
+  margin-bottom: 0;
+}
+
+/* ✅ BOTONES EXTERNOS - FUERA DE LA BARRA DE BÚSQUEDA */
+
+.search-container-with-external-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input-clean {
+  flex: 1;
+  padding: 10px 12px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input-clean:focus {
+  border-color: #00e6f6;
+  background: #232329;
+}
+
+.search-input-clean::placeholder {
+  color: #8eb8b8;
+}
+
+.external-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clear-btn-external {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-btn-external:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.5);
+  transform: scale(1.05);
+}
+
+.add-btn-external {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  border: none;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-btn-external:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* ✅ RESPONSIVE PARA BOTONES EXTERNOS */
+@media (max-width: 768px) {
+  .search-container-with-external-buttons {
+    gap: 6px;
+  }
+
+  .clear-btn-external,
+  .add-btn-external {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  .search-input-clean {
+    font-size: 16px; /* Evitar zoom en iOS */
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container-with-external-buttons {
+    gap: 4px;
+  }
+
+  .clear-btn-external,
+  .add-btn-external {
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ✅ LIMPIAR ESTILOS ANTERIORES QUE YA NO SE USAN */
+.input-with-button,
+.clear-btn,
+.add-button-inline {
+  /* Remover estos estilos ya que ahora usamos botones externos */
+  display: none;
+}
+
+/* NUEVOS ESTILOS PARA LA BÚSQUEDA DE SERVICIOS */
+.servicio-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.servicio-search-input-clean {
+  width: 100%;
+  padding: 12px 15px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #323238;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.servicio-search-input-clean:focus {
+  border-color: #00e6f6;
+  background: #232329;
+}
+
+.servicio-search-input-clean::placeholder {
+  color: #8eb8b8;
+}
+
+/* Botones externos en la búsqueda de servicios */
+.clear-servicio-btn-external {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-servicio-btn-external:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.5);
+  transform: scale(1.05);
+}
+
+.add-servicio-btn-external {
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%);
+  border: none;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-servicio-btn-external:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* Ajustes específicos para la búsqueda de servicios en el modal */
+.editar-turno-form-group {
+  margin-bottom: 15px; /* ✅ Asegurar consistencia con el resto del formulario */
+}
+
+.editar-turno-modal-content {
+  padding: 20px;
+  max-height: 85vh;
+}
+
+/* Responsivo para la búsqueda de servicios */
+@media (max-width: 768px) {
+  .servicio-search-wrapper {
+    width: 100%;
+  }
+
+  .servicio-search-input-clean {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+
+  .clear-servicio-btn-external,
+  .add-servicio-btn-external {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .servicio-search-wrapper {
+    width: 100%;
+  }
+
+  .servicio-search-input-clean {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .clear-servicio-btn-external,
+  .add-servicio-btn-external {
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
 }
