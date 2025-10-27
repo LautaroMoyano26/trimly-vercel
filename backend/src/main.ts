@@ -16,36 +16,48 @@ async function bootstrap() {
     }),
   );
 
-  // Habilitar CORS dinámico
-  const frontendUrl = process.env.FRONTEND_URL;
-  const allowedOrigins = [
-    frontendUrl,
-    'http://localhost:5173',
-    'http://localhost:3000',
-  ].filter(Boolean);
-
+  // Habilitar CORS para producción
+  const frontendUrl = process.env.FRONTEND_URL || 'https://trimly-frontend-eta.vercel.app';
+  
+  console.log('🔧 Configurando CORS...');
+  console.log('Frontend URL permitida:', frontendUrl);
+  console.log('Environment:', process.env.NODE_ENV);
+  
   app.enableCors({
     origin: (origin, callback) => {
+      console.log('🌐 Origin recibido:', origin);
+      
       // Permitir requests sin origin (como Postman, curl, etc)
       if (!origin) {
+        console.log('✅ Permitido: Sin origin');
         return callback(null, true);
       }
       
-      // Verificar si el origin está en la lista de permitidos
+      // Lista de origenes permitidos
+      const allowedOrigins = [
+        frontendUrl,
+        'https://trimly-frontend-eta.vercel.app',
+        'http://localhost:5173',
+        'http://localhost:3000',
+      ];
+      
       const isAllowed = allowedOrigins.some(allowed => 
-        origin === allowed || origin === allowed + '/'
+        origin === allowed || origin === allowed + '/' || origin.startsWith(allowed)
       );
       
       if (isAllowed) {
+        console.log('✅ CORS permitido para:', origin);
         callback(null, true);
       } else {
-        console.log(`CORS blocked origin: ${origin}`);
+        console.log('❌ CORS bloqueado para:', origin);
         callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Length', 'Content-Type'],
+    maxAge: 86400, // 24 horas
   });
 
   await app.listen(process.env.PORT || 3000);
