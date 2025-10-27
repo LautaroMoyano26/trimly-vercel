@@ -12,17 +12,23 @@ import { FacturacionModule } from './facturacion/facturacion.module';
 import { ReportesModule } from './reportes/reportes.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 
+const dbSsl = process.env.DB_SSL === 'true';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'TRIMLY2025',
-      database: 'pruebas',
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME || 'postgres',
+      password: String(process.env.DB_PASSWORD || ''),
+      database: process.env.DB_DATABASE || 'postgres',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'production',
+      ssl: dbSsl ? { rejectUnauthorized: false } : false,
+      extra: dbSsl ? { ssl: { rejectUnauthorized: false } } : undefined,
+      connectTimeoutMS: 10000,
+      logging: ['error', 'warn'],
     }),
     ClientesModule,
     ServiciosModule,

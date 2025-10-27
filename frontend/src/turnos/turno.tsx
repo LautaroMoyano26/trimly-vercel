@@ -14,6 +14,7 @@ import NuevoTurnoModal from "./NuevoTurnoModal";
 import EditarTurnoModal from "./EditarTurnoModal";
 import EliminarTurnoModal from "./EliminarTurnoModal"; // Asegúrate de importar el modal
 import HistorialTurno from "./HistorialTurno";
+import { API_URL } from "../config/api";
 export default function Turnos() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -38,7 +39,7 @@ export default function Turnos() {
 
   useEffect(() => {
     // --- Fetch turnos ---
-    fetch("http://localhost:3000/turnos")
+    fetch(`${API_URL}/turnos`)
       .then((res) => res.json())
       .then((data) => {
         // ✅ FILTRAR SOLO TURNOS PENDIENTES
@@ -50,19 +51,19 @@ export default function Turnos() {
       .catch(() => setTurnos([]));
 
     // --- Fetch clientes ---
-    fetch("http://localhost:3000/clientes")
+    fetch(`${API_URL}/clientes`)
       .then((res) => res.json())
       .then((data) => setClientes(Array.isArray(data) ? data : []))
       .catch(() => setClientes([]));
 
     // --- Fetch servicios ---
-    fetch("http://localhost:3000/servicios")
+    fetch(`${API_URL}/servicios`)
       .then((res) => res.json())
       .then((data) => setServicios(Array.isArray(data) ? data : []))
       .catch(() => setServicios([]));
 
     // --- Fetch usuarios ---
-    fetch("http://localhost:3000/usuarios")
+    fetch(`${API_URL}/usuarios`)
       .then((res) => res.json())
       .then((data) => setUsuarios(Array.isArray(data) ? data : []))
       .catch(() => setUsuarios([]));
@@ -83,7 +84,7 @@ export default function Turnos() {
   // Function to reload data after a turno is edited
   const handleTurnoEditado = async () => {
     try {
-      const res = await fetch("http://localhost:3000/turnos");
+      const res = await fetch(`${API_URL}/turnos`);
       const data = await res.json();
       // ✅ FILTRAR SOLO TURNOS PENDIENTES
       const turnosPendientes = Array.isArray(data)
@@ -100,7 +101,7 @@ export default function Turnos() {
   // Function to reload data after a turno is deleted
   const handleTurnoCancelado = async () => {
     try {
-      const res = await fetch("http://localhost:3000/turnos");
+      const res = await fetch(`${API_URL}/turnos`);
       const data = await res.json();
       // ✅ FILTRAR SOLO TURNOS PENDIENTES
       const turnosPendientes = Array.isArray(data)
@@ -436,7 +437,7 @@ export default function Turnos() {
         show={showModal}
         onClose={() => setShowModal(false)}
         onTurnoCreado={async () => {
-          const res = await fetch("http://localhost:3000/turnos");
+          const res = await fetch(`${API_URL}/turnos`);
           const data = await res.json();
           // ✅ FILTRAR SOLO TURNOS PENDIENTES
           const turnosPendientes = Array.isArray(data)

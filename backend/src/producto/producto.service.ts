@@ -25,7 +25,7 @@ export class ProductoService implements OnModuleInit {
       // Solo configurar el AUTO_INCREMENT si no hay productos con ID >= 10000
       if (!existingProducto) {
         await this.productoRepository.query(
-          'ALTER TABLE producto AUTO_INCREMENT = 10000'
+          'ALTER SEQUENCE producto_id_seq RESTART WITH 10000'
         );
         console.log('AUTO_INCREMENT configurado para iniciar desde 10000');
       }

@@ -8,6 +8,7 @@ import EliminarServicioModal from "./EliminarServicioModal";
 import SuccessModal from "../components/SuccessModal";
 import { FaClock, FaEdit, FaTrash, FaCut } from "react-icons/fa";
 import { usePermissions } from "../hooks/usePermissions";
+import { API_URL } from "../config/api";
 
 interface Servicio {
   id: number;
@@ -43,7 +44,7 @@ export default function Servicios() {
   // Cargar servicios desde el backend
   const cargarServicios = async () => {
     try {
-      const res = await fetch("http://localhost:3000/servicios");
+      const res = await fetch(`${API_URL}/servicios`);
       const data = await res.json();
       setServicios(data);
     } catch (error) {

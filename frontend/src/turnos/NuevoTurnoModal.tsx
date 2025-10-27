@@ -5,6 +5,7 @@ import SuccessModal from "../components/SuccessModal";
 import NuevoClienteModal from "../clientes/NuevoClienteModal";
 import NuevoServicioModal from "../servicios/NuevoServicioModal";
 import NuevoUsuarioModal from "../usuarios/NuevoUsuarioModal";
+import { API_URL } from "../config/api";
 
 interface Cliente {
   id: number;
@@ -132,7 +133,7 @@ export default function NuevoTurnoModal({
     };
 
     try {
-      const response = await fetch("http://localhost:3000/turnos", {
+      const response = await fetch(`${API_URL}/turnos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(turno),

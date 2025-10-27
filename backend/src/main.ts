@@ -1,4 +1,5 @@
 // src/main.ts
+import 'dotenv/config'; // Cargar variables de entorno ANTES de cualquier otra cosa
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common'; // <-- Importa ValidationPipe
@@ -15,14 +16,19 @@ async function bootstrap() {
     }),
   );
 
-  // Habilitar CORS
-  // MUY IMPORTANTE: Cambia 'http://localhost:5173' por el puerto exacto de tu frontend React
+  // Habilitar CORS dinámico
+  const frontendUrl = process.env.FRONTEND_URL;
   app.enableCors({
-    origin: 'http://localhost:5173', // <--- VERIFICA ESTE PUERTO. Puede ser 3000, 5173, etc.
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Asegúrate de que PATCH esté aquí
+    origin: (origin, callback) => {
+      if (!origin || origin === frontendUrl || origin === frontendUrl + '/') {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS blocked'));
+      }
+    },
     credentials: true,
   });
 
-  await app.listen(3000); // Tu puerto del backend (normalmente 3000)
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
