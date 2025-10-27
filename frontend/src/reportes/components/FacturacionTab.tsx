@@ -1,8 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import "./FacturacionTab.css";
-// TODO: Fix pdfGenerator.ts template literals before uncommenting
-// import { generarFacturaPDF } from "../../utils/pdfGenerator";
+import { generarFacturaPDF } from "../../utils/pdfGenerator";
 import { API_URL } from '../../config/api';
 
 // Función para formatear precios con punto de miles y coma para centavos
@@ -631,8 +630,25 @@ const FacturacionTab: React.FC = () => {
 
       if (!res.ok) throw new Error("Error al finalizar la factura");
 
-      // TODO: Reactivar cuando se arregle pdfGenerator.ts
-      // const numeroFactura = generarFacturaPDF({...});
+      // Generar PDF de la factura
+      try {
+        generarFacturaPDF({
+          fecha: new Date(),
+          cliente: clienteSeleccionado,
+          items: itemsFactura.map(item => ({
+            productoId: item.productoId,
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            precioUnitario: item.precioUnitario,
+            stockDisponible: item.stockDisponible
+          })),
+          metodoPago,
+          total
+        });
+      } catch (pdfError) {
+        console.error("Error al generar PDF:", pdfError);
+        mostrarMensaje("Factura guardada pero hubo un error al generar el PDF", "error");
+      }
       
       mostrarMensaje("Factura finalizada correctamente", "exito");
 
@@ -682,10 +698,25 @@ const FacturacionTab: React.FC = () => {
     console.log('Método de pago:', metodoPago);
     console.log('Total:', total);
 
-    // TODO: Reactivar cuando se arregle pdfGenerator.ts
-    // const numeroFactura = generarFacturaPDF({...});
-    
-    mostrarMensaje("Función de PDF temporalmente deshabilitada", "error");
+    try {
+      generarFacturaPDF({
+        fecha: new Date(),
+        cliente: clienteSeleccionado,
+        items: itemsFactura.map(item => ({
+          productoId: item.productoId,
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          precioUnitario: item.precioUnitario,
+          stockDisponible: item.stockDisponible
+        })),
+        metodoPago,
+        total
+      });
+      mostrarMensaje("PDF generado correctamente", "exito");
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      mostrarMensaje("Error al generar el PDF", "error");
+    }
   };
 
   // Función para obtener turnos seleccionados
