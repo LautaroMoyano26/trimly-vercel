@@ -1,4 +1,4 @@
-// frontend/src/servicios/Servicio.tsx - ACTUALIZAR CON MODAL DE ELIMINACIÓN
+﻿// frontend/src/servicios/Servicio.tsx - ACTUALIZAR CON MODAL DE ELIMINACIÓN
 import { useState, useEffect } from "react";
 import "./Servicio.css";
 import Tabla from "../components/Tabla";
@@ -128,7 +128,7 @@ export default function Servicios() {
     acciones: (
       <>
         {/* Verificar permiso para editar servicios */}
-        {hasPermission('servicios.edit') && (
+        {hasPermission("servicios.edit") && (
           <button 
             className="btn-accion editar" 
             title="Editar"

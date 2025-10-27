@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface NotificationCardProps {
@@ -55,7 +55,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       <div className="notification-card-items">
         {visibleItems.map((item) => (
           <div key={item.id} className="notification-card-item">
-            {type === 'stock' ? (
+            {type === "stock" ? (
               <>
                 <span className="notification-item-name">{item.nombre}</span>
                 <span className="notification-item-stock">

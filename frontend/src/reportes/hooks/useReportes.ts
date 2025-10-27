@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { reportesService } from '../services/reportesService';
+import { reportesService } from '../services/reportes.service';
 import type { DatosReporte } from '../types/reportes.types';
 
 export const useReportes = () => {

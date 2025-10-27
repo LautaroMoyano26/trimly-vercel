@@ -1,4 +1,4 @@
-import jsPDF from 'jspdf';
+﻿import jsPDF from 'jspdf';
 
 interface Cliente {
   id: number;
@@ -43,7 +43,7 @@ export const generarFacturaPDF = (datos: DatosFactura) => {
   });
   
   try {
-    console.log('Creando instancia jsPDF...');
+    console.log(`Creando instancia jsPDF...');
     const doc = new jsPDF();
     console.log('jsPDF creado exitosamente');
   
@@ -74,12 +74,12 @@ export const generarFacturaPDF = (datos: DatosFactura) => {
   doc.setFont('helvetica', 'normal');
   const numeroFactura = datos.numeroFactura || `F-${Date.now().toString().slice(-6)}`;
   doc.text(`Nº: ${numeroFactura}`, 150, 28);
-  doc.text(`Fecha: ${datos.fecha.toLocaleDateString('es-AR')}`, 150, 34);
+  doc.text(`Fecha: ${datos.fecha.toLocaleDateString(`es-AR')}`, 150, 34);
   
   // Información del cliente
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2]);
   doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('DATOS DEL CLIENTE', 20, 55);
   
   doc.setFont('helvetica', 'normal');
@@ -97,7 +97,7 @@ export const generarFacturaPDF = (datos: DatosFactura) => {
   // Tabla de productos/servicios (manual)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2]);
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('DETALLE DE LA FACTURA', 20, 110);
   
   // Headers de la tabla (en blanco y negro)
@@ -165,7 +165,7 @@ export const generarFacturaPDF = (datos: DatosFactura) => {
   // Método de pago (en negro)
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('Método de Pago:', 20, finalY + 15);
   doc.setFont('helvetica', 'normal');
   doc.text(datos.metodoPago, 60, finalY + 15);
@@ -190,15 +190,15 @@ export const generarFacturaPDF = (datos: DatosFactura) => {
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.text('Gracias por su preferencia - TRIMLY', 20, 280);
-  doc.text(`Generado el ${new Date().toLocaleString('es-AR')}`, 20, 285);
+  doc.text(`Generado el ${new Date().toLocaleString(`es-AR')}`, 20, 285);
   
     // Descargar el PDF con nombre organizado
-    console.log('Guardando PDF...');
+    console.log(`Guardando PDF...');
     const fechaFormateada = datos.fecha.toISOString().split('T')[0]; // YYYY-MM-DD
     const nombreArchivo = `TRIMLY_Facturas_${fechaFormateada}_${numeroFactura}_${datos.cliente.nombre}_${datos.cliente.apellido}.pdf`;
     doc.save(nombreArchivo);
     
-    console.log('PDF guardado exitosamente:', nombreArchivo);
+    console.log(`PDF guardado exitosamente:', nombreArchivo);
     return numeroFactura;
   } catch (error) {
     console.error('Error en generarFacturaPDF:', error);
@@ -261,14 +261,14 @@ export const exportarReporteCompleto = (datos: DatosReporteCompleto) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
-      return `${hours}h ${mins > 0 ? `${mins}m` : ''}`.trim();
+      return `${hours}h ${mins > 0 ? `${mins}m` : `'}`.trim();
     }
     return `${mins}m`;
   };
   
   // Header de la empresa
   doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
-  doc.rect(0, 0, 220, 40, 'F');
+  doc.rect(0, 0, 220, 40, `F');
   
   // Logo y nombre de la empresa
   doc.setTextColor(255, 255, 255);
@@ -288,14 +288,14 @@ export const exportarReporteCompleto = (datos: DatosReporteCompleto) => {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.text(`Período: ${datos.periodo}`, 130, 28);
-  doc.text(`Generado: ${new Date().toLocaleDateString('es-AR')}`, 130, 34);
+  doc.text(`Generado: ${new Date().toLocaleDateString(`es-AR')}`, 130, 34);
   
   let yPosition = 55;
   
   // Resumen ejecutivo
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2]);
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('RESUMEN EJECUTIVO', 20, yPosition);
   yPosition += 15;
   
@@ -312,14 +312,14 @@ export const exportarReporteCompleto = (datos: DatosReporteCompleto) => {
   doc.text(`Total Productos Vendidos: ${datos.resumen.totalProductos}`, 25, yPosition + 19);
   doc.text(`Ingresos por Productos: ${formatCurrency(datos.resumen.ingresosProductos)}`, 25, yPosition + 26);
   
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text(`INGRESOS TOTALES: ${formatCurrency(datos.resumen.ingresosTotales)}`, 120, yPosition + 19);
   
   yPosition += 50;
   
   // Sección de Servicios
   doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('ANÁLISIS DE SERVICIOS', 20, yPosition);
   yPosition += 10;
   
@@ -421,12 +421,12 @@ export const exportarReporteCompleto = (datos: DatosReporteCompleto) => {
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
   doc.text('Generado por TRIMLY - Sistema de Gestión Integral', 20, 280);
-  doc.text(`${new Date().toLocaleString('es-AR')}`, 20, 285);
+  doc.text(`${new Date().toLocaleString(`es-AR')}`, 20, 285);
   
   // Descargar el PDF con nombre organizado
-  const fechaArchivo = new Date().toISOString().split('T')[0];
+  const fechaArchivo = new Date().toISOString().split(`T')[0];
   const horaArchivo = new Date().toTimeString().slice(0, 5).replace(':', '-'); // HH-MM
-  const nombreArchivo = `TRIMLY_Reportes_${fechaArchivo}_${horaArchivo}_${datos.periodo.replace(/\s/g, '_')}.pdf`;
+  const nombreArchivo = `TRIMLY_Reportes_${fechaArchivo}_${horaArchivo}_${datos.periodo.replace(/\s/g, `_')}.pdf`;
   doc.save(nombreArchivo);
 };
 
@@ -440,7 +440,7 @@ export const exportarReporteGeneral = async () => {
   
   // Header de la empresa
   doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
-  doc.rect(0, 0, 220, 40, 'F');
+  doc.rect(0, 0, 220, 40, `F');
   
   // Logo y nombre de la empresa
   doc.setTextColor(255, 255, 255);
@@ -461,12 +461,12 @@ export const exportarReporteGeneral = async () => {
   doc.setFont('helvetica', 'normal');
   const fecha = new Date().toLocaleDateString('es-AR');
   doc.text(`Fecha: ${fecha}`, 150, 28);
-  doc.text(`Hora: ${new Date().toLocaleTimeString('es-AR')}`, 150, 34);
+  doc.text(`Hora: ${new Date().toLocaleTimeString(`es-AR')}`, 150, 34);
   
   // Contenido del reporte
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2]);
   doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(`helvetica', 'bold');
   doc.text('INFORMACIÓN DEL SISTEMA', 20, 60);
   
   doc.setFont('helvetica', 'normal');
@@ -482,10 +482,10 @@ export const exportarReporteGeneral = async () => {
   // Footer
   doc.setFontSize(8);
   doc.text('Generado por TRIMLY - Sistema de Gestión Integral', 20, 280);
-  doc.text(`${new Date().toLocaleString('es-AR')}`, 20, 285);
+  doc.text(`${new Date().toLocaleString(`es-AR')}`, 20, 285);
   
   // Descargar el PDF con nombre organizado
-  const fechaArchivo = new Date().toISOString().split('T')[0];
+  const fechaArchivo = new Date().toISOString().split(`T')[0];
   const horaArchivo = new Date().toTimeString().slice(0, 5).replace(':', '-');
   const nombreArchivo = `TRIMLY_Reportes_${fechaArchivo}_${horaArchivo}_General.pdf`;
   doc.save(nombreArchivo);

@@ -5,7 +5,7 @@ import FacturacionTab from "./components/FacturacionTab";
 import { ReportesView } from "./components/ReportesView";
 import type { ReportesViewHandle } from "./components/ReportesView";
 import { OrganizacionPDFs } from "../components/OrganizacionPDFs";
-import { exportarReporteGeneral, exportarReporteCompleto } from "../utils/pdfGenerator";
+// import { exportarReporteGeneral, exportarReporteCompleto } from "../utils/pdfGenerator";
 
 const ReportesDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"reportes" | "facturacion">("facturacion");
@@ -14,7 +14,9 @@ const ReportesDashboard: React.FC = () => {
 
   const handleExportarPDF = async () => {
     try {
-      if (activeTab === "reportes" && reportesViewRef.current) {
+      // TODO: Reactivar cuando se arregle pdfGenerator.ts
+      alert("Función de exportación PDF temporalmente deshabilitada");
+      /* if (activeTab === "reportes" && reportesViewRef.current) {
         // Intentar obtener los datos del componente ReportesView
         const datosReporte = reportesViewRef.current.exportarDatos();
         
@@ -28,7 +30,7 @@ const ReportesDashboard: React.FC = () => {
       } else {
         // Para la pestaña de facturación o cuando no hay datos específicos
         await exportarReporteGeneral();
-      }
+      } */
     } catch (error) {
       console.error("Error al exportar PDF:", error);
       alert("Error al generar el PDF del reporte");
