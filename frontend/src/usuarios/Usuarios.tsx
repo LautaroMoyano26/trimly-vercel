@@ -1,11 +1,11 @@
-ï»¿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Usuarios.css";
 import Tabla from "../components/Tabla";
 import NuevoUsuarioModal from "./NuevoUsuarioModal";
 import EditarUsuarioModal from "./EditarUsuarioModal"; // Importar
 import EliminarUsuarioModal from "./EliminarUsuarioModal"; // Importar
-import {
 import { API_URL } from '../config/api';
+import {
   FaUserCircle,
   FaEnvelope,
   FaUserShield,
@@ -38,8 +38,8 @@ const columns = [
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [showNewUserModal, setShowNewUserModal] = useState(false);
-  const [showEditUserModal, setShowEditUserModal] = useState(false); // Estado para modal de ediciÃ³n
-  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // Estado para modal de eliminaciÃ³n
+  const [showEditUserModal, setShowEditUserModal] = useState(false); // Estado para modal de edición
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // Estado para modal de eliminación
   const [selectedUser, setSelectedUser] = useState<Usuario | undefined>(
     undefined
   ); // Usuario para editar/eliminar
@@ -50,7 +50,7 @@ export default function Usuarios() {
 
   const fetchUsuarios = async () => {
     try {
-      const res = await fetch(`${API_URL}/usuarios");
+      const res = await fetch(`${API_URL}/usuarios`);
       if (!res.ok) throw new Error("No se pudo obtener usuarios");
       const data = await res.json();
       setUsuarios(Array.isArray(data) ? data : []);
