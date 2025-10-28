@@ -909,3 +909,25 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
+/*  Fix para inputs invisibles en los contenedores con botón (+) */
+.input-with-button {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.input-with-button input,
+.input-with-button select {
+  flex: 1;
+  width: 100%;
+  z-index: 1;
+}
+.add-button-inline {
+  position: relative; 
+  transform: none;
+  right: auto;
+  top: auto;
+  z-index: 2;
+  height: 100%;
+  min-width: 40px;
+}
