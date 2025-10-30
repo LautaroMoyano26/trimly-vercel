@@ -909,25 +909,140 @@ input[type="time"]::-webkit-datetime-edit-fields-wrapper {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
-/*  Fix para inputs invisibles en los contenedores con botón (+) */
+/* Fix de emergencia para mostrar mañana a profe aperlo(modificar luego) */
+
+/* Contenedor de inputs + botón "+" */
 .input-with-button {
   display: flex !important;
-  align-items: center;
-  gap: 8px;
-  position: relative;
+  align-items: center !important;
+  gap: 8px !important;
+  position: relative !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
+
+/* Inputs y selects */
 .input-with-button input,
 .input-with-button select {
-  flex: 1;
-  width: 100%;
-  z-index: 1;
+  flex: 1 !important;
+  width: 100% !important;
+  z-index: 1 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
+
+/* Botón "+" */
 .add-button-inline {
-  position: relative; 
-  transform: none;
-  right: auto;
-  top: auto;
-  z-index: 2;
-  height: 100%;
-  min-width: 40px;
+  position: relative !important; 
+  transform: none !important;
+  right: auto !important;
+  top: auto !important;
+  z-index: 5 !important;
+  height: 100% !important;
+  min-width: 40px !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+/* Scroll de servicio igual que cliente */
+.servicios-dropdown {
+  max-height: 150px !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #8eb8b8 #18181b !important;
+}
+
+.servicios-dropdown::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.servicios-dropdown::-webkit-scrollbar-track {
+  background: #18181b !important;
+  border-radius: 4px !important;
+}
+
+.servicios-dropdown::-webkit-scrollbar-thumb {
+  background: #8eb8b8 !important;
+  border-radius: 4px !important;
+}
+
+.servicios-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #fff !important;
+}
+
+/* Scroll de cliente */
+.clientes-dropdown {
+  max-height: 150px !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #8eb8b8 #18181b !important;
+}
+
+.clientes-dropdown::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.clientes-dropdown::-webkit-scrollbar-track {
+  background: #18181b !important;
+  border-radius: 4px !important;
+}
+
+.clientes-dropdown::-webkit-scrollbar-thumb {
+  background: #8eb8b8 !important;
+  border-radius: 4px !important;
+}
+
+.clientes-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #fff !important;
+}
+
+/* Scroll de usuario */
+.usuarios-dropdown::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.usuarios-dropdown::-webkit-scrollbar-track {
+  background: #18181b !important;
+  border-radius: 4px !important;
+}
+
+.usuarios-dropdown::-webkit-scrollbar-thumb {
+  background: #22c55e !important;
+  border-radius: 4px !important;
+}
+
+.usuarios-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #15803d !important; 
+}
+
+/* X de cliente */
+.clear-cliente-btn {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  right: 45px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: none !important;
+  border: none !important;
+  color: #8eb8b8 !important;
+  cursor: pointer !important;
+  padding: 4px 6px !important;
+  font-size: 1.2rem !important;
+  z-index: 3 !important;
+}
+
+.clear-cliente-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px !important;
 }
