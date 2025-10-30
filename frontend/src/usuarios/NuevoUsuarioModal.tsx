@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaUser, FaLock, FaEnvelope, FaUserShield } from "react-icons/fa";
-import ErrorModal from "../components/ErrorModal"; // Asegúrate de tener esta importación
+import ErrorModal from "../components/ErrorModal"; // Asegï¿½rate de tener esta importaciï¿½n
 import SuccessModal from "../components/SuccessModal"; // Importar SuccessModal
 import "./NuevoUsuarioModal.css";
 import { API_URL } from '../config/api';
@@ -90,14 +90,14 @@ export default function NuevoUsuarioModal({
     if (!form.username.trim())
       newErrors.username = "El nombre de usuario es obligatorio.";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Formato de email inválido.";
+      newErrors.email = "Formato de email invÃ¡lido.";
     }
     if (!form.password) {
-      newErrors.password = "La contraseña es obligatoria.";
+      newErrors.password = "La contraseÃ±a es obligatoria.";
     } else if (form.password.length < 7) {
-      newErrors.password = "La contraseña debe tener al menos 7 caracteres.";
+      newErrors.password = "La contraseÃ±a debe tener al menos 7 caracteres.";
     } else if (!/\d/.test(form.password)) {
-      newErrors.password = "La contraseña debe contener al menos un número.";
+      newErrors.password = "La contraseÃ±a debe contener al menos un nÃºmero.";
     }
     if (!form.rol) newErrors.rol = "El rol es obligatorio.";
 
@@ -128,11 +128,11 @@ export default function NuevoUsuarioModal({
       if (usernameExists) {
         setErrors((prev) => ({
           ...prev,
-          username: "Este nombre de usuario ya está en uso.",
+          username: "Este nombre de usuario ya estÃ¡ en uso.",
         }));
         setErrorModal({
           show: true,
-          message: "Este nombre de usuario ya está en uso.",
+          message: "Este nombre de usuario ya estÃ¡ en uso.",
         });
         setIsSubmitting(false);
         return;
@@ -145,18 +145,18 @@ export default function NuevoUsuarioModal({
         if (emailExists) {
           setErrors((prev) => ({
             ...prev,
-            email: "Este email ya está en uso.",
+            email: "Este email ya estÃ¡ en uso.",
           }));
           setErrorModal({
             show: true,
-            message: "Este email ya está en uso.",
+            message: "Este email ya estÃ¡ en uso.",
           });
           setIsSubmitting(false);
           return;
         }
       }
 
-      // Convertir email vacío a null antes de enviar
+      // Convertir email vacï¿½o a null antes de enviar
       const dataToSend = {
         ...form,
         email: form.email || null,
@@ -176,13 +176,13 @@ export default function NuevoUsuarioModal({
         throw new Error(errorMessage || "Error al crear el usuario.");
       }
 
-      // Mostrar el modal de éxito solo después de la creación exitosa
+      // Mostrar el modal de ï¿½xito solo despuï¿½s de la creaciï¿½n exitosa
       setSuccessModal({
         show: true,
         message: "Usuario creado exitosamente.",
       });
       await onUsuarioCreado();
-      setIsSubmitting(false); // Puedes desactivar el botón de "crear" aquí también
+      setIsSubmitting(false); // Puedes desactivar el botï¿½n de "crear" aquï¿½ tambiï¿½n
     } catch (error: any) {
       setErrors((prev) => ({
         ...prev,
@@ -199,7 +199,7 @@ export default function NuevoUsuarioModal({
 
   const handleSuccessModalClose = () => {
     setSuccessModal({ show: false, message: "" });
-    onClose(); // Cierra el modal principal después de aceptar el SuccessModal
+    onClose(); // Cierra el modal principal despuï¿½s de aceptar el SuccessModal
   };
 
   if (!show) return null;
@@ -208,7 +208,7 @@ export default function NuevoUsuarioModal({
     <div className="modal-bg">
       <div className="nuevo-usuario-modal-content">
         <button className="close-btn" onClick={onClose}>
-          ×
+          x
         </button>
         <h2 className="modal-title">Nuevo Usuario</h2>
         <p className="modal-subtitle">
@@ -233,7 +233,7 @@ export default function NuevoUsuarioModal({
               <label>Apellido</label>
               <input
                 name="apellido"
-                placeholder="Ej: Pérez"
+                placeholder="Ej: PÃ©rez"
                 value={form.apellido}
                 onChange={handleChange}
                 required
@@ -273,13 +273,13 @@ export default function NuevoUsuarioModal({
             )}
           </div>
           <div className="nuevo-input-group input-icon-group">
-            <label>Contraseña</label>
+            <label>ContraseÃ±a</label>
             <div className="input-icon-row">
               <FaLock className="input-icon" />
               <input
                 name="password"
                 type="password"
-                placeholder="Mínimo 7 caracteres, 1 número"
+                placeholder="MÃ­nimo 7 caracteres, 1 nÃºmero"
                 value={form.password}
                 onChange={handleChange}
                 required

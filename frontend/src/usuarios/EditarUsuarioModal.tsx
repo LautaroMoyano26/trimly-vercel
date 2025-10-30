@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaUser, FaLock, FaEnvelope, FaUserShield } from "react-icons/fa";
-import SuccessModal from "../components/SuccessModal"; // Asegúrate de que esta ruta sea correcta
+import SuccessModal from "../components/SuccessModal"; // Asegï¿½rate de que esta ruta sea correcta
 import ErrorModal from "../components/ErrorModal"; // Importamos el ErrorModal
 import "./EditarUsuarioModal.css";
 import { API_URL } from '../config/api';
@@ -85,10 +85,10 @@ export default function EditarUsuarioModal({
     if (!form.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (form.password && form.password.length < 7) {
       newErrors.password =
-        "La nueva contraseña debe tener al menos 7 caracteres.";
+        "La nueva contraseÃ±a debe tener al menos 7 caracteres.";
     } else if (form.password && !/\d/.test(form.password)) {
       newErrors.password =
-        "La nueva contraseña debe contener al menos un número.";
+        "La nueva contraseÃ±a debe contener al menos un nÃºmero.";
     }
     if (!form.rol) newErrors.rol = "El rol es obligatorio.";
     setErrors(newErrors);
@@ -98,13 +98,13 @@ export default function EditarUsuarioModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Si el formulario no es válido, mostramos el modal con el mensaje de error
+    // Si el formulario no es vï¿½lido, mostramos el modal con el mensaje de error
     if (!validateForm()) {
       setErrorModal({
         show: true,
         message: "Por favor, corrige los errores en el formulario.",
       });
-      return; // No proceder con la edición si hay errores
+      return; // No proceder con la ediciï¿½n si hay errores
     }
 
     setIsSubmitting(true);
@@ -159,7 +159,7 @@ export default function EditarUsuarioModal({
       <div className="modal-bg">
         <div className="editar-usuario-modal-content">
           <button className="close-btn" onClick={onClose}>
-            ×
+            x
           </button>
           <h2 className="modal-title">Editar Usuario</h2>
           <p className="modal-subtitle">
@@ -204,7 +204,7 @@ export default function EditarUsuarioModal({
             </div>
 
             <div className="nuevo-input-group input-icon-group">
-              <label>Nueva Contraseña (opcional)</label>
+              <label>Nueva ContraseÃ±a (opcional)</label>
               <div className="input-icon-row">
                 <FaLock className="input-icon" />
                 <input
@@ -244,7 +244,7 @@ export default function EditarUsuarioModal({
               <div>
                 <label className="estado-label">Estado del usuario</label>
                 <div className="switch-desc">
-                  Usuario activo puede iniciar sesión
+                  Usuario activo puede iniciar sesiÃ³n
                 </div>
               </div>
               <label className="switch">
@@ -285,7 +285,7 @@ export default function EditarUsuarioModal({
         message={successModal.message}
         onClose={() => {
           setSuccessModal({ show: false, message: "" });
-          onClose(); // Cierra la modal principal después de aceptar el SuccessModal
+          onClose(); // Cierra la modal principal despuï¿½s de aceptar el SuccessModal
         }}
       />
 
