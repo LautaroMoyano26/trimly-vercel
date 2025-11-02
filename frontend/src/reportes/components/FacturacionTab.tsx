@@ -1025,8 +1025,8 @@ const FacturacionTab: React.FC = () => {
                 <tbody>
                 {itemsFactura.map((item) => (
                   <tr key={item.productoId + item.nombre}>
-                    <td>{item.nombre}</td>
-                    <td>
+                    <td data-label="Producto/Servicio">{item.nombre}</td>
+                    <td data-label="Cantidad">
                       <div className="cantidad-controls">
                         <button
                           onClick={() => decrementarCantidad(item.productoId)}
@@ -1069,7 +1069,7 @@ const FacturacionTab: React.FC = () => {
                           )}
                       </small>
                     </td>
-                    <td>
+                    <td data-label="Precio Unitario">
                       <div className="precio-controls">
                         <span className="precio-simbolo">$</span>
                         <input
@@ -1092,10 +1092,10 @@ const FacturacionTab: React.FC = () => {
                         />
                       </div>
                     </td>
-                    <td>
+                    <td data-label="Subtotal">
                       <strong>${formatearPrecio(item.cantidad * item.precioUnitario)}</strong>
                     </td>
-                    <td>
+                    <td data-label="Nota">
                       {item.turnoId ? (
                         <input
                           type="text"
@@ -1113,7 +1113,7 @@ const FacturacionTab: React.FC = () => {
                         <span className="sin-nota">-</span>
                       )}
                     </td>
-                    <td>
+                    <td data-label="Eliminar">
                       <button onClick={() => eliminarProducto(item.productoId)}>
                         <FaTrash color="red" />
                       </button>

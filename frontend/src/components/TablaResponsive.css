@@ -1,0 +1,198 @@
+/* ============================================
+   TABLA RESPONSIVE - COMPONENTE REUTILIZABLE
+   ============================================ */
+
+.tabla-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabla-responsive {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+}
+
+/* THEAD */
+.tabla-responsive thead {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tabla-responsive thead tr {
+  border-bottom: 2px solid rgba(162, 89, 255, 0.3);
+}
+
+.tabla-responsive th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tabla-responsive th .th-icon {
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* TBODY */
+.tabla-responsive tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+
+.tabla-responsive tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tabla-responsive tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabla-responsive td {
+  padding: 0.875rem 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  vertical-align: middle;
+  font-size: 0.875rem;
+}
+
+/* Última columna (acciones) centrada */
+.tabla-responsive td:last-child {
+  text-align: center;
+}
+
+/* ============================================
+   RESPONSIVE TABLET (768px - 1023px)
+   ============================================ */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .tabla-responsive-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tabla-responsive {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .tabla-responsive th,
+  .tabla-responsive td {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE MOBILE - GRID DE 2 COLUMNAS
+   ============================================ */
+@media (max-width: 767.98px) {
+  .tabla-responsive-wrapper {
+    overflow: visible;
+    overflow-x: hidden;
+    background: transparent;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tabla-responsive {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Ocultar thead */
+  .tabla-responsive thead {
+    display: none;
+  }
+
+  /* Tbody como grid de 2 columnas */
+  .tabla-responsive tbody {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.625rem;
+    width: 100%;
+  }
+
+  /* Cada fila como card */
+  .tabla-responsive tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.625rem;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .tabla-responsive tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Cada celda */
+  .tabla-responsive td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.375rem 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+    text-align: left;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  /* Última celda (acciones) */
+  .tabla-responsive td:last-child {
+    border-bottom: none;
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  /* Labels automáticos */
+  .tabla-responsive td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+    display: block;
+  }
+
+  /* Contenido de celdas */
+  .tabla-responsive td > * {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  /* Para pantallas muy pequeñas: 1 columna */
+  @media (max-width: 374.98px) {
+    .tabla-responsive tbody {
+      grid-template-columns: 1fr;
+    }
+  }
+}

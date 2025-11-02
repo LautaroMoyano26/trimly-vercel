@@ -1,12 +1,172 @@
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {
-  height: 100%;
   margin: 0;
   padding: 0;
-  background: #19191d;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 body {
   overflow: hidden;
+  width: 100vw;
+  max-width: 100vw;
+}
+
+/* ============================================
+   APP LAYOUT - ESTRUCTURA PRINCIPAL
+   ============================================ */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  background: #19191d;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-content {
+  flex: 1;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE (< 768px)
+   Ajustar para el navbar inferior sticky
+   ============================================ */
+@media (max-width: 767.98px) {
+  html,
+  body,
+  #root {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-layout {
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    max-width: 100vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-content {
+    flex: 1;
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
+    width: 100vw;
+    max-width: 100vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 0;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+
+  /* Asegurar que TODO el contenido respete el ancho */
+  .app-content > * {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Asegurar que el navbar siempre esté visible */
+  .navbar-vertical {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    z-index: 1040 !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE PEQUEÑO (< 375px)
+   ============================================ */
+@media (max-width: 374.98px) {
+  .app-content {
+    height: calc(100vh - 55px);
+    height: calc(100dvh - 55px);
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLET (768px - 1023px)
+   ============================================ */
+@media (max-width: 1023px) and (min-width: 768px) {
+  html,
+  body,
+  #root,
+  .app-layout,
+  .app-content {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .app-content > * {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* ============================================
+   SCROLLBAR PERSONALIZADO
+   ============================================ */
+.app-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app-content::-webkit-scrollbar-track {
+  background: #1a1a1e;
+}
+
+.app-content::-webkit-scrollbar-thumb {
+  background: #3a3a40;
+  border-radius: 4px;
+}
+
+.app-content::-webkit-scrollbar-thumb:hover {
+  background: #4a4a50;
+}
+
+/* ============================================
+   FIX PARA MODALES EN MOBILE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Asegurar que los modales tengan altura correcta */
+  .modal-overlay,
+  .modal-backdrop {
+    height: 100vh !important;
+    height: 100dvh !important;
+  }
+
+  /* Ajustar contenido de modales para que no quede detrás del navbar */
+  .modal-content,
+  .modal-dialog {
+    max-height: calc(100vh - 80px) !important;
+    max-height: calc(100dvh - 80px) !important;
+    margin-bottom: 70px;
+  }
 }

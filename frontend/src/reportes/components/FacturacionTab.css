@@ -35,7 +35,11 @@
 
 /* Barra de turno seleccionado */
 .turno-seleccionado-bar {
-  background: linear-gradient(135deg, rgba(0, 230, 246, 0.1), rgba(162, 89, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 230, 246, 0.1),
+    rgba(162, 89, 255, 0.1)
+  );
   border: 1px solid rgba(0, 230, 246, 0.3);
   border-radius: 12px;
   padding: 16px 20px;
@@ -129,7 +133,7 @@
 .panel-content-scroll {
   flex: 1;
   max-height: 260px; /* Altura específica para el contenido scrolleable */
-  overflow-y: auto;  /* Habilita el scroll vertical si el contenido excede la altura */
+  overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura */
   overflow-x: hidden; /* Deshabilita el scroll horizontal */
   padding-right: 8px;
   box-sizing: border-box;
@@ -185,13 +189,21 @@
 
 /* Estilo para turnos seleccionados */
 .card-item.seleccionado {
-  background: linear-gradient(135deg, rgba(0, 230, 246, 0.15), rgba(162, 89, 255, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 230, 246, 0.15),
+    rgba(162, 89, 255, 0.15)
+  );
   border: 2px solid rgba(0, 230, 246, 0.4);
   transform: translateY(-2px);
 }
 
 .card-item.seleccionado:hover {
-  background: linear-gradient(135deg, rgba(0, 230, 246, 0.2), rgba(162, 89, 255, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 230, 246, 0.2),
+    rgba(162, 89, 255, 0.2)
+  );
   border-color: rgba(0, 230, 246, 0.6);
 }
 
@@ -610,7 +622,11 @@
   align-items: center;
   margin-top: 24px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, rgba(0, 230, 246, 0.1), rgba(162, 89, 255, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 230, 246, 0.1),
+    rgba(162, 89, 255, 0.1)
+  );
   border-radius: 12px;
   border: 1px solid rgba(0, 230, 246, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -699,7 +715,8 @@
     gap: 16px;
   }
 
-  .panel, .panel-turnos {
+  .panel,
+  .panel-turnos {
     padding: 16px;
   }
 
@@ -1042,7 +1059,8 @@
     gap: 12px;
   }
 
-  .panel, .panel-turnos {
+  .panel,
+  .panel-turnos {
     padding: 12px;
   }
 

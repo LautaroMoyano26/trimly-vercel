@@ -1,0 +1,803 @@
+/* ============================================
+   RESPONSIVE GLOBAL STYLES
+   Estilos globales para hacer responsive todos los módulos
+   ============================================ */
+
+/* ============================================
+   BASE - PREVENIR SCROLL HORIZONTAL
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Prevenir overflow en TODOS los elementos */
+div,
+section,
+article,
+main,
+header,
+footer,
+nav {
+  max-width: 100%;
+}
+
+/* ============================================
+   CONTAINERS PRINCIPALES - TABLET
+   ============================================ */
+@media (max-width: 1023px) and (min-width: 768px) {
+  /* Prevenir scroll horizontal en tablets */
+  .clientes-container,
+  .servicios-container,
+  .turnos-container,
+  .productos-container,
+  .usuarios-container,
+  .reportes-container,
+  .facturacion-container,
+  .dashboard-container {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Tablas en tablets con scroll solo si es necesario */
+  .tabla-responsive-wrapper,
+  .tabla-productos-wrapper,
+  .clientes-tabla-container,
+  .servicios-tabla-container,
+  .usuarios-tabla-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ============================================
+   CONTAINERS PRINCIPALES - MOBILE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Todos los containers principales */
+  .clientes-container,
+  .servicios-container,
+  .turnos-container,
+  .productos-container,
+  .usuarios-container,
+  .reportes-container,
+  .facturacion-container {
+    padding: 0.875rem !important;
+    padding-bottom: 1rem !important;
+    height: auto !important;
+    min-height: calc(100vh - 60px) !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Headers de todas las páginas */
+  .clientes-header,
+  .servicios-header,
+  .productos-header,
+  .turnos-header,
+  .usuarios-header,
+  .reportes-header,
+  .facturacion-header,
+  .dashboard-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  /* Header actions wrapper */
+  .header-actions,
+  .header-right {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Títulos principales */
+  .clientes-title,
+  .servicios-title,
+  .productos-title,
+  .turnos-title,
+  .usuarios-title,
+  .reportes-title,
+  .facturacion-title {
+    font-size: 1.35rem !important;
+    margin: 0 !important;
+  }
+
+  /* Subtítulos */
+  .clientes-description,
+  .servicios-description,
+  .productos-description,
+  .turnos-description,
+  .usuarios-description,
+  .reportes-description {
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+  }
+
+  /* Botones de acción principales */
+  .nuevo-cliente-btn,
+  .nuevo-servicio-btn,
+  .nuevo-producto-btn,
+  .nuevo-turno-btn,
+  .nuevo-usuario-btn,
+  .exportar-pdf-btn,
+  .nueva-factura-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0.625rem 0.875rem !important;
+    font-size: 0.9rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Inputs de búsqueda */
+  .clientes-busqueda,
+  .servicios-busqueda,
+  .productos-busqueda,
+  .turnos-busqueda,
+  .usuarios-busqueda {
+    width: 100% !important;
+    font-size: 0.9rem !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* ============================================
+   TABLAS RESPONSIVE - DISEÑO COMPACTO TIPO GRID
+   Cards 50% más pequeñas con diseño de 2 columnas
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Contenedores de tablas */
+  .clientes-tabla-container,
+  .servicio-tabla-container,
+  .servicios-tabla-container,
+  .productos-tabla-container,
+  .tabla-productos-wrapper,
+  .turnos-tabla-container,
+  .usuarios-tabla-container,
+  .tabla-container,
+  .tabla-wrapper,
+  .table-responsive {
+    display: block !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ocultar thead en mobile */
+  .clientes-tabla thead,
+  .servicio-tabla thead,
+  .servicios-tabla thead,
+  .productos-table thead,
+  .tabla-factura thead,
+  .historial-table thead,
+  .productos-tabla thead,
+  .turnos-tabla thead,
+  .usuarios-tabla thead,
+  .table thead,
+  table thead,
+  thead {
+    display: none !important;
+  }
+
+  /* Tbody como grid de 2 columnas */
+  .clientes-tabla tbody,
+  .servicio-tabla tbody,
+  .servicios-tabla tbody,
+  .productos-table tbody,
+  .historial-table tbody,
+  .productos-tabla tbody,
+  .turnos-tabla tbody,
+  .usuarios-tabla tbody,
+  .table tbody,
+  table tbody,
+  tbody {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.625rem !important;
+    width: 100% !important;
+  }
+
+  /* Cada fila (tr) como card compacta */
+  .clientes-tabla tbody tr,
+  .servicio-tabla tbody tr,
+  .servicios-tabla tbody tr,
+  .productos-table tbody tr,
+  .historial-table tbody tr,
+  .productos-tabla tbody tr,
+  .turnos-tabla tbody tr,
+  .usuarios-tabla tbody tr,
+  .table tbody tr,
+  table tbody tr,
+  tbody tr {
+    display: flex !important;
+    flex-direction: column !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 0.625rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    min-height: auto !important;
+  }
+
+  /* Cada celda (td) - layout compacto vertical */
+  .clientes-tabla tbody tr td,
+  .servicio-tabla tbody tr td,
+  .servicios-tabla tbody tr td,
+  .productos-table tbody tr td,
+  .historial-table tbody tr td,
+  .productos-tabla tbody tr td,
+  .turnos-tabla tbody tr td,
+  .usuarios-tabla tbody tr td,
+  .table tbody tr td,
+  table tbody tr td,
+  tbody tr td {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.375rem 0 !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    min-height: auto !important;
+    width: 100% !important;
+    text-align: left !important;
+    position: relative !important;
+    gap: 0.25rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Última celda (acciones) - layout horizontal centrado */
+  tbody tr td:last-child {
+    border-bottom: none !important;
+    padding-top: 0.5rem !important;
+    margin-top: 0.25rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.375rem !important;
+  }
+
+  /* Labels compactos con data-label */
+  tbody tr td[data-label]::before {
+    content: attr(data-label) !important;
+    font-weight: 600 !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.65rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 0.2rem !important;
+    display: block !important;
+  }
+
+  /* Contenido de las celdas */
+  tbody tr td > * {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Botones compactos */
+  .tabla-accion-btn,
+  .acciones-btn,
+  .historial-btn,
+  .editar-btn,
+  .eliminar-btn,
+  .btn-accion,
+  tbody tr td button {
+    padding: 0.375rem 0.625rem !important;
+    font-size: 0.75rem !important;
+    min-width: auto !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    border-radius: 4px !important;
+    height: auto !important;
+  }
+
+  /* Iconos en botones más pequeños */
+  .tabla-accion-btn svg,
+  .acciones-btn svg,
+  .btn-accion svg,
+  tbody tr td button svg {
+    font-size: 0.9rem !important;
+  }
+
+  /* Badges compactos */
+  .badge,
+  .visitas-badge,
+  .estado-badge,
+  .stock-badge,
+  .categoria-badge {
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.45rem !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+  }
+
+  /* Iconos inline más pequeños */
+  .servicio-icon,
+  .profesional-icon,
+  .producto-badge svg {
+    width: 12px !important;
+    height: 12px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Cells especiales - más compactas */
+  .servicio-cell,
+  .profesional-cell,
+  .productos-cell {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Para dispositivos muy pequeños: 1 columna */
+  @media (max-width: 374.98px) {
+    .clientes-tabla tbody,
+    .servicio-tabla tbody,
+    .servicios-tabla tbody,
+    .productos-table tbody,
+    .historial-table tbody,
+    .productos-tabla tbody,
+    .turnos-tabla tbody,
+    .usuarios-tabla tbody,
+    .table tbody,
+    table tbody,
+    tbody {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+
+/* ============================================
+   TABLAS DE FACTURACIÓN - MANTENER EN 1 COLUMNA
+   (requieren más espacio por inputs y controles)
+   ============================================ */
+@media (max-width: 767.98px) {
+  .tabla-factura tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    grid-template-columns: none !important;
+  }
+
+  .tabla-factura tbody tr {
+    padding: 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .tabla-factura tbody tr td {
+    padding: 0.375rem 0 !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Controles de cantidad y precio en facturación */
+  .cantidad-controls,
+  .precio-controls {
+    width: 100% !important;
+    max-width: 200px !important;
+  }
+
+  .cantidad-input,
+  .precio-input {
+    font-size: 0.85rem !important;
+    padding: 0.375rem !important;
+  }
+
+  .cantidad-btn {
+    padding: 0.25rem !important;
+    min-width: 28px !important;
+  }
+}
+
+/* ============================================
+   MODALES RESPONSIVE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Overlays de modales */
+  .modal-overlay,
+  .cliente-modal-overlay,
+  .servicio-modal-overlay,
+  .producto-modal-overlay,
+  .turno-modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+    background: rgba(0, 0, 0, 0.75) !important;
+  }
+
+  /* Contenedores de modales - Estilo Bottom Sheet */
+  .modal-content,
+  .cliente-modal,
+  .servicio-modal,
+  .producto-modal,
+  .turno-modal,
+  .usuario-modal,
+  .historial-modal {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    max-height: 85vh !important;
+    margin: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Handle visual para arrastrar modal */
+  .modal-header::before,
+  .cliente-modal-header::before,
+  .servicio-modal-header::before,
+  .producto-modal-header::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    margin: -0.5rem auto 0.75rem;
+  }
+
+  /* Headers de modales */
+  .modal-header,
+  .cliente-modal-header,
+  .servicio-modal-header,
+  .producto-modal-header {
+    padding: 0.875rem 1rem 0.75rem !important;
+    flex-wrap: wrap !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Títulos de modales */
+  .modal-title,
+  .modal-header h2 {
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+  }
+
+  /* Botón cerrar modal */
+  .modal-close-btn,
+  .close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+  }
+
+  /* Contenido de modales */
+  .modal-body,
+  .cliente-modal-body,
+  .servicio-modal-body,
+  .producto-modal-body {
+    padding: 0.875rem !important;
+    max-height: calc(85vh - 140px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Footer de modales */
+  .modal-footer,
+  .cliente-modal-footer,
+  .servicio-modal-footer,
+  .producto-modal-footer {
+    padding: 0.875rem !important;
+    flex-direction: column-reverse !important;
+    gap: 0.5rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: inherit !important;
+  }
+
+  /* Botones en modales */
+  .modal-footer button,
+  .cliente-modal-footer button,
+  .servicio-modal-footer button,
+  .producto-modal-footer button {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    margin: 0 !important;
+  }
+
+  /* Formularios en modales */
+  .modal-form-group,
+  .form-group {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .modal-form-group label,
+  .form-group label {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.375rem !important;
+    display: block !important;
+  }
+
+  .modal-form-group input,
+  .modal-form-group select,
+  .modal-form-group textarea,
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 0.9rem !important;
+    padding: 0.625rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Prevenir zoom en inputs en iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ============================================
+   GRIDS Y CARDS RESPONSIVE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Grids de métricas y cards */
+  .metrics-grid,
+  .cards-grid,
+  .servicios-grid,
+  .productos-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Cards individuales */
+  .metric-card,
+  .servicio-card,
+  .producto-card,
+  .turno-card {
+    padding: 1rem !important;
+  }
+
+  /* Valores en cards */
+  .metric-card-value,
+  .card-value {
+    font-size: 1.5rem !important;
+  }
+
+  /* Badges */
+  .badge,
+  .visitas-badge,
+  .estado-badge,
+  .stock-badge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+/* ============================================
+   TABS RESPONSIVE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Contenedores de tabs */
+  .tabs-container,
+  .reportes-tabs,
+  .facturacion-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: 0 -1rem !important;
+    padding: 0 1rem !important;
+  }
+
+  /* Lista de tabs */
+  .tabs-list,
+  .reportes-tabs-list {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Botones de tabs */
+  .tab-btn,
+  .reportes-tab,
+  .facturacion-tab {
+    white-space: nowrap !important;
+    font-size: 0.85rem !important;
+    padding: 0.625rem 1rem !important;
+  }
+}
+
+/* ============================================
+   FILTROS Y BÚSQUEDA AVANZADA
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Contenedores de filtros */
+  .filtros-container,
+  .busqueda-avanzada {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Grupos de filtros */
+  .filtro-grupo {
+    width: 100% !important;
+  }
+
+  /* Selects y inputs de filtro */
+  .filtro-select,
+  .filtro-input {
+    width: 100% !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ============================================
+   PAGINACIÓN RESPONSIVE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Contenedor de paginación */
+  .paginacion-container,
+  .pagination {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Botones de paginación */
+  .paginacion-btn,
+  .page-btn {
+    min-width: 36px !important;
+    height: 36px !important;
+    padding: 0.25rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Info de paginación */
+  .paginacion-info {
+    width: 100% !important;
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* ============================================
+   ACCIONES Y DROPDOWNS
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Menús desplegables */
+  .dropdown-menu,
+  .acciones-dropdown {
+    right: 0 !important;
+    left: auto !important;
+    min-width: 180px !important;
+  }
+
+  /* Items de dropdown */
+  .dropdown-item {
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ============================================
+   CHARTS Y GRÁFICOS
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Contenedores de charts */
+  .chart-container,
+  .grafico-container {
+    height: 250px !important;
+    padding: 1rem !important;
+  }
+
+  /* Canvas de charts */
+  .chart-canvas {
+    max-height: 200px !important;
+  }
+}
+
+/* ============================================
+   MOBILE PEQUEÑO (< 375px)
+   ============================================ */
+@media (max-width: 374.98px) {
+  .clientes-container,
+  .servicios-container,
+  .turnos-container,
+  .productos-container,
+  .usuarios-container,
+  .reportes-container,
+  .facturacion-container {
+    padding: 0.75rem !important;
+  }
+
+  .clientes-title,
+  .servicios-title,
+  .productos-title,
+  .turnos-title {
+    font-size: 1.25rem !important;
+  }
+
+  .nuevo-cliente-btn,
+  .nuevo-servicio-btn,
+  .nuevo-producto-btn,
+  .nuevo-turno-btn {
+    font-size: 0.85rem !important;
+    padding: 0.625rem 0.875rem !important;
+  }
+
+  .modal-body,
+  .cliente-modal-body {
+    padding: 0.75rem !important;
+  }
+}
+
+/* ============================================
+   TABLET (768px - 1023px)
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .clientes-container,
+  .servicios-container,
+  .turnos-container,
+  .productos-container {
+    padding: 1.5rem !important;
+  }
+
+  .metrics-grid,
+  .servicios-grid,
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .modal-content,
+  .cliente-modal {
+    max-width: 600px !important;
+  }
+}
+
+/* ============================================
+   UTILIDADES RESPONSIVE
+   ============================================ */
+@media (max-width: 767.98px) {
+  /* Ocultar en mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Mostrar solo en mobile */
+  .show-mobile {
+    display: block !important;
+  }
+
+  /* Texto responsive */
+  .text-truncate-mobile {
+    max-width: 150px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .show-mobile {
+    display: none !important;
+  }
+}

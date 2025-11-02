@@ -7,7 +7,6 @@ import {
   FaBoxOpen,
   FaClipboardList,
   FaUserCog,
-  FaCog,
   FaSignOutAlt,
   FaUser,
 } from "react-icons/fa";
@@ -62,11 +61,10 @@ const Navbar: React.FC = () => {
       baseItems.push({ icon: FaClipboardList, label: "Reportes", path: "/reportes", section: "reportes" });
     }
 
-    // Agregar usuarios y configuración solo para admins
+    // Agregar usuarios solo para admins (removemos configuración)
     if (isAdmin) {
       baseItems.push(
-        { icon: FaUserCog, label: "Usuarios", path: "/usuarios", section: "usuarios" },
-        { icon: FaCog, label: "Configuración", path: "/configuracion", section: "configuracion" }
+        { icon: FaUserCog, label: "Usuarios", path: "/usuarios", section: "usuarios" }
       );
     }
 

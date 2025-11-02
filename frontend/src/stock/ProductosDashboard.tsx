@@ -5,6 +5,8 @@ import NuevoProductoModal from "./NuevoProductoModal";
 import EditarProductoModal from "./EditarProductoModal";
 import EliminarProductoModal from "./EliminarProductoModal";
 import SuccessModal from "../components/SuccessModal";
+import TablaResponsive from "../components/TablaResponsive";
+import type { ColumnaTabla } from "../components/TablaResponsive";
 import { usePermissions } from "../hooks/usePermissions";
 import { API_URL } from "../config/api";
 
@@ -78,6 +80,80 @@ export default function ProductosDashboard() {
     p.marca.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  // Definir columnas de la tabla
+  const columns: ColumnaTabla[] = [
+    {
+      key: "nombre",
+      label: "Producto",
+      icon: <FaBoxOpen className="icono-producto" />,
+    },
+    {
+      key: "categoria",
+      label: "Categoría",
+      render: (value) => <span className="categoria-badge">{value}</span>,
+    },
+    {
+      key: "marca",
+      label: "Marca",
+    },
+    {
+      key: "precio",
+      label: "Precio",
+      render: (value) => `$${value}`,
+    },
+    {
+      key: "stock",
+      label: "Stock",
+    },
+    {
+      key: "estado",
+      label: "Estado",
+      render: (value) => (
+        <span
+          className={`estado-badge ${
+            value === "Alto"
+              ? "estado-alto"
+              : value === "Medio"
+              ? "estado-medio"
+              : "estado-bajo"
+          }`}
+        >
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: "acciones",
+      label: "Acciones",
+      render: (_, row) => (
+        <>
+          {hasPermission('productos.edit') && (
+            <button
+              className="btn-accion editar"
+              onClick={() => {
+                setProductoAEditar(row);
+                setShowEditarModal(true);
+              }}
+            >
+              <FaEdit />
+            </button>
+          )}
+          {hasPermission('productos.delete') && (
+            <button
+              className="btn-accion eliminar"
+              onClick={() => {
+                setProductoAEliminar(row);
+                setShowEliminarModal(true);
+              }}
+            >
+              <FaTrash />
+            </button>
+          )}
+        </>
+      ),
+    },
+  ];
+
   return (
    <div className="productos-dashboard-container">
   {/* ✅ AGREGAR SUCCESS MODAL */}
@@ -110,73 +186,12 @@ export default function ProductosDashboard() {
     onChange={(e) => setBusqueda(e.target.value)}
   />
 
-  {/* Contenedor con scroll moderno pegado a la derecha */}
-  <div className="tabla-productos-wrapper">
-    <table className="productos-table">
-      <thead>
-        <tr>
-          <th><FaBoxOpen className="icono-producto" /> Producto</th>
-          <th>Categoría</th>
-          <th>Marca</th>
-          <th>Precio</th>
-          <th>Stock</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {productosFiltrados.map((p) => (
-          <tr key={p.id}>
-            <td>{p.nombre}</td>
-            <td><span className="categoria-badge">{p.categoria}</span></td>
-            <td>{p.marca}</td>
-            <td>${p.precio}</td>
-            <td>{p.stock}</td>
-            <td>
-              <span
-                className={`estado-badge ${
-                  p.estado === "Alto"
-                    ? "estado-alto"
-                    : p.estado === "Medio"
-                    ? "estado-medio"
-                    : "estado-bajo"
-                }`}
-              >
-                {p.estado}
-              </span>
-            </td>
-            <td>
-              {/* Verificar permiso para editar productos */}
-              {hasPermission('productos.edit') && (
-                <button
-                  className="btn-accion editar"
-                  onClick={() => {
-                    setProductoAEditar(p);
-                    setShowEditarModal(true);
-                  }}
-                >
-                  <FaEdit />
-                </button>
-              )}
-              
-              {/* Verificar permiso para eliminar productos */}
-              {hasPermission('productos.delete') && (
-                <button
-                  className="btn-accion eliminar"
-                  onClick={() => {
-                    setProductoAEliminar(p);
-                    setShowEliminarModal(true);
-                  }}
-                >
-                  <FaTrash />
-                </button>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+  <TablaResponsive
+    columns={columns}
+    data={productosFiltrados}
+    keyExtractor={(producto) => producto.id}
+    className="tabla-productos-wrapper"
+  />
 
   {/* ✅ ACTUALIZAR MODALES PARA USAR LAS NUEVAS FUNCIONES */}
   <NuevoProductoModal

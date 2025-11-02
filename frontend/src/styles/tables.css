@@ -1,0 +1,280 @@
+/* ==============================================
+   ESTILOS GLOBALES PARA TABLAS
+   ============================================== */
+
+/* Contenedor de tabla */
+.table-container {
+  background: #19191d;
+  border-radius: 16px;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Tabla base */
+.table-base {
+  width: 100%;
+  background: #232329;
+  color: #fff;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header de tabla */
+.table-base thead {
+  flex-shrink: 0;
+  display: block;
+  background: #232329;
+}
+
+.table-base thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-base thead th {
+  color: #b3b3b3;
+  font-weight: bold;
+  font-size: 1.05rem;
+  padding: 16px 12px;
+  position: sticky;
+  top: 0;
+  background: #232329;
+  z-index: 10;
+  border-bottom: 1px solid #3a3a42;
+  text-align: left;
+}
+
+/* Body de tabla */
+.table-base tbody {
+  flex: 1;
+  display: block;
+  overflow-y: auto;
+  max-height: calc(9 * 70px);
+}
+
+.table-base tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 1px solid #3a3a42;
+  transition: background 0.2s;
+}
+
+.table-base tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.table-base tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table-base tbody td {
+  padding: 16px 12px;
+  vertical-align: middle;
+  color: #e4e4e7;
+  font-size: 1rem;
+}
+
+/* Scrollbar personalizado */
+.table-base tbody::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-base tbody::-webkit-scrollbar-track,
+.table-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.table-base tbody::-webkit-scrollbar-thumb,
+.table-container::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.table-base tbody::-webkit-scrollbar-thumb:hover,
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* Firefox scrollbar */
+.table-base tbody,
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
+  scroll-behavior: smooth;
+}
+
+/* Botones de acción */
+.table-action-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-action-btn:hover {
+  transform: scale(1.1);
+}
+
+.table-action-btn.edit:hover,
+.table-action-btn.editar:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #00b3ff;
+}
+
+.table-action-btn.delete:hover,
+.table-action-btn.eliminar:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff4f4f;
+}
+
+.table-action-btn.historial:hover {
+  background-color: rgba(162, 89, 255, 0.1);
+  color: #a259ff;
+}
+
+.table-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.table-action-btn:disabled:hover {
+  background: none;
+  color: #ccc;
+  transform: none;
+}
+
+/* Badges */
+.table-badge {
+  border-radius: 12px;
+  padding: 4px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.table-badge.success,
+.table-badge.activo {
+  background: #0e3e1a;
+  color: #1ed760;
+}
+
+.table-badge.warning,
+.table-badge.medio {
+  background: #4a3a15;
+  color: #ffd600;
+}
+
+.table-badge.danger,
+.table-badge.bajo,
+.table-badge.inactivo {
+  background: #4a1515;
+  color: #ff4d4d;
+}
+
+.table-badge.alto {
+  background: #0e3e1a;
+  color: #1ed760;
+}
+
+/* Icono en header */
+.table-header-icon {
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Celdas especiales */
+.table-cell-center {
+  text-align: center;
+}
+
+.table-cell-right {
+  text-align: right;
+}
+
+/* Responsive Tablet */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .table-base thead th {
+    font-size: 0.95rem;
+    padding: 14px 10px;
+  }
+
+  .table-base tbody td {
+    font-size: 0.95rem;
+    padding: 14px 10px;
+  }
+
+  .table-action-btn {
+    font-size: 1rem;
+    padding: 5px;
+  }
+}
+
+/* Responsive Mobile */
+@media (max-width: 767.98px) {
+  .table-container {
+    border-radius: 12px;
+  }
+
+  .table-base thead th {
+    font-size: 0.9rem;
+    padding: 12px 8px;
+  }
+
+  .table-base tbody td {
+    font-size: 0.9rem;
+    padding: 12px 8px;
+  }
+
+  .table-action-btn {
+    font-size: 0.95rem;
+    padding: 4px;
+  }
+
+  .table-badge {
+    font-size: 0.85rem;
+    padding: 3px 12px;
+  }
+}
+
+/* Empty state para tablas sin datos */
+.table-empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #b3b3b3;
+}
+
+.table-empty-state svg {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.table-empty-state h5 {
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.table-empty-state p {
+  color: #b3b3b3;
+  font-size: 0.95rem;
+}

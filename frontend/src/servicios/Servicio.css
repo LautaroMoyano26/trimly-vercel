@@ -27,7 +27,6 @@
   opacity: 0.85;
 }
 
-
 .estado-badge {
   background: #0e3e1a;
   color: #1ed760;
@@ -43,7 +42,6 @@
   --bs-table-striped-bg: #232329 !important;
   --bs-table-hover-bg: #232329 !important;
 }
-
 
 .table thead th {
   color: #b3b3b3;
@@ -159,7 +157,7 @@
   color: #ff4f4f;
 }
 .icono-tijera {
-  color: #00E6F6;
+  color: #00e6f6;
   font-size: 1.1rem;
   flex-shrink: 0;
 }

@@ -11,6 +11,7 @@ import ReportesDashboard from "./reportes/ReportesDashboard";
 import Dashboard from "./dashboard/Dashboard";
 import FacturacionPage from "./facturacion/FacturacionPage";
 import authService from "./services/authService";
+import "./App.css";
 
 // Usar el nuevo sistema de autenticación
 const isAuthenticated = () => {
@@ -27,6 +28,18 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return !isAuthenticated() ? <>{children}</> : <Navigate to="/dashboard" replace />;
 };
 
+// Layout wrapper para rutas autenticadas
+const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="app-layout">
+      <Navbar />
+      <main className="app-content">
+        {children}
+      </main>
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,186 +54,98 @@ export default function App() {
           }
         />
 
-        {/* ✅ NUEVA RUTA: Dashboard */}
+        {/* Dashboard */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Dashboard />
-                </div>
-              </div>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta de clientes */}
+        {/* Clientes */}
         <Route
           path="/clientes"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Clientes />
-                </div>
-              </div>
+              <AppLayout>
+                <Clientes />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta de servicios */}
+        {/* Servicios */}
         <Route
           path="/servicios"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Servicios />
-                </div>
-              </div>
+              <AppLayout>
+                <Servicios />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta de stock */}
+        {/* Stock */}
         <Route
           path="/stock"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <ProductosDashboard />
-                </div>
-              </div>
+              <AppLayout>
+                <ProductosDashboard />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta de usuarios */}
+        {/* Usuarios */}
         <Route
           path="/usuarios"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Usuarios />
-                </div>
-              </div>
+              <AppLayout>
+                <Usuarios />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta de turnos */}
+        {/* Turnos */}
         <Route
           path="/turnos"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <Turnos />
-                </div>
-              </div>
+              <AppLayout>
+                <Turnos />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta: Facturación */}
+        {/* Facturación */}
         <Route
           path="/facturacion"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <FacturacionPage />
-                </div>
-              </div>
+              <AppLayout>
+                <FacturacionPage />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Ruta: Reportes */}
+        {/* Reportes */}
         <Route
           path="/reportes"
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100vh",
-                  width: "100%",
-                  background: "#19191d",
-                  overflow: "hidden",
-                }}
-              >
-                <Navbar />
-                <div style={{ flex: 1, height: "100vh", overflow: "hidden" }}>
-                  <ReportesDashboard />
-                </div>
-              </div>
+              <AppLayout>
+                <ReportesDashboard />
+              </AppLayout>
             </ProtectedRoute>
           }
         />

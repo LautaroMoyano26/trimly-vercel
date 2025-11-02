@@ -12,17 +12,16 @@
 }
 
 .nuevo-producto-modal-content {
-  background: #27272A;
+  background: #27272a;
   border-radius: 32px;
   padding: 32px 28px;
   width: 100%;
   max-width: 500px;
   color: #fff;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
-
 
 .modal-title {
   font-size: 1.8rem;
@@ -54,7 +53,7 @@
   padding: 12px 14px;
   border-radius: 12px;
   border: none;
-  background: #18181B;
+  background: #18181b;
   color: #fff;
   font-size: 1rem;
   outline: none;
@@ -76,7 +75,7 @@
   padding: 12px 14px;
   border-radius: 12px;
   border: none;
-  background: #18181B;
+  background: #18181b;
   color: #fff;
   font-size: 1rem;
   outline: none;
@@ -110,7 +109,7 @@
 }
 
 .cancel-btn:hover {
-  background: #18181B;
+  background: #18181b;
 }
 
 .create-btn {

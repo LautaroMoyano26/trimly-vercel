@@ -162,12 +162,12 @@
 }
 
 .tabla-productos-wrapper::-webkit-scrollbar-track {
-  background: #18181B;
+  background: #18181b;
   border-radius: 4px;
 }
 
 .tabla-productos-wrapper::-webkit-scrollbar-thumb {
-  background: #888888;;
+  background: #888888;
   border-radius: 4px;
 }
 
@@ -178,5 +178,5 @@
 /* Firefox */
 .tabla-productos-wrapper {
   scrollbar-width: thin;
-  scrollbar-color:  #888888 #18181B;
+  scrollbar-color: #888888 #18181b;
 }

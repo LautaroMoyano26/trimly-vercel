@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Clientes.css";
-import Tabla from "../components/Tabla";
+import TablaResponsive from "../components/TablaResponsive";
+import type { ColumnaTabla } from "../components/TablaResponsive";
 import EditarClienteModal from "./EditarClienteModal";
 import EliminarClienteModal from "../components/EliminarClienteModal";
 import NuevoClienteModal from "./NuevoClienteModal";
@@ -47,16 +48,6 @@ interface FacturaHistorial {
   createdAt: string;
   detalles: FacturaDetalle[];
 }
-
-const columns = [
-  { key: "cliente", label: "Cliente" },
-  { key: "contacto", label: "Contacto" },
-  { key: "dni", label: "DNI" },
-  { key: "fechaNacimiento", label: "Fecha de nacimiento" },
-  { key: "visitas", label: "Visitas" },
-  { key: "estado", label: "Estado" },
-  { key: "acciones", label: "Acciones" },
-];
 
 export default function Clientes() {
   // Obtener permisos del usuario
@@ -201,89 +192,100 @@ export default function Clientes() {
   const clientesActivos = clientes.filter((c) => c.activo).length;
   const clientesInactivos = clientes.filter((c) => !c.activo).length;
 
-  // --- PREPARACIÓN DE DATOS PARA LA TABLA ---
-  const data = sortedAndFilteredClientes.map((c) => ({
-    cliente: (
-      <span className="d-flex align-items-center gap-2">
-        <FaUserCircle size={32} color="#a259ff" />
-        <span className="fw-bold">
-          {c.nombre} {c.apellido}
+  // --- DEFINIR COLUMNAS DE LA TABLA ---
+  const columns: ColumnaTabla[] = [
+    {
+      key: "nombre",
+      label: "Cliente",
+      icon: <FaUserCircle color="#a259ff" />,
+      render: (_, row) => `${row.nombre} ${row.apellido}`,
+    },
+    {
+      key: "telefono",
+      label: "Contacto",
+      render: (_, row) => (
+        <>
+          <div><FaPhoneAlt size={12} className="me-1" />{row.telefono}</div>
+          <div><FaEnvelope size={12} className="me-1" />{row.email}</div>
+        </>
+      ),
+    },
+    {
+      key: "dni",
+      label: "DNI",
+    },
+    {
+      key: "fechaNacimiento",
+      label: "Fecha de nacimiento",
+      render: (value) =>
+        value ? (
+          <>
+            <FaCalendarAlt size={14} className="me-1" />
+            {value}
+          </>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      key: "visitas",
+      label: "Visitas",
+      render: (value) => (
+        <span
+          className={`visitas-badge ${value === 0 ? "sin-visitas" : ""}`}
+        >
+          {value || 0} {value === 1 ? "visita" : "visitas"}
         </span>
-      </span>
-    ),
-    contacto: (
-      <>
-        <FaPhoneAlt size={12} className="me-1" />
-        {c.telefono}
-        <br />
-        <FaEnvelope size={12} className="me-1" />
-        {c.email}
-      </>
-    ),
-    dni: c.dni,
-    fechaNacimiento: c.fechaNacimiento ? (
-      <>
-        <FaCalendarAlt size={14} className="me-1" />
-        {c.fechaNacimiento}
-      </>
-    ) : (
-      "-"
-    ),
-    // ✅ Mostrar visitas calculadas con la misma lógica del modal
-    visitas: (
-      <span
-        className={`visitas-badge ${
-          (c.visitas || 0) === 0 ? "sin-visitas" : ""
-        }`}
-      >
-        {c.visitas || 0} {(c.visitas || 0) === 1 ? "visita" : "visitas"}
-      </span>
-    ),
-    estado: (
-      <span
-        className={c.activo ? "estado-badge-activo" : "estado-badge-inactivo"}
-      >
-        {c.activo ? "Activo" : "Inactivo"}
-      </span>
-    ),
-    acciones: (
-      <>
-        {/* Verificar permiso para editar clientes */}
-        {hasPermission('clientes.edit') && (
-          <button
-            className="btn-accion editar"
-            title="Editar"
-            onClick={() => handleEditClick(c)}
-          >
-            <FaEdit />
-          </button>
-        )}
-        
-        {/* Verificar permiso para desactivar clientes */}
-        {hasPermission('clientes.delete') && (
-          <button
-            className="btn-accion eliminar"
-            title="Desactivar"
-            onClick={() => handleDeleteClick(c)}
-            disabled={!c.activo}
-          >
-            <FaTrash />
-          </button>
-        )}
-        
-        {/* Historial disponible si puede ver clientes */}
-        {hasPermission('clientes.view') && (
-          <button
-            className="btn-accion historial"
-            onClick={() => abrirHistorial(c)}
-            title="Ver historial"
-          >
-            <FaFileInvoice />
-          </button>
-        )}
-      </>
-    ),
-  }));
+      ),
+    },
+    {
+      key: "activo",
+      label: "Estado",
+      render: (value) => (
+        <span
+          className={value ? "estado-badge-activo" : "estado-badge-inactivo"}
+        >
+          {value ? "Activo" : "Inactivo"}
+        </span>
+      ),
+    },
+    {
+      key: "acciones",
+      label: "Acciones",
+      render: (_, row) => (
+        <>
+          {hasPermission('clientes.edit') && (
+            <button
+              className="btn-accion editar"
+              title="Editar"
+              onClick={() => handleEditClick(row)}
+            >
+              <FaEdit />
+            </button>
+          )}
+          {hasPermission('clientes.delete') && (
+            <button
+              className="btn-accion eliminar"
+              title="Desactivar"
+              onClick={() => handleDeleteClick(row)}
+              disabled={!row.activo}
+            >
+              <FaTrash />
+            </button>
+          )}
+          {hasPermission('clientes.view') && (
+            <button
+              className="btn-accion historial"
+              onClick={() => abrirHistorial(row)}
+              title="Ver historial"
+            >
+              <FaFileInvoice />
+            </button>
+          )}
+        </>
+      ),
+    },
+  ];
 
   return (
     <div className="clientes-container">
@@ -412,11 +414,12 @@ export default function Clientes() {
       )}
 
       {/* Tabla de clientes */}
-      <div className="clientes-tabla-container">
-        {sortedAndFilteredClientes.length > 0 && (
-          <Tabla columns={columns} data={data} />
-        )}
-      </div>
+      <TablaResponsive
+        columns={columns}
+        data={sortedAndFilteredClientes}
+        keyExtractor={(cliente) => cliente.id}
+        className="clientes-tabla-container"
+      />
     </div>
   );
 }

@@ -21,7 +21,7 @@ const Tabla: React.FC<TablaProps> = ({ columns, data }) => {
           {data.map((row, i) => (
             <tr key={i}>
               {columns.map((col) => (
-                <td key={col.key}>{row[col.key]}</td>
+                <td key={col.key} data-label={col.label}>{row[col.key]}</td>
               ))}
             </tr>
           ))}

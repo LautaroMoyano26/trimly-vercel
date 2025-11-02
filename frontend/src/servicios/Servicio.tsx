@@ -1,7 +1,8 @@
 ﻿// frontend/src/servicios/Servicio.tsx - ACTUALIZAR CON MODAL DE ELIMINACIÓN
 import { useState, useEffect } from "react";
 import "./Servicio.css";
-import Tabla from "../components/Tabla";
+import TablaResponsive from "../components/TablaResponsive";
+import type { ColumnaTabla } from "../components/TablaResponsive";
 import NuevoServicioModal from "./NuevoServicioModal";
 import EditarServicioModal from "./EditarServicioModal";
 import EliminarServicioModal from "./EliminarServicioModal";
@@ -18,15 +19,6 @@ interface Servicio {
   precio: number;
   estado: boolean;
 }
-
-const columns = [
-  { key: "servicio", label: "Servicio" },
-  { key: "descripcion", label: "Descripción" },
-  { key: "duracion", label: "Duración" },
-  { key: "precio", label: "Precio" },
-  { key: "estado", label: "Estado" },
-  { key: "acciones", label: "Acciones" },
-];
 
 export default function Servicios() {
   // Obtener permisos del usuario
@@ -103,54 +95,70 @@ export default function Servicios() {
   return a.servicio.localeCompare(b.servicio);
     });
 
+  // Definir columnas de la tabla
+  const columns: ColumnaTabla[] = [
+    {
+      key: "servicio",
+      label: "Servicio",
+      icon: <FaCut className="icono-tijera" />,
+      render: (value) => value,
+    },
+    {
+      key: "descripcion",
+      label: "Descripción",
+    },
+    {
+      key: "duracion",
+      label: "Duración",
+      render: (value) => (
+        <>
+          <FaClock size={14} className="me-1" />
+          {value}
+        </>
+      ),
+    },
+    {
+      key: "precio",
+      label: "Precio",
+      render: (value) => `$${value}`,
+    },
+    {
+      key: "estado",
+      label: "Estado",
+      render: (value) => (
+        <span className={value ? "estado-badge" : "estado-badge-inactivo"}>
+          {value ? "Activo" : "Inactivo"}
+        </span>
+      ),
+    },
+    {
+      key: "acciones",
+      label: "Acciones",
+      render: (_, row) => (
+        <>
+          {hasPermission("servicios.edit") && (
+            <button 
+              className="btn-accion editar" 
+              title="Editar"
+              onClick={() => handleEditClick(row)}
+            >
+              <FaEdit />
+            </button>
+          )}
+          {hasPermission('servicios.delete') && (
+            <button 
+              className="btn-accion eliminar" 
+              title="Eliminar"
+              onClick={() => handleDeleteClick(row)}
+            >
+              <FaTrash />
+            </button>
+          )}
+        </>
+      ),
+    },
+  ];
 
-  // Prepara los datos para la tabla
-  const data = serviciosOrdenados.map((s) => ({
-    servicio: (
-      <span className="fw-bold d-flex align-items-center gap-2">
-        <FaCut className="icono-tijera" />
-        <span>{s.servicio}</span>
-      </span>
-    ),
-    descripcion: s.descripcion,
-    duracion: (
-      <>
-        <FaClock size={14} className="me-1" />
-        {s.duracion}
-      </>
-    ),
-    precio: <>${s.precio}</>,
-    estado: (
-      <span className={s.estado ? "estado-badge" : "estado-badge-inactivo"}>
-        {s.estado ? "Activo" : "Inactivo"}
-      </span>
-    ),
-    acciones: (
-      <>
-        {/* Verificar permiso para editar servicios */}
-        {hasPermission("servicios.edit") && (
-          <button 
-            className="btn-accion editar" 
-            title="Editar"
-            onClick={() => handleEditClick(s)}
-          >
-            <FaEdit />
-          </button>
-        )}
-        
-        {/* Verificar permiso para eliminar servicios */}
-        {hasPermission('servicios.delete') && (
-          <button 
-            className="btn-accion eliminar" 
-            title="Eliminar"
-            onClick={() => handleDeleteClick(s)}
-          >
-            <FaTrash />
-          </button>
-        )}
-      </>
-    ),
-  }));
 
   return (
     <div className="servicio-container">
@@ -185,9 +193,12 @@ export default function Servicios() {
         </div>
       </div>
 
-      <div className="servicio-tabla-container">
-        <Tabla columns={columns} data={data} />
-      </div>
+      <TablaResponsive
+        columns={columns}
+        data={serviciosOrdenados}
+        keyExtractor={(servicio) => servicio.id}
+        className="servicio-tabla-container"
+      />
 
       {/* Modal de Nuevo Servicio */}
       <NuevoServicioModal

@@ -328,8 +328,8 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                         <tbody>
                           {historialOrdenado.map((servicio, index) => (
                             <tr key={index}>
-                              <td className="fecha-cell">{servicio.fecha}</td>
-                              <td>
+                              <td className="fecha-cell" data-label="Fecha">{servicio.fecha}</td>
+                              <td data-label="Servicio">
                                 <div className="servicio-cell">
                                   <div className="servicio-icon">
                                     <FaCut />
@@ -337,7 +337,7 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                                   <span>{servicio.servicio}</span>
                                 </div>
                               </td>
-                              <td>
+                              <td data-label="Profesional">
                                 <div className="profesional-cell">
                                   <div className="profesional-icon">
                                     <FaUser />
@@ -345,7 +345,7 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                                   <span>{servicio.profesional}</span>
                                 </div>
                               </td>
-                              <td>
+                              <td data-label="Productos">
                                 {servicio.productos.length > 0 ? (
                                   <div className="productos-cell">
                                     {servicio.productos.map((producto, idx) => (
@@ -364,8 +364,8 @@ const HistorialClienteModal: React.FC<Props> = ({ show, onClose, cliente }) => {
                                   </span>
                                 )}
                               </td>
-                              <td className="nota-cell">{servicio.nota}</td>
-                              <td className="monto-cell">
+                              <td className="nota-cell" data-label="Nota">{servicio.nota}</td>
+                              <td className="monto-cell" data-label="Monto">
                                 ${servicio.monto.toLocaleString()}
                               </td>
                             </tr>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Usuarios.css";
-import Tabla from "../components/Tabla";
+import TablaResponsive from "../components/TablaResponsive";
+import type { ColumnaTabla } from "../components/TablaResponsive";
 import NuevoUsuarioModal from "./NuevoUsuarioModal";
 import EditarUsuarioModal from "./EditarUsuarioModal"; // Importar
 import EliminarUsuarioModal from "./EliminarUsuarioModal"; // Importar
@@ -26,20 +27,11 @@ interface Usuario {
   fechaCreacion: string;
 }
 
-const columns = [
-  { key: "usuario", label: "Usuario" },
-  { key: "email", label: "Email" },
-  { key: "rol", label: "Rol" },
-  { key: "fechaCreacion", label: "Miembro desde" },
-  { key: "estado", label: "Estado" },
-  { key: "acciones", label: "Acciones" },
-];
-
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [showNewUserModal, setShowNewUserModal] = useState(false);
-  const [showEditUserModal, setShowEditUserModal] = useState(false); // Estado para modal de edición
-  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // Estado para modal de eliminación
+  const [showEditUserModal, setShowEditUserModal] = useState(false); // Estado para modal de ediciï¿½n
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // Estado para modal de eliminaciï¿½n
   const [selectedUser, setSelectedUser] = useState<Usuario | undefined>(
     undefined
   ); // Usuario para editar/eliminar
@@ -98,64 +90,87 @@ export default function Usuarios() {
     return a.username.localeCompare(b.username);
   });
 
-  const data = sortedAndFilteredUsuarios.map((u) => ({
-    usuario: (
-      <span className="d-flex align-items-center gap-2">
-        <FaUserCircle size="1.8em" className="text-secondary" />
-        <span className="fw-bold">
-          {u.nombre} {u.apellido}
-          <br />
-          <small className="text-secondary">@{u.username}</small>
+  // Definir columnas de la tabla
+  const columns: ColumnaTabla[] = [
+    {
+      key: "nombre",
+      label: "Usuario",
+      icon: <FaUserCircle className="text-secondary" />,
+      render: (_, row) => (
+        <>
+          <div className="fw-bold">{row.nombre} {row.apellido}</div>
+          <small className="text-secondary">@{row.username}</small>
+        </>
+      ),
+    },
+    {
+      key: "email",
+      label: "Email",
+      render: (value) => (
+        <>
+          <FaEnvelope className="text-secondary email-icon me-1" />
+          {value}
+        </>
+      ),
+    },
+    {
+      key: "rol",
+      label: "Rol",
+      render: (value) => (
+        <>
+          <FaUserShield className="text-secondary rol-icon me-1" />
+          {value === "admin" ? "Administrador" : "Empleado"}
+        </>
+      ),
+    },
+    {
+      key: "fechaCreacion",
+      label: "Miembro desde",
+      render: (value) =>
+        value ? (
+          <>
+            <FaCalendarAlt className="text-secondary me-1" />
+            {new Date(value).toLocaleDateString()}
+          </>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      key: "activo",
+      label: "Estado",
+      render: (value) => (
+        <span
+          className={value ? "estado-badge-activo" : "estado-badge-inactivo"}
+        >
+          {value ? "Activo" : "Inactivo"}
         </span>
-      </span>
-    ),
-    email: (
-      <span className="d-flex align-items-center gap-2 email-cell">
-        <FaEnvelope className="text-secondary email-icon" />
-        <span className="email-text">{u.email}</span>
-      </span>
-    ),
-    rol: (
-      <span className="d-flex align-items-center gap-2 rol-cell">
-        <FaUserShield className="text-secondary rol-icon" />
-        <span className="rol-text">{u.rol === "admin" ? "Administrador" : "Empleado"}</span>
-      </span>
-    ),
-    fechaCreacion: u.fechaCreacion ? (
-      <span className="d-flex align-items-center gap-2">
-        <FaCalendarAlt className="text-secondary" />
-        {new Date(u.fechaCreacion).toLocaleDateString()}
-      </span>
-    ) : (
-      "-"
-    ),
-    estado: (
-      <span
-        className={u.activo ? "estado-badge-activo" : "estado-badge-inactivo"}
-      >
-        {u.activo ? "Activo" : "Inactivo"}
-      </span>
-    ),
-    acciones: (
-      <>
-        <button
-          className="btn-accion editar"
-          title="Editar usuario"
-          onClick={() => handleEditClick(u)}
-        >
-          <FaEdit />
-        </button>
-        <button
-          className="btn-accion eliminar"
-          title="Desactivar usuario"
-          onClick={() => handleDeleteClick(u)}
-          disabled={!u.activo} // Add this line to disable the button for inactive users
-        >
-          <FaTrash />
-        </button>
-      </>
-    ),
-  }));
+      ),
+    },
+    {
+      key: "acciones",
+      label: "Acciones",
+      render: (_, row) => (
+        <>
+          <button
+            className="btn-accion editar"
+            title="Editar usuario"
+            onClick={() => handleEditClick(row)}
+          >
+            <FaEdit />
+          </button>
+          <button
+            className="btn-accion eliminar"
+            title="Desactivar usuario"
+            onClick={() => handleDeleteClick(row)}
+            disabled={!row.activo}
+          >
+            <FaTrash />
+          </button>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div className="usuarios-container container-fluid py-4 px-2 px-md-4">
@@ -215,7 +230,12 @@ export default function Usuarios() {
         </div>
       </div>
 
-      <Tabla columns={columns} data={data} />
+      <TablaResponsive
+        columns={columns}
+        data={sortedAndFilteredUsuarios}
+        keyExtractor={(usuario) => usuario.id}
+        className="usuarios-tabla-container"
+      />
     </div>
   );
 }
