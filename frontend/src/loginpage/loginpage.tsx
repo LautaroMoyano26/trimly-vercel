@@ -86,19 +86,11 @@ const LoginPage = () => {
       // Simulación de delay de autenticación
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // ✅ USAR EL NUEVO SISTEMA DE AUTENTICACIÓN
+      // ✅ USAR EL NUEVO SISTEMA DE AUTENTICACIÓN (persistencia según "rememberMe")
       const mockToken = `mock_token_${usuarioExiste.user.rol}_${Date.now()}`;
-      
-      // Guardar usando el authService
-      localStorage.setItem('trimly_token', mockToken);
-      localStorage.setItem('trimly_user', JSON.stringify(usuarioExiste.user));
 
-      // ✅ FUNCIONALIDAD RECORDAR SESIÓN (opcional)
-      if (rememberMe) {
-        localStorage.setItem('trimly_remember', 'true');
-      } else {
-        localStorage.removeItem('trimly_remember');
-      }
+      // Guardar mediante el authService; si rememberMe=false, se usará sessionStorage
+      authService.setAuthData(mockToken, usuarioExiste.user, rememberMe);
 
       // Redirigir al dashboard
       navigate('/dashboard');

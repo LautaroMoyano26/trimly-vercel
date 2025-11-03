@@ -42,10 +42,13 @@ body {
 .app-content {
   flex: 1;
   height: 100vh;
-  overflow: hidden;
+  /* Permitir scroll vertical en el contenido principal del app (cuando sea necesario) */
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   width: 100%;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch; /* suaviza el scroll en iOS */
 }
 
 /* ============================================

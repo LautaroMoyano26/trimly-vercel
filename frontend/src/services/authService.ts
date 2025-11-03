@@ -25,7 +25,7 @@ class AuthService {
   private readonly USER_KEY = 'trimly_user';
 
   // Hacer login
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  async login(credentials: LoginCredentials, remember = true): Promise<AuthResponse> {
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
@@ -41,9 +41,8 @@ class AuthService {
 
       const data: AuthResponse = await response.json();
       
-      // Guardar token y usuario en localStorage
-      localStorage.setItem(this.TOKEN_KEY, data.token);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(data.user));
+  // Guardar token y usuario según la preferencia de "remember"
+  this.setAuthData(data.token, data.user, remember);
 
       return data;
     } catch (error) {
@@ -51,21 +50,55 @@ class AuthService {
     }
   }
 
+  // Guardar token y usuario en localStorage o sessionStorage según "remember"
+  setAuthData(token: string, user: User, remember = true): void {
+    // Primero limpiar cualquier valor previo
+    try {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+    } catch {}
+
+    try {
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
+    } catch {}
+
+    if (remember) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    } else {
+      sessionStorage.setItem(this.TOKEN_KEY, token);
+      sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    }
+  }
+
   // Hacer logout
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    // Eliminar de ambos storages
+    try {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+    } catch {}
+
+    try {
+      sessionStorage.removeItem(this.TOKEN_KEY);
+      sessionStorage.removeItem(this.USER_KEY);
+    } catch {}
     window.location.href = '/login';
   }
 
   // Obtener token actual
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    // Primero buscar en localStorage (persistente), luego en sessionStorage (temporal)
+    const fromLocal = localStorage.getItem(this.TOKEN_KEY);
+    if (fromLocal) return fromLocal;
+
+    return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
   // Obtener usuario actual
   getCurrentUser(): User | null {
-    const userStr = localStorage.getItem(this.USER_KEY);
+    const userStr = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);
     if (!userStr) return null;
     
     try {
