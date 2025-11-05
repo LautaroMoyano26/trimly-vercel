@@ -4,10 +4,38 @@
 
 .tabla-responsive-wrapper {
   width: 100%;
+  max-height: calc(9 * 60px); /* Máximo 9 filas visibles */
+  overflow-y: auto;
   overflow-x: auto;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.02);
   -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar moderno */
+.tabla-responsive-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tabla-responsive-wrapper::-webkit-scrollbar-track {
+  background: #18181b;
+  border-radius: 4px;
+}
+
+.tabla-responsive-wrapper::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 4px;
+}
+
+.tabla-responsive-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Firefox */
+.tabla-responsive-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #888888 #18181b;
 }
 
 .tabla-responsive {
@@ -19,7 +47,10 @@
 
 /* THEAD */
 .tabla-responsive thead {
-  background: rgba(255, 255, 255, 0.05);
+  background: #232329;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .tabla-responsive thead tr {

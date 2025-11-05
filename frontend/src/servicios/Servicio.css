@@ -54,13 +54,13 @@
   border-bottom: 1px solid #232329 !important;
   font-size: 1.05rem;
   transition: background 0.2s;
+  min-height: 60px;
+  height: 60px; /* Altura fija para cálculo correcto */
 }
 
-.table-responsive {
-  border-radius: 16px;
-  overflow: hidden;
-  background: #232329;
-  position: relative;
+.table tbody td {
+  padding: 16px 12px;
+  vertical-align: middle;
 }
 
 /* Header fijo */
@@ -71,54 +71,6 @@
   z-index: 10;
 }
 
-/* Mejora de la altura de las filas */
-.table tbody tr {
-  min-height: 60px;
-  height: 60px; /* Altura fija para cálculo correcto */
-}
-
-.table tbody td {
-  padding: 16px 12px;
-  vertical-align: middle;
-}
-
-/* Scroll personalizado para tbody - Estilo moderno */
-.table-responsive .table tbody::-webkit-scrollbar {
-  width: 8px;
-}
-
-.table-responsive .table tbody::-webkit-scrollbar-track {
-  background: #18181b;
-  border-radius: 4px;
-}
-
-.table-responsive .table tbody::-webkit-scrollbar-thumb {
-  background: #888888;
-  border-radius: 4px;
-}
-
-.table-responsive .table tbody::-webkit-scrollbar-thumb:hover {
-  background: #555555;
-}
-
-/* Firefox */
-.table-responsive .table tbody {
-  scrollbar-width: thin;
-  scrollbar-color: #888888 #18181b;
-}
-
-/* Smooth scroll para tbody */
-.table-responsive .table tbody {
-  scroll-behavior: smooth;
-}
-
-/* Asegurar que el header sea sticky */
-.table-responsive .table thead th {
-  position: sticky;
-  top: 0;
-  background: #232329 !important;
-  z-index: 10;
-}
 .btn-accion {
   background: none;
   border: none;
@@ -170,43 +122,37 @@
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Prevenir scroll en el contenedor */
-}
-
-/* Ajustar la tabla para que use todo el espacio disponible */
-.table-responsive {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.table-responsive .table {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  margin-bottom: 0;
-}
-
-.table-responsive .table thead {
-  flex-shrink: 0;
-  display: block;
-}
-
-.table-responsive .table thead tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table-responsive .table tbody {
-  flex: 1;
-  display: block;
-  overflow-y: auto;
   max-height: calc(9 * 60px); /* Máximo 9 filas visibles */
 }
 
-.table-responsive .table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
+/* La tabla responsive dentro del contenedor */
+.servicio-tabla-container .tabla-responsive-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* Scrollbar moderno para el wrapper dentro de servicio-tabla-container */
+.servicio-tabla-container .tabla-responsive-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.servicio-tabla-container .tabla-responsive-wrapper::-webkit-scrollbar-track {
+  background: #18181b;
+  border-radius: 4px;
+}
+
+.servicio-tabla-container .tabla-responsive-wrapper::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 4px;
+}
+
+.servicio-tabla-container .tabla-responsive-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Firefox */
+.servicio-tabla-container .tabla-responsive-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #888888 #18181b;
 }

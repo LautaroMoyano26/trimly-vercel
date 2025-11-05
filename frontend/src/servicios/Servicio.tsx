@@ -193,12 +193,13 @@ export default function Servicios() {
         </div>
       </div>
 
-      <TablaResponsive
-        columns={columns}
-        data={serviciosOrdenados}
-        keyExtractor={(servicio) => servicio.id}
-        className="servicio-tabla-container"
-      />
+      <div className="servicio-tabla-container">
+        <TablaResponsive
+          columns={columns}
+          data={serviciosOrdenados}
+          keyExtractor={(servicio) => servicio.id}
+        />
+      </div>
 
       {/* Modal de Nuevo Servicio */}
       <NuevoServicioModal
