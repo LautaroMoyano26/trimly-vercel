@@ -65,10 +65,15 @@ export class DashboardService {
     ).length;
 
     // Ingresos de hoy basados en facturas cobradas
+    const inicioDelDia = new Date(hoy);
+    inicioDelDia.setHours(0, 0, 0, 0);
+    const finDelDia = new Date(hoy);
+    finDelDia.setHours(23, 59, 59, 999);
+
     const facturasHoy = await this.facturaRepository.find({
       where: {
         estado: 'cobrada',
-        createdAt: Between(hoy, new Date(hoy.getTime() + 24 * 60 * 60 * 1000)),
+        createdAt: Between(inicioDelDia, finDelDia),
       },
       relations: ['detalles'],
     });
@@ -85,22 +90,15 @@ export class DashboardService {
     const objetivoDiario = 35000;
     const porcentajeCumplimiento = (ingresosHoy / objetivoDiario) * 100;
 
-    // Clientes atendidos en la semana
-    const facturasSemana = await this.facturaRepository.find({
-      where: {
-        estado: 'cobrada',
-        createdAt: Between(inicioSemana, finSemana),
-      },
-    });
-
-    // Clientes únicos atendidos (facturados) en la semana
-    const clientesIdsAtendidos = [
-      ...new Set(facturasSemana.map((f) => f.clienteId)),
+    // Clientes atendidos HOY (del día actual)
+    // Clientes únicos atendidos (facturados) en el día
+    const clientesIdsAtendidosHoy = [
+      ...new Set(facturasHoy.map((f) => f.clienteId)),
     ];
-    const clientesAtendidos = clientesIdsAtendidos.length;
+    const clientesAtendidosHoy = clientesIdsAtendidosHoy.length;
 
-    // Total de facturas en la semana
-    const clientesFacturados = facturasSemana.length;
+    // Total de facturas del día
+    const clientesFacturadosHoy = facturasHoy.length;
 
     // Resumen semanal
     const turnosSemana = await this.turnoRepository.find({
@@ -168,9 +166,9 @@ export class DashboardService {
         porcentaje: Math.round(porcentajeCumplimiento),
       },
       clientesHoy: {
-        total: clientesAtendidos,
-        atendidos: clientesAtendidos,
-        facturados: clientesFacturados,
+        total: clientesAtendidosHoy,
+        atendidos: clientesAtendidosHoy,
+        facturados: clientesFacturadosHoy,
       },
       resumenSemanal: {
         ingresos: ingresosSemana,
