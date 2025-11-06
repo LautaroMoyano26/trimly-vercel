@@ -42,10 +42,10 @@ export class DashboardService {
     // Obtener semana anterior para cálculo de crecimiento
     const inicioSemanaPrev = new Date(inicioSemana);
     inicioSemanaPrev.setDate(inicioSemana.getDate() - 7);
-    const inicioSemanaPrevStr = inicioSemanaPrev.toISOString().split('T')[0];
+    inicioSemanaPrev.setHours(0, 0, 0, 0);
     const finSemanaPrev = new Date(inicioSemana);
     finSemanaPrev.setDate(inicioSemana.getDate() - 1);
-    const finSemanaPrevStr = finSemanaPrev.toISOString().split('T')[0];
+    finSemanaPrev.setHours(23, 59, 59, 999);
 
     // Turnos de hoy
     const turnosHoy = await this.turnoRepository.find({
@@ -108,7 +108,9 @@ export class DashboardService {
       relations: ['servicio'],
     });
 
-    const totalTurnosSemana = turnosSemana.length;
+    // Filtrar turnos que no estén cancelados
+    const turnosActivosSemana = turnosSemana.filter((t) => t.estado !== 'cancelado');
+    const totalTurnosSemana = turnosActivosSemana.length;
 
     // Ingresos semanales basados en facturas cobradas
     const facturasSemanaCobradas = await this.facturaRepository.find({
@@ -136,17 +138,22 @@ export class DashboardService {
       .filter((d) => d.tipo_item === 'producto')
       .reduce((sum, d) => sum + d.cantidad, 0);
 
-    // Calcular crecimiento semanal
-    const turnosSemanaAnterior = await this.turnoRepository.find({
+    // Calcular crecimiento semanal basado en facturas
+    const facturasSemanaPrev = await this.facturaRepository.find({
       where: {
-        fecha: Between(inicioSemanaPrevStr, finSemanaPrevStr),
+        estado: 'cobrada',
+        createdAt: Between(inicioSemanaPrev, finSemanaPrev),
       },
-      relations: ['servicio'],
+      relations: ['detalles'],
     });
 
-    const ingresosSemanaAnterior = turnosSemanaAnterior
-      .filter((t) => t.estado === 'cobrado')
-      .reduce((suma, t) => suma + (t.servicio?.precio || 0), 0);
+    const ingresosSemanaAnterior = facturasSemanaPrev.reduce((total, factura) => {
+      const totalFactura = factura.detalles.reduce(
+        (sum, detalle) => sum + Number(detalle.subtotal),
+        0,
+      );
+      return total + totalFactura;
+    }, 0);
 
     const crecimientoSemanal =
       ingresosSemanaAnterior > 0
