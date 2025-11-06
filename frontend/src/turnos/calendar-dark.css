@@ -49,6 +49,13 @@
   padding: 6px 0;
   background: transparent;
 }
+
+/* Capitalizar primera letra de los días de la semana */
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
 .react-calendar__month-view__days__day {
   color: #fff;
   background: transparent;
