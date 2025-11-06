@@ -53,11 +53,14 @@ export class DashboardService {
       relations: ['servicio'],
     });
 
-    const totalTurnosHoy = turnosHoy.length;
-    const turnosCompletados = turnosHoy.filter(
+    // Filtrar turnos que no estén cancelados
+    const turnosActivos = turnosHoy.filter((t) => t.estado !== 'cancelado');
+
+    const totalTurnosHoy = turnosActivos.length;
+    const turnosCompletados = turnosActivos.filter(
       (t) => t.estado === 'cobrado',
     ).length;
-    const turnosPendientes = turnosHoy.filter(
+    const turnosPendientes = turnosActivos.filter(
       (t) => t.estado === 'pendiente',
     ).length;
 
