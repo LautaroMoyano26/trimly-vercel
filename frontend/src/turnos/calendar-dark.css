@@ -89,10 +89,20 @@
 .react-calendar__month-view__days__day--weekend {
   color: #a259ff;
 }
+
+/* Día actual (hoy) - Más visible */
 .react-calendar__tile--now {
-  background: #232329 !important;
-  color: #a259ff !important;
+  background: linear-gradient(135deg, #00e6f6 0%, #a259ff 100%) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 15px rgba(162, 89, 255, 0.6);
+  border: 2px solid rgba(0, 230, 246, 0.5);
 }
+
+.react-calendar__tile--now:hover {
+  box-shadow: 0 0 20px rgba(162, 89, 255, 0.8);
+}
+
 .react-calendar__tile--hasActive {
   background: #a259ff;
   color: #fff;
