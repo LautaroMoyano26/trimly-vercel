@@ -37,6 +37,7 @@
   font-weight: 500;
   color: #fff;
   background: transparent;
+  text-transform: capitalize;
 }
 .react-calendar__month-view__weekdays {
   text-align: center;
