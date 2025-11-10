@@ -160,7 +160,7 @@ const LoginPage = () => {
               />
             </div>
 
-            {/* Recordar sesión y olvidar contraseña */}
+            {/* Recordar sesión */}
             <div className="formOptions">
               <div className="checkboxGroup">
                 <input
@@ -175,13 +175,6 @@ const LoginPage = () => {
                   Recordar sesión
                 </label>
               </div>
-              <button
-                type="button"
-                className="forgotPassword"
-                disabled={isLoading}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
             </div>
 
             {/* Botón de login */}
@@ -200,16 +193,6 @@ const LoginPage = () => {
               )}
             </button>
           </form>
-
-          {/* Información adicional */}
-          <div className="additionalInfo">
-            <p className="supportText">
-              ¿No tienes una cuenta?{' '}
-              <button className="supportLink">
-                Contacta con soporte
-              </button>
-            </p>
-          </div>
 
           {/* Demo credentials */}
           <div className="demoCredentials">
