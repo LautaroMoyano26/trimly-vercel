@@ -79,6 +79,8 @@
 .productos-table tbody tr {
   border-bottom: 1px solid #3a3a42 !important;
   transition: background 0.2s ease;
+  min-height: 70px; /* Altura consistente con clientes */
+  height: 70px; /* Altura fija para cálculo correcto */
 }
 
 .productos-table tbody tr:hover {
@@ -87,9 +89,10 @@
 
 .productos-table th,
 .productos-table td {
-  padding: 14px 12px;
+  padding: 16px 12px; /* Padding ajustado */
   text-align: left;
   border-bottom: 1px solid #3a3a42 !important;
+  vertical-align: middle; /* Centrado vertical */
 }
 
 .icono-producto {
@@ -150,7 +153,7 @@
   color: #ff4f4f;
 }
 .tabla-productos-wrapper {
-  max-height: 400px; /* Ajusta según la altura que quieras */
+  max-height: calc(9 * 70px); /* Altura consistente con clientes (9 filas) */
   overflow-y: auto;
   border-radius: 8px;
   padding-right: 8px; /* Para que el scrollbar no tape contenido */
