@@ -265,8 +265,9 @@ const FacturacionTab: React.FC = () => {
         setClienteBloqueado(false);
       }
 
+      const nombreServicio = turno.servicio?.servicio || "Servicio no disponible";
       mostrarMensaje(
-        `${turno.cliente.nombre} - ${turno.servicio.servicio} removido de la factura`,
+        `${turno.cliente.nombre} - ${nombreServicio} removido de la factura`,
         "exito"
       );
       return;
@@ -293,13 +294,17 @@ const FacturacionTab: React.FC = () => {
       return;
     }
 
+    // Manejar el nombre y precio del servicio (puede ser null si está eliminado)
+    const nombreServicio = turno.servicio?.servicio || "Servicio no disponible";
+    const precioServicio = turno.servicio?.precio || 0;
+
     setItemsFactura([
       ...itemsFactura,
       {
         productoId: turno.id,
-        nombre: turno.servicio.servicio, // ✅ Solo el nombre del servicio
+        nombre: nombreServicio,
         cantidad: 1,
-        precioUnitario: turno.servicio.precio,
+        precioUnitario: precioServicio,
         stockDisponible: 999,
         esTurnoServicio: true,
         turnoId: turno.id, // Asociar el turno para las notas
@@ -315,7 +320,7 @@ const FacturacionTab: React.FC = () => {
     }
 
     mostrarMensaje(
-      `${turno.cliente.nombre} - ${turno.servicio.servicio} agregado a la factura`,
+      `${turno.cliente.nombre} - ${nombreServicio} agregado a la factura`,
       "exito"
     );
   };
@@ -584,9 +589,12 @@ const FacturacionTab: React.FC = () => {
         const esTurno = turnosPendientes.some((t) => t.id === item.productoId);
         if (esTurno) {
           const turno = turnosPendientes.find((t) => t.id === item.productoId);
+          // Usar el servicioId del turno si existe, sino usar un ID genérico
+          const servicioId = turno?.servicioId ?? 0;
+          
           return {
             tipo_item: "servicio",
-            itemId: turno?.servicioId ?? Number(item.productoId), // id del servicio real
+            itemId: servicioId, // id del servicio real (puede ser 0 si está eliminado)
             cantidad: Number(item.cantidad),
             precioUnitario: Number(item.precioUnitario),
             subtotal: Number(item.cantidad) * Number(item.precioUnitario),
@@ -777,6 +785,9 @@ const FacturacionTab: React.FC = () => {
               turnosPendientes.map((turno) => {
                 const diasDeDemora = calcularDemora(turno.fecha);
                 const colorBadge = obtenerColorBadge(diasDeDemora);
+                const nombreServicio = turno.servicio?.servicio || "Servicio no disponible";
+                const cliente = clientes.find(c => c.id === turno.clienteId);
+                const nombreCliente = cliente ? `${cliente.nombre} ${cliente.apellido}` : "Cliente desconocido";
 
                 return (
                   <div
@@ -789,9 +800,9 @@ const FacturacionTab: React.FC = () => {
                     onClick={() => toggleTurno(turno)}
                   >
                     <div>
-                     <div className="nombre-item">{clientes.find(c => c.id === turno.clienteId)?.nombre + " " + clientes.find(c => c.id === turno.clienteId)?.apellido || "Cliente desconocido"}</div>
+                     <div className="nombre-item">{nombreCliente}</div>
                       <div className="precio-item">
-                        {turno.servicio?.servicio || "Servicio no disponible"}
+                        {nombreServicio}
                       </div>
                       <div className="servicio-info">
                         <small>Fecha: {turno.fecha}</small>
