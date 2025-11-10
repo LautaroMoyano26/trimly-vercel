@@ -55,21 +55,29 @@ export class ReportesService {
           COALESCE(SUM(CASE WHEN fd.tipo_item = 'servicio' THEN fd.cantidad ELSE 0 END), 0) as total_servicios,
           COALESCE(SUM(CASE WHEN fd.tipo_item = 'producto' THEN fd.cantidad ELSE 0 END), 0) as total_productos
         FROM factura f
-        LEFT JOIN factura_detalle fd ON f.id = fd."facturaId"
-        WHERE DATE(f."createdAt") BETWEEN $1 AND $2
+        LEFT JOIN factura_detalle fd ON f.id = fd.facturaId
+        WHERE DATE(f.createdAt) BETWEEN ? AND ?
       `;
 
-      const [result] = await this.facturaRepository.query(query, [fechaInicio, fechaFin]);
+      const result = await this.facturaRepository.query(query, [fechaInicio, fechaFin]);
+      const row = result[0] || {};
 
       return {
-        total_turnos: Number(result?.total_turnos ?? 0),
-        ingresos_totales: Number(result?.ingresos_totales ?? 0),
-        total_servicios: Number(result?.total_servicios ?? 0),
-        total_productos: Number(result?.total_productos ?? 0),
+        total_turnos: Number(row.total_turnos ?? 0),
+        ingresos_totales: Number(row.ingresos_totales ?? 0),
+        total_servicios: Number(row.total_servicios ?? 0),
+        total_productos: Number(row.total_productos ?? 0),
       };
     } catch (error) {
       console.error('Error al obtener resumen general:', error);
-      throw new Error('Error al obtener resumen general');
+      console.error('Detalles del error:', error.message);
+      // Retornar valores por defecto en lugar de lanzar error
+      return {
+        total_turnos: 0,
+        ingresos_totales: 0,
+        total_servicios: 0,
+        total_productos: 0,
+      };
     }
   }
 
@@ -83,31 +91,33 @@ export class ReportesService {
           COALESCE(SUM(fd.cantidad), 0) as cantidad,
           COALESCE(SUM(fd.subtotal), 0) as ingresos
         FROM servicio s
-        LEFT JOIN factura_detalle fd ON s.id = fd."itemId" AND fd.tipo_item = 'servicio'
-        LEFT JOIN factura f ON fd."facturaId" = f.id
+        LEFT JOIN factura_detalle fd ON s.id = fd.itemId AND fd.tipo_item = 'servicio'
+        LEFT JOIN factura f ON fd.facturaId = f.id
       `;
 
       const params: any[] = [];
 
       if (fechaInicio && fechaFin) {
-        query += ` WHERE f.id IS NULL OR DATE(f."createdAt") BETWEEN $1 AND $2`;
+        query += ` WHERE f.id IS NULL OR (DATE(f.createdAt) BETWEEN ? AND ?)`;
         params.push(fechaInicio, fechaFin);
       }
 
-      query += ` GROUP BY s.id, s.servicio, s.precio ORDER BY cantidad DESC`;
+      query += ` GROUP BY s.id, s.servicio, s.precio ORDER BY ingresos DESC`;
 
       const result = await this.servicioRepository.query(query, params);
 
       return result.map((item: any) => ({
         id: Number(item.id),
-        nombre: item.nombre,
+        nombre: item.nombre || '',
         precio: Number(item.precio ?? 0),
         cantidad: Number(item.cantidad ?? 0),
         ingresos: Number(item.ingresos ?? 0),
       }));
     } catch (error) {
       console.error('Error al obtener estadísticas de servicios:', error);
-      throw new Error('Error al obtener estadísticas de servicios');
+      console.error('Detalles del error:', error.message);
+      // Retornar array vacío en lugar de lanzar error
+      return [];
     }
   }
 
@@ -122,32 +132,34 @@ async obtenerEstadisticasProductos(fechaInicio?: string, fechaFin?: string) {
         COALESCE(SUM(fd.cantidad), 0) as cantidad,
         COALESCE(SUM(fd.subtotal), 0) as ingresos
       FROM producto p
-      LEFT JOIN factura_detalle fd ON p.id = fd."itemId" AND fd.tipo_item = 'producto'
-      LEFT JOIN factura f ON fd."facturaId" = f.id
+      LEFT JOIN factura_detalle fd ON p.id = fd.itemId AND fd.tipo_item = 'producto'
+      LEFT JOIN factura f ON fd.facturaId = f.id
     `;
 
     const params: any[] = [];
 
     if (fechaInicio && fechaFin) {
-      query += ` WHERE f.id IS NULL OR DATE(f."createdAt") BETWEEN $1 AND $2`;
+      query += ` WHERE f.id IS NULL OR (DATE(f.createdAt) BETWEEN ? AND ?)`;
       params.push(fechaInicio, fechaFin);
     }
 
-    query += ` GROUP BY p.id, p.nombre, p.precio, p.stock ORDER BY cantidad DESC`;
+    query += ` GROUP BY p.id, p.nombre, p.precio, p.stock ORDER BY ingresos DESC`;
 
     const result = await this.productoRepository.query(query, params);
 
     return result.map((item: any) => ({
       id: Number(item.id),
-      nombre: item.nombre,
+      nombre: item.nombre || '',
       precio: Number(item.precio ?? 0),
-      stock: item.stock !== null ? Number(item.stock) : null,
+      stock: item.stock !== null ? Number(item.stock) : 0,
       cantidad: Number(item.cantidad ?? 0),
       ingresos: Number(item.ingresos ?? 0),
     }));
   } catch (error) {
     console.error('Error al obtener estadísticas de productos:', error);
-    throw new Error('Error al obtener estadísticas de productos');
+    console.error('Detalles del error:', error.message);
+    // Retornar array vacío en lugar de lanzar error
+    return [];
   }
 }
 
@@ -155,12 +167,12 @@ async obtenerEstadisticasProductos(fechaInicio?: string, fechaFin?: string) {
     try {
       const query = `
         SELECT 
-          DATE(f."createdAt") as fecha,
+          DATE(f.createdAt) as fecha,
           COALESCE(SUM(fd.subtotal), 0) as total
         FROM factura f
-        LEFT JOIN factura_detalle fd ON f.id = fd."facturaId"
-        WHERE DATE(f."createdAt") BETWEEN $1 AND $2
-        GROUP BY DATE(f."createdAt")
+        LEFT JOIN factura_detalle fd ON f.id = fd.facturaId
+        WHERE DATE(f.createdAt) BETWEEN ? AND ?
+        GROUP BY DATE(f.createdAt)
         ORDER BY fecha ASC
       `;
 

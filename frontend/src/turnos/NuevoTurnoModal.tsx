@@ -53,7 +53,11 @@ export default function NuevoTurnoModal({
   const [clienteId, setClienteId] = useState<number | null>(null);
   const [servicio, setServicio] = useState("");
   const [usuario, setUsuario] = useState("");
-  const [fecha, setFecha] = useState("");
+  const [fecha, setFecha] = useState(() => {
+    // Inicializar con la fecha de hoy en formato YYYY-MM-DD
+    const hoy = new Date();
+    return hoy.toISOString().split('T')[0];
+  });
   const [hora, setHora] = useState("");
   const [notas, setNotas] = useState("");
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
@@ -294,7 +298,9 @@ export default function NuevoTurnoModal({
     setClienteId(null);
     setServicio("");
     setUsuario("");
-    setFecha("");
+    // Resetear a la fecha de hoy
+    const hoy = new Date();
+    setFecha(hoy.toISOString().split('T')[0]);
     setHora("");
     setNotas("");
     setShowTimeSelector(false);
@@ -648,7 +654,17 @@ export default function NuevoTurnoModal({
               <input
                 type="date"
                 value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const currentYear = new Date().getFullYear();
+                  // Solo permitir fechas del año actual
+                  if (selectedDate.getFullYear() === currentYear) {
+                    setFecha(e.target.value);
+                  }
+                }}
+                min={`${new Date().getFullYear()}-01-01`}
+                max={`${new Date().getFullYear()}-12-31`}
+                onKeyDown={(e) => e.preventDefault()} // Deshabilitar edición por teclado
               />
               {errores.fecha && <p className="error">{errores.fecha}</p>}
             </div>
